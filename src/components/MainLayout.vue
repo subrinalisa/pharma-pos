@@ -10,7 +10,7 @@
       <Header :title="title" v-if="token" />
       <!-- content -->
       <div
-        class="p-5 bg-transparent border-double border-4 border-indigo-400 mt-5 rounded-md min-h-80"
+        class="p-5 bg-white border-double border-4 border-indigo-400 mt-5 rounded-md min-h-80"
       >
         <slot></slot>
       </div>

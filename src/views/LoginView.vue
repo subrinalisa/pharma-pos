@@ -2,15 +2,17 @@
   <MainLayout>
     <div class="md:p-10">
       <h1 class="text-4xl xl:text-5xl font-semibold mb-8">Login</h1>
-      <a-form :model="formState" layout="vertical" @finish="onFinish">
+      <a-form
+        :model="formState"
+        layout="vertical"
+        @finish="handleLogin(formState, $router)"
+      >
         <a-form-item
-          label="Email Address"
-          name="email"
-          :rules="[
-            { required: true, message: 'Please input your Email Address!' },
-          ]"
+          label="Username"
+          name="username"
+          :rules="[{ required: true, message: 'Please input your username!' }]"
         >
-          <a-input v-model:value="formState.email">
+          <a-input v-model:value="formState.username" placeholder="User name">
             <template #prefix>
               <UserOutlined class="site-form-item-icon" />
             </template>
@@ -21,16 +23,29 @@
           name="password"
           :rules="[{ required: true, message: 'Please input your password!' }]"
         >
-          <a-input-password v-model:value="formState.password">
+          <a-input-password
+            v-model:value="formState.password"
+            placeholder="Password"
+          >
             <template #prefix>
               <LockOutlined class="site-form-item-icon" />
             </template>
           </a-input-password>
         </a-form-item>
         <a-form-item>
-          <button type="submit" class="btn-submit">
+          <button
+            type="submit"
+            class="btn-submit disabled:bg-opacity-50"
+            :disabled="isLoading"
+          >
             <i class="bi bi-check2-circle mr-2"></i>Login
           </button>
+          <p class="mt-3">
+            New Here?
+            <router-link :to="{ name: 'register' }" class="text-purple-600"
+              >Register</router-link
+            >
+          </p>
         </a-form-item>
       </a-form>
     </div>
@@ -39,23 +54,19 @@
 
 <script setup>
 import { UserOutlined, LockOutlined } from "@ant-design/icons-vue";
-import { showNotification } from "@/utilities/notification.js";
 import MainLayout from "@/components/MainLayout.vue";
-import { useRouter } from "vue-router";
-import Cookies from "js-cookie";
 import { reactive } from "vue";
 
-const router = useRouter();
+// Pinia
+import { storeToRefs } from "pinia";
+import { useLoginStore } from "@/stores/login";
+
+const loginStore = useLoginStore();
+const { isLoading } = storeToRefs(loginStore);
+const { handleLogin } = loginStore;
 
 const formState = reactive({
-  email: "admin@admin.com",
-  password: "123456",
+  username: "",
+  password: "",
 });
-
-const onFinish = (values) => {
-  localStorage.setItem("userType", "");
-  Cookies.set("token", "123");
-  router.push({ name: "home" });
-  showNotification("success", "Logged In");
-};
 </script>

@@ -2,24 +2,25 @@
 import MainLayout from "@/components/MainLayout.vue";
 import Upload from "@/components/Upload.vue";
 import Feedback from "@/components/Feedback.vue";
-import { ref, computed } from "vue";
+import { computed } from "vue";
 
-const userType = ref(localStorage.getItem("userType"));
+// Pinia
+import { storeToRefs } from "pinia";
+import { useLoginStore } from "@/stores/login";
+
+const loginStore = useLoginStore();
+const { is_superuser } = storeToRefs(loginStore);
 
 const userTypeLabel = computed(() => {
-  return userType.value === "admin"
+  return is_superuser.value
     ? "Virtual Assistant Admin Panel"
     : "Virtual Assistant Input Panel";
-});
-
-const isAdmin = computed(() => {
-  return userType.value === "admin";
 });
 </script>
 
 <template>
   <MainLayout :title="userTypeLabel">
-    <template v-if="!isAdmin">
+    <template v-if="!is_superuser">
       <Upload />
       <Feedback />
     </template>

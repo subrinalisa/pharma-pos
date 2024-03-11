@@ -2,6 +2,7 @@
 import { base } from "@/config.js";
 defineProps(["modalTitle", "imgPath"]);
 </script>
+
 <template>
   <div
     class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-90 flex justify-center items-center transition-opacity duration-300"
@@ -9,13 +10,13 @@ defineProps(["modalTitle", "imgPath"]);
     <div class="p-6 rounded-lg shadow-md xl:w-1/3 lg:w-1/2 w-full">
       <div class="flex justify-center items-center mb-4">
         <img :src="`${base}src/assets/images/${imgPath}`" class="w-10" alt="" />
-        <h2 class="text-lg font-semibold text-white ml-3 capitalize">
+        <h2 class="text-lg font-semibold text-white ml-3">
           {{ modalTitle }}
         </h2>
       </div>
       <div class="bg-[#D9D9D9] rounded-md p-5 min-h-72">
         <div class="flex justify-between">
-          <div class="grow"><slot></slot></div>
+          <div class="grow mr-3"><slot></slot></div>
           <div class="text-right">
             <button
               class="text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700"
