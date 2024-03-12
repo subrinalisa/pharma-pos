@@ -17,15 +17,6 @@
     </div>
     <!-- single -->
     <div class="border p-3 text-center rounded-md mb-3">
-      <!-- <input type="file" id="voice-upload" class="hidden" accept="audio/*" />
-      <label for="voice-upload">
-        <img
-          src="@/assets/images/file.png"
-          alt="img"
-          class="inline-block h-32 w-32"
-        />
-        <p class="mt-3">Voice upload</p>
-      </label> -->
       <button
         type="button"
         class="block text-center w-full"
@@ -41,15 +32,6 @@
     </div>
     <!-- single -->
     <div class="border p-3 text-center rounded-md mb-3">
-      <!-- <input type="file" id="file-upload" class="hidden" />
-      <label for="file-upload">
-        <img
-          src="@/assets/images/text.png"
-          alt="img"
-          class="inline-block h-32 w-32"
-        />
-        <p class="mt-3">File upload</p>
-      </label> -->
       <button
         type="button"
         class="block text-center w-full"
@@ -72,12 +54,12 @@
     v-if="isTextModal"
     @button-clicked="isTextModal = false"
   >
-    <h6 class="font-semibold mb-3">Write anything</h6>
+    <h6 class="font-semibold mb-3">Write a text message</h6>
     <a-textarea
-      v-model:value="value"
-      placeholder="Basic usage"
+      v-model:value="reviewData.text"
+      placeholder="Enter your text here..."
       :rows="5"
-      class="bg-[#f1f1f1] border border-gray-400"
+      class="bg-[#f1f1f1] border border-gray-400 focus:border-gray-600"
     />
   </Modal>
   <!-- Modal Audio -->
@@ -89,13 +71,23 @@
   >
     <div class="text-center">
       <h6 class="font-semibold mb-3">Record your input or upload your audio</h6>
-
-      <a-upload v-model:file-list="fileList" name="file" :max-count="1">
-        <a-button class="border border-black">
-          <upload-outlined></upload-outlined>
-          Click to Upload
-        </a-button>
-      </a-upload>
+      <input
+        type="file"
+        id="voice"
+        class="hidden"
+        accept="audio/*"
+        @change="reviewData.voice = $event?.target?.files[0]"
+      />
+      <label for="voice">
+        <img
+          src="@/assets/images/file.png"
+          alt="img"
+          class="inline-block h-32 w-32"
+        />
+      </label>
+      <p class="text-purple-500 mt-3" v-if="reviewData.voice?.name">
+        <i class="bi bi-paperclip mr-2"></i>{{ reviewData.voice?.name }}
+      </p>
     </div>
   </Modal>
   <!-- Modal File -->
@@ -107,28 +99,42 @@
   >
     <div class="text-center">
       <h6 class="font-semibold mb-3">Upload your file</h6>
-
-      <a-upload
-        v-model:file-list="fileList"
-        name="avatar"
-        list-type="picture-card"
-        class="avatar-uploader"
-      >
-        <div class="">
-          <plus-outlined></plus-outlined>
-          <div class="ant-upload-text">Upload</div>
-        </div>
-      </a-upload>
+      <input
+        type="file"
+        id="file"
+        class="hidden"
+        @change="reviewData.file = $event?.target?.files[0]"
+      />
+      <label for="file">
+        <img
+          src="@/assets/images/attach-file.png"
+          alt="img"
+          class="inline-block h-32 w-32"
+        />
+      </label>
+      <p class="text-purple-500 mt-3" v-if="reviewData.file?.name">
+        <i class="bi bi-paperclip mr-2"></i>{{ reviewData.file?.name }}
+      </p>
     </div>
   </Modal>
 </template>
 
 <script setup>
-import { UploadOutlined, PlusOutlined } from "@ant-design/icons-vue";
-
-import { ref } from "vue";
 import Modal from "./Modal.vue";
+import { ref } from "vue";
+
 const isTextModal = ref(false);
 const isAudioModal = ref(false);
 const isFileModal = ref(false);
+
+// Pinia
+import { storeToRefs } from "pinia";
+import { useDataStore } from "@/stores/data";
+
+const dataStore = useDataStore();
+const { reviewData } = storeToRefs(dataStore);
+
+const handleUploadFile = (event, data) => {
+  console.log(event?.target?.files[0], data);
+};
 </script>
