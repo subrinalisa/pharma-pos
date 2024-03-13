@@ -32,7 +32,9 @@ import { useRouter } from "vue-router";
 // Pinia
 import { storeToRefs } from "pinia";
 import { useLoginStore } from "@/stores/login";
+import { useDataStore } from "@/stores/data";
 const loginStore = useLoginStore();
+const dataStore = useDataStore();
 const { userInfo } = storeToRefs(loginStore);
 
 const router = useRouter();
@@ -43,6 +45,7 @@ const handleLogout = () => {
   Cookies.set("token", "");
   localStorage.clear();
   loginStore.$reset();
+  dataStore.$reset();
   router.push({ name: "login" });
   showNotification("success", "Logged Out");
 };
