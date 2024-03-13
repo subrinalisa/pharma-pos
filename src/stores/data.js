@@ -13,15 +13,21 @@ export const useDataStore = defineStore("dataStore", {
       file: "",
       feedback: "",
     },
+    userList: null,
   }),
 
   actions: {
     // Review
     async virtualAssistant(data) {
+      if (!data.text && !data.voice && !data.file && !data.feedback) return 0;
+
       this.isLoading = true;
       const token = Cookies.get("token");
       const config = {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
       };
       try {
         const response = await axios.post(
@@ -31,23 +37,47 @@ export const useDataStore = defineStore("dataStore", {
         );
         this.isLoading = false;
 
-        if (response.status === 200) {
+        if (response.status === 201) {
           const res = response?.data;
-          console.log("res", res);
-          // if (res?.status == 400) {
-          //   showNotification("error", res?.message);
-          //   return 0;
-          // }
-          // this.userInfo = res;
-          // this.is_superuser = res?.is_superuser;
-          // Cookies.set("token", res?.access_token, { expires: null });
-          // showNotification("success", "Successfully Logged In");
-          // router.push({ name: "home" });
+          showNotification("success", res?.message);
+          this.reviewData = {
+            text: "",
+            voice: "",
+            file: "",
+            feedback: "",
+          };
         }
       } catch (error) {
         this.isLoading = false;
-        // this.userInfo = null;
-        // this.is_superuser = null;
+        showNotification("error", error?.message);
+        this.reviewData = {
+          text: "",
+          voice: "",
+          file: "",
+          feedback: "",
+        };
+      }
+    },
+    // List
+    async getVirtualAssistant() {
+      this.isLoading = true;
+      const token = Cookies.get("token");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      try {
+        const response = await axios.get(
+          `${apiBase}/virtual_assistant`,
+          config
+        );
+        this.isLoading = false;
+        const res = response?.data;
+        if (res.status == 200) this.userList = res?.data;
+      } catch (error) {
+        this.isLoading = false;
+        this.userList = null;
         showNotification("error", error?.message);
       }
     },

@@ -2,6 +2,7 @@
 import MainLayout from "@/components/MainLayout.vue";
 import Upload from "@/components/Upload.vue";
 import Feedback from "@/components/Feedback.vue";
+import Userlist from "@/components/Userlist.vue";
 import { computed } from "vue";
 
 // Pinia
@@ -24,5 +25,6 @@ const userTypeLabel = computed(() => {
       <Upload />
       <Feedback />
     </template>
+    <Userlist />
   </MainLayout>
 </template>

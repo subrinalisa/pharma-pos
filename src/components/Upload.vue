@@ -1,3 +1,19 @@
+<script setup>
+import Modal from "./Modal.vue";
+import { ref } from "vue";
+
+const isTextModal = ref(false);
+const isAudioModal = ref(false);
+const isFileModal = ref(false);
+
+// Pinia
+import { storeToRefs } from "pinia";
+import { useDataStore } from "@/stores/data";
+
+const dataStore = useDataStore();
+const { reviewData } = storeToRefs(dataStore);
+</script>
+
 <template>
   <div class="sm:grid grid-cols-3 gap-4">
     <!-- single -->
@@ -118,23 +134,3 @@
     </div>
   </Modal>
 </template>
-
-<script setup>
-import Modal from "./Modal.vue";
-import { ref } from "vue";
-
-const isTextModal = ref(false);
-const isAudioModal = ref(false);
-const isFileModal = ref(false);
-
-// Pinia
-import { storeToRefs } from "pinia";
-import { useDataStore } from "@/stores/data";
-
-const dataStore = useDataStore();
-const { reviewData } = storeToRefs(dataStore);
-
-const handleUploadFile = (event, data) => {
-  console.log(event?.target?.files[0], data);
-};
-</script>
