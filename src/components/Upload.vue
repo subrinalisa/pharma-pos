@@ -5,13 +5,52 @@ import { ref } from "vue";
 const isTextModal = ref(false);
 const isAudioModal = ref(false);
 const isFileModal = ref(false);
+const isRecording = ref(false);
+const audioUrl = ref();
+const mediaRecorder = ref();
 
 // Pinia
 import { storeToRefs } from "pinia";
 import { useDataStore } from "@/stores/data";
+import { showNotification } from "@/utilities/notification";
 
 const dataStore = useDataStore();
 const { reviewData } = storeToRefs(dataStore);
+
+const handleAudioUpload = (event) => {
+  const file = event?.target?.files[0];
+  reviewData.value.voice = file;
+  const objectURL = URL.createObjectURL(file);
+  audioUrl.value = objectURL;
+};
+
+const handleRecording = async () => {
+  try {
+    let recordedChunks = [];
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder.value = new MediaRecorder(stream);
+
+    mediaRecorder.value.addEventListener("dataavailable", (event) => {
+      recordedChunks.push(event.data);
+    });
+
+    mediaRecorder.value.addEventListener("stop", () => {
+      const blob = new Blob(recordedChunks, { type: "audio/wav" });
+      reviewData.value.voice = blob;
+      audioUrl.value = URL.createObjectURL(blob);
+    });
+
+    mediaRecorder.value.start();
+    isRecording.value = true;
+  } catch (error) {
+    console.error("Error accessing microphone:", error);
+    showNotification("warning", "Please Connect your microphone");
+  }
+};
+const stopRecording = () => {
+  mediaRecorder.value.stop();
+  isRecording.value = false;
+};
 </script>
 
 <template>
@@ -85,26 +124,40 @@ const { reviewData } = storeToRefs(dataStore);
     v-if="isAudioModal"
     @button-clicked="isAudioModal = false"
   >
-    <div class="text-center">
-      <h6 class="font-semibold mb-3">Record your input or upload your audio</h6>
-      <input
-        type="file"
-        id="voice"
-        class="hidden"
-        accept="audio/*"
-        @change="reviewData.voice = $event?.target?.files[0]"
-      />
-      <label for="voice">
-        <img
-          src="@/assets/images/file.png"
-          alt="img"
-          class="inline-block h-32 w-32"
+    <div class="grid grid-cols-2 gap-4 text-center">
+      <div>
+        <button type="button" @click="handleRecording" v-if="!isRecording">
+          <img src="@/assets/images/record.png" class="w-10" alt="img" />
+        </button>
+        <button type="button" @click="stopRecording" v-if="isRecording">
+          <img src="@/assets/images/record-play.png" class="w-10" alt="img" />
+        </button>
+        <h6 class="font-semibold mb-3">Record your input</h6>
+      </div>
+      <div>
+        <input
+          type="file"
+          id="voice"
+          class="hidden"
+          accept="audio/*"
+          @change="handleAudioUpload($event)"
         />
-      </label>
-      <p class="text-purple-500 mt-3" v-if="reviewData.voice?.name">
-        <i class="bi bi-paperclip mr-2"></i>{{ reviewData.voice?.name }}
-      </p>
-      <!-- <audio :src="audioUrl" controls class="mt-5 w-10/12 mx-auto hidden" /> -->
+        <label for="voice">
+          <img
+            src="@/assets/images/file.png"
+            alt="img"
+            class="inline-block w-16"
+          />
+        </label>
+
+        <h6 class="font-semibold mb-3">Upload your audio</h6>
+      </div>
+    </div>
+    <p class="text-blue-500 mt-3 text-center" v-if="reviewData.voice?.name">
+      <i class="bi bi-paperclip mr-2"></i>{{ reviewData.voice?.name }}
+    </p>
+    <div class="text-center">
+      <audio :src="audioUrl" controls class="mt-5 w-10/12 mx-auto" />
     </div>
   </Modal>
   <!-- Modal File -->
