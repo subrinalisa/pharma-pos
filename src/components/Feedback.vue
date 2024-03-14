@@ -1,8 +1,9 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useDataStore } from "@/stores/data";
+import Loader from "./Loader.vue";
 const dataStore = useDataStore();
-const { reviewData } = storeToRefs(dataStore);
+const { reviewData, isLoading } = storeToRefs(dataStore);
 const { virtualAssistant } = dataStore;
 </script>
 
@@ -20,6 +21,7 @@ const { virtualAssistant } = dataStore;
         @click="virtualAssistant(reviewData)"
       >
         <i class="bi bi-check2-circle mr-2"></i>Submit
+        <Loader v-if="isLoading" />
       </button>
     </div>
   </div>

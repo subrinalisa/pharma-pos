@@ -7,6 +7,7 @@ import { defineStore } from "pinia";
 export const useDataStore = defineStore("dataStore", {
   state: () => ({
     isLoading: false,
+    isUpdating: false,
     reviewData: {
       text: "",
       voice: "",
@@ -78,6 +79,39 @@ export const useDataStore = defineStore("dataStore", {
       } catch (error) {
         this.isLoading = false;
         this.userList = null;
+        // showNotification("error", error?.message);
+      }
+    },
+    // Status Update
+    async statusUpdate(id) {
+      this.isUpdating = true;
+      const token = Cookies.get("token");
+
+      const data = {
+        file: null,
+        status: "approved",
+      };
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      };
+
+      try {
+        const response = await axios.put(
+          `${apiBase}/virtual_assistant/${id}`,
+          data,
+          config
+        );
+        this.isUpdating = false;
+        const res = response?.data;
+        if (res.status == 200) {
+          showNotification("success", res?.message);
+          return 1;
+        }
+      } catch (error) {
+        this.isUpdating = false;
         showNotification("error", error?.message);
       }
     },

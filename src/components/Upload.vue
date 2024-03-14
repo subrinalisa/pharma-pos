@@ -104,6 +104,7 @@ const { reviewData } = storeToRefs(dataStore);
       <p class="text-purple-500 mt-3" v-if="reviewData.voice?.name">
         <i class="bi bi-paperclip mr-2"></i>{{ reviewData.voice?.name }}
       </p>
+      <!-- <audio :src="audioUrl" controls class="mt-5 w-10/12 mx-auto hidden" /> -->
     </div>
   </Modal>
   <!-- Modal File -->

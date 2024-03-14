@@ -26,8 +26,10 @@ export const useLoginStore = defineStore("loginStore", {
             showNotification("error", res?.message);
             return 0;
           }
+
           this.userInfo = res;
           this.is_superuser = res?.is_superuser;
+          console.log(this.is_superuser);
           Cookies.set("token", res?.access_token, { expires: null });
           showNotification("success", "Successfully Logged In");
           router.push({ name: "home" });

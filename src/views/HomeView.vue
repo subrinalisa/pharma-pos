@@ -21,10 +21,10 @@ const userTypeLabel = computed(() => {
 
 <template>
   <MainLayout :title="userTypeLabel">
-    <template v-if="!is_superuser">
+    <template v-if="is_superuser == false">
       <Upload />
       <Feedback />
     </template>
-    <Userlist />
+    <Userlist v-else />
   </MainLayout>
 </template>
