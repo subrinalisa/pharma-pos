@@ -1,5 +1,6 @@
 <script setup>
 import MainLayout from "@/components/MainLayout.vue";
+import { PictureOutlined } from "@ant-design/icons-vue";
 </script>
 
 <template>
@@ -7,18 +8,429 @@ import MainLayout from "@/components/MainLayout.vue";
     <div class="grid grid-cols-3 gap-4">
       <div class="col-span-2">
         <!-- Search -->
-        <form class="flex mb-4">
-          <button class="border border-slate-300 px-5 py-2 shadow-inner">
+        <form class="flex mb-4" @submit.prevent="console.log('hello')">
+          <button
+            type="submit"
+            class="border border-slate-300 px-5 py-2 shadow-inner"
+          >
             <i class="bi bi-search"></i>
           </button>
-          <input
-            type="text"
-            placeholder="Enter item name or scan barcode"
-            class="bg-white w-full px-3 py-3 outline-none shadow-inner border border-slate-300 text-black"
-          />
+          <a-dropdown :trigger="['click']">
+            <input
+              type="text"
+              placeholder="Enter item name or scan barcode"
+              class="bg-white w-full px-3 py-3 outline-none shadow-inner border border-slate-300 text-black"
+            />
+            <template #overlay>
+              <a-menu class="max-h-80 overflow-y-auto">
+                <!-- a-menu-item -->
+                <a-menu-item>
+                  <div class="flex">
+                    <div class="mr-3">
+                      <a-avatar :size="32">
+                        <PictureOutlined class="align-middle mb-2" />
+                      </a-avatar>
+                    </div>
+                    <div>
+                      <h6 class="font-bold">
+                        Lorem ipsum dolor sit amet consectetur.
+                      </h6>
+                      <p class="text-gray-500">
+                        Item: lorem 200ml; Size: 30gm; Category:
+                        <span class="text-green-600">oral</span>; Qty:
+                        <span class="text-green-600">2</span>
+                      </p>
+                    </div>
+                  </div>
+                </a-menu-item>
+                <!-- a-menu-item -->
+                <a-menu-item>
+                  <div class="flex">
+                    <div class="mr-3">
+                      <a-avatar :size="32">
+                        <PictureOutlined class="align-middle mb-2" />
+                      </a-avatar>
+                    </div>
+                    <div>
+                      <h6 class="font-bold">
+                        Lorem ipsum dolor sit amet consectetur.
+                      </h6>
+                      <p class="text-gray-500">
+                        Item: lorem 200ml; Size: 30gm; Category:
+                        <span class="text-green-600">oral</span>; Qty:
+                        <span class="text-green-600">2</span>
+                      </p>
+                    </div>
+                  </div>
+                </a-menu-item>
+                <!-- a-menu-item -->
+                <a-menu-item>
+                  <div class="flex">
+                    <div class="mr-3">
+                      <a-avatar :size="32">
+                        <PictureOutlined class="align-middle mb-2" />
+                      </a-avatar>
+                    </div>
+                    <div>
+                      <h6 class="font-bold">
+                        Lorem ipsum dolor sit amet consectetur.
+                      </h6>
+                      <p class="text-gray-500">
+                        Item: lorem 200ml; Size: 30gm; Category:
+                        <span class="text-green-600">oral</span>; Qty:
+                        <span class="text-green-600">2</span>
+                      </p>
+                    </div>
+                  </div>
+                </a-menu-item>
+                <!-- a-menu-item -->
+                <a-menu-item>
+                  <div class="flex">
+                    <div class="mr-3">
+                      <a-avatar :size="32">
+                        <PictureOutlined class="align-middle mb-2" />
+                      </a-avatar>
+                    </div>
+                    <div>
+                      <h6 class="font-bold">
+                        Lorem ipsum dolor sit amet consectetur.
+                      </h6>
+                      <p class="text-gray-500">
+                        Item: lorem 200ml; Size: 30gm; Category:
+                        <span class="text-green-600">oral</span>; Qty:
+                        <span class="text-green-600">2</span>
+                      </p>
+                    </div>
+                  </div>
+                </a-menu-item>
+                <!-- a-menu-item -->
+                <a-menu-item>
+                  <div class="flex">
+                    <div class="mr-3">
+                      <a-avatar :size="32">
+                        <PictureOutlined class="align-middle mb-2" />
+                      </a-avatar>
+                    </div>
+                    <div>
+                      <h6 class="font-bold">
+                        Lorem ipsum dolor sit amet consectetur.
+                      </h6>
+                      <p class="text-gray-500">
+                        Item: lorem 200ml; Size: 30gm; Category:
+                        <span class="text-green-600">oral</span>; Qty:
+                        <span class="text-green-600">2</span>
+                      </p>
+                    </div>
+                  </div>
+                </a-menu-item>
+                <!-- a-menu-item -->
+                <a-menu-item>
+                  <div class="flex">
+                    <div class="mr-3">
+                      <a-avatar :size="32">
+                        <PictureOutlined class="align-middle mb-2" />
+                      </a-avatar>
+                    </div>
+                    <div>
+                      <h6 class="font-bold">
+                        Lorem ipsum dolor sit amet consectetur.
+                      </h6>
+                      <p class="text-gray-500">
+                        Item: lorem 200ml; Size: 30gm; Category:
+                        <span class="text-green-600">oral</span>; Qty:
+                        <span class="text-green-600">2</span>
+                      </p>
+                    </div>
+                  </div>
+                </a-menu-item>
+                <!-- a-menu-item -->
+                <a-menu-item>
+                  <div class="flex">
+                    <div class="mr-3">
+                      <a-avatar :size="32">
+                        <PictureOutlined class="align-middle mb-2" />
+                      </a-avatar>
+                    </div>
+                    <div>
+                      <h6 class="font-bold">
+                        Lorem ipsum dolor sit amet consectetur.
+                      </h6>
+                      <p class="text-gray-500">
+                        Item: lorem 200ml; Size: 30gm; Category:
+                        <span class="text-green-600">oral</span>; Qty:
+                        <span class="text-green-600">2</span>
+                      </p>
+                    </div>
+                  </div>
+                </a-menu-item>
+                <!-- a-menu-item -->
+                <a-menu-item>
+                  <div class="flex">
+                    <div class="mr-3">
+                      <a-avatar :size="32">
+                        <PictureOutlined class="align-middle mb-2" />
+                      </a-avatar>
+                    </div>
+                    <div>
+                      <h6 class="font-bold">
+                        Lorem ipsum dolor sit amet consectetur.
+                      </h6>
+                      <p class="text-gray-500">
+                        Item: lorem 200ml; Size: 30gm; Category:
+                        <span class="text-green-600">oral</span>; Qty:
+                        <span class="text-green-600">2</span>
+                      </p>
+                    </div>
+                  </div>
+                </a-menu-item>
+                <!-- a-menu-item -->
+                <a-menu-item>
+                  <div class="flex">
+                    <div class="mr-3">
+                      <a-avatar :size="32">
+                        <PictureOutlined class="align-middle mb-2" />
+                      </a-avatar>
+                    </div>
+                    <div>
+                      <h6 class="font-bold">
+                        Lorem ipsum dolor sit amet consectetur.
+                      </h6>
+                      <p class="text-gray-500">
+                        Item: lorem 200ml; Size: 30gm; Category:
+                        <span class="text-green-600">oral</span>; Qty:
+                        <span class="text-green-600">2</span>
+                      </p>
+                    </div>
+                  </div>
+                </a-menu-item>
+                <!-- a-menu-item -->
+                <a-menu-item>
+                  <div class="flex">
+                    <div class="mr-3">
+                      <a-avatar :size="32">
+                        <PictureOutlined class="align-middle mb-2" />
+                      </a-avatar>
+                    </div>
+                    <div>
+                      <h6 class="font-bold">
+                        Lorem ipsum dolor sit amet consectetur.
+                      </h6>
+                      <p class="text-gray-500">
+                        Item: lorem 200ml; Size: 30gm; Category:
+                        <span class="text-green-600">oral</span>; Qty:
+                        <span class="text-green-600">2</span>
+                      </p>
+                    </div>
+                  </div>
+                </a-menu-item>
+                <!-- a-menu-item -->
+                <a-menu-item>
+                  <div class="flex">
+                    <div class="mr-3">
+                      <a-avatar :size="32">
+                        <PictureOutlined class="align-middle mb-2" />
+                      </a-avatar>
+                    </div>
+                    <div>
+                      <h6 class="font-bold">
+                        Lorem ipsum dolor sit amet consectetur.
+                      </h6>
+                      <p class="text-gray-500">
+                        Item: lorem 200ml; Size: 30gm; Category:
+                        <span class="text-green-600">oral</span>; Qty:
+                        <span class="text-green-600">2</span>
+                      </p>
+                    </div>
+                  </div>
+                </a-menu-item>
+                <!-- a-menu-item -->
+                <a-menu-item>
+                  <div class="flex">
+                    <div class="mr-3">
+                      <a-avatar :size="32">
+                        <PictureOutlined class="align-middle mb-2" />
+                      </a-avatar>
+                    </div>
+                    <div>
+                      <h6 class="font-bold">
+                        Lorem ipsum dolor sit amet consectetur.
+                      </h6>
+                      <p class="text-gray-500">
+                        Item: lorem 200ml; Size: 30gm; Category:
+                        <span class="text-green-600">oral</span>; Qty:
+                        <span class="text-green-600">2</span>
+                      </p>
+                    </div>
+                  </div>
+                </a-menu-item>
+                <!-- a-menu-item -->
+                <a-menu-item>
+                  <div class="flex">
+                    <div class="mr-3">
+                      <a-avatar :size="32">
+                        <PictureOutlined class="align-middle mb-2" />
+                      </a-avatar>
+                    </div>
+                    <div>
+                      <h6 class="font-bold">
+                        Lorem ipsum dolor sit amet consectetur.
+                      </h6>
+                      <p class="text-gray-500">
+                        Item: lorem 200ml; Size: 30gm; Category:
+                        <span class="text-green-600">oral</span>; Qty:
+                        <span class="text-green-600">2</span>
+                      </p>
+                    </div>
+                  </div>
+                </a-menu-item>
+                <!-- a-menu-item -->
+                <a-menu-item>
+                  <div class="flex">
+                    <div class="mr-3">
+                      <a-avatar :size="32">
+                        <PictureOutlined class="align-middle mb-2" />
+                      </a-avatar>
+                    </div>
+                    <div>
+                      <h6 class="font-bold">
+                        Lorem ipsum dolor sit amet consectetur.
+                      </h6>
+                      <p class="text-gray-500">
+                        Item: lorem 200ml; Size: 30gm; Category:
+                        <span class="text-green-600">oral</span>; Qty:
+                        <span class="text-green-600">2</span>
+                      </p>
+                    </div>
+                  </div>
+                </a-menu-item>
+                <!-- a-menu-item -->
+                <a-menu-item>
+                  <div class="flex">
+                    <div class="mr-3">
+                      <a-avatar :size="32">
+                        <PictureOutlined class="align-middle mb-2" />
+                      </a-avatar>
+                    </div>
+                    <div>
+                      <h6 class="font-bold">
+                        Lorem ipsum dolor sit amet consectetur.
+                      </h6>
+                      <p class="text-gray-500">
+                        Item: lorem 200ml; Size: 30gm; Category:
+                        <span class="text-green-600">oral</span>; Qty:
+                        <span class="text-green-600">2</span>
+                      </p>
+                    </div>
+                  </div>
+                </a-menu-item>
+                <!-- a-menu-item -->
+                <a-menu-item>
+                  <div class="flex">
+                    <div class="mr-3">
+                      <a-avatar :size="32">
+                        <PictureOutlined class="align-middle mb-2" />
+                      </a-avatar>
+                    </div>
+                    <div>
+                      <h6 class="font-bold">
+                        Lorem ipsum dolor sit amet consectetur.
+                      </h6>
+                      <p class="text-gray-500">
+                        Item: lorem 200ml; Size: 30gm; Category:
+                        <span class="text-green-600">oral</span>; Qty:
+                        <span class="text-green-600">2</span>
+                      </p>
+                    </div>
+                  </div>
+                </a-menu-item>
+                <!-- a-menu-item -->
+                <a-menu-item>
+                  <div class="flex">
+                    <div class="mr-3">
+                      <a-avatar :size="32">
+                        <PictureOutlined class="align-middle mb-2" />
+                      </a-avatar>
+                    </div>
+                    <div>
+                      <h6 class="font-bold">
+                        Lorem ipsum dolor sit amet consectetur.
+                      </h6>
+                      <p class="text-gray-500">
+                        Item: lorem 200ml; Size: 30gm; Category:
+                        <span class="text-green-600">oral</span>; Qty:
+                        <span class="text-green-600">2</span>
+                      </p>
+                    </div>
+                  </div>
+                </a-menu-item>
+                <!-- a-menu-item -->
+                <a-menu-item>
+                  <div class="flex">
+                    <div class="mr-3">
+                      <a-avatar :size="32">
+                        <PictureOutlined class="align-middle mb-2" />
+                      </a-avatar>
+                    </div>
+                    <div>
+                      <h6 class="font-bold">
+                        Lorem ipsum dolor sit amet consectetur.
+                      </h6>
+                      <p class="text-gray-500">
+                        Item: lorem 200ml; Size: 30gm; Category:
+                        <span class="text-green-600">oral</span>; Qty:
+                        <span class="text-green-600">2</span>
+                      </p>
+                    </div>
+                  </div>
+                </a-menu-item>
+                <!-- a-menu-item -->
+                <a-menu-item>
+                  <div class="flex">
+                    <div class="mr-3">
+                      <a-avatar :size="32">
+                        <PictureOutlined class="align-middle mb-2" />
+                      </a-avatar>
+                    </div>
+                    <div>
+                      <h6 class="font-bold">
+                        Lorem ipsum dolor sit amet consectetur.
+                      </h6>
+                      <p class="text-gray-500">
+                        Item: lorem 200ml; Size: 30gm; Category:
+                        <span class="text-green-600">oral</span>; Qty:
+                        <span class="text-green-600">2</span>
+                      </p>
+                    </div>
+                  </div>
+                </a-menu-item>
+                <!-- a-menu-item -->
+                <a-menu-item>
+                  <div class="flex">
+                    <div class="mr-3">
+                      <a-avatar :size="32">
+                        <PictureOutlined class="align-middle mb-2" />
+                      </a-avatar>
+                    </div>
+                    <div>
+                      <h6 class="font-bold">
+                        Lorem ipsum dolor sit amet consectetur.
+                      </h6>
+                      <p class="text-gray-500">
+                        Item: lorem 200ml; Size: 30gm; Category:
+                        <span class="text-green-600">oral</span>; Qty:
+                        <span class="text-green-600">2</span>
+                      </p>
+                    </div>
+                  </div>
+                </a-menu-item>
+                <!--/ a-menu-item -->
+              </a-menu>
+            </template>
+          </a-dropdown>
+
           <button
             class="bg-[#000180] px-5 py-1 text-white min-w-fit"
-            type="submit"
+            type="button"
           >
             <i class="bi bi-cart mr-2"></i> <span>Purchased</span>
           </button>
