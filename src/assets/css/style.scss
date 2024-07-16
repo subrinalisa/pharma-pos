@@ -1,3 +1,65 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+$text-color: #58595B;
+
+
+body {
+    font-family: "Inter", sans-serif;
+    color: #000;
+    background: #F5F5F5;
+}
+
+.profile-menu {
+    li {
+        position: relative;
+        padding-left: 12px;
+    }
+
+    li:not(:first-child)::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: 1px;
+        height: 16px;
+        background-color: #000;
+        transform: translateY(-50%);
+
+    }
+}
+
+.sidebar {
+    li {
+        a {
+            @apply border border-slate-300 inline-block px-5 py-3 w-full
+        }
+
+        i {
+            @apply text-xl mr-2
+        }
+
+        .router-link-exact-active {
+            @apply bg-white
+        }
+    }
+
+    li:not(:last-child) {
+        a {
+            @apply border-b-0
+        }
+    }
+}
+
+.table {
+
+
+
+    th,
+    td {
+        @apply border border-slate-400 px-2
+    }
+
+}
