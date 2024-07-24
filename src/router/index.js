@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 
 import Login from "@/views/Login.vue";
 import Home from "@/views/Home.vue";
+import Item from "@/views/Item.vue";
 
 const routes = [
   {
@@ -10,8 +11,6 @@ const routes = [
     name: "login",
     component: Login,
   },
-
-
   {
     path: "/home",
     name: "home",
@@ -25,7 +24,7 @@ const routes = [
   {
     path: "/item",
     name: "item",
-    component: Home,
+    component: Item,
   },
   {
     path: "/supplier",
