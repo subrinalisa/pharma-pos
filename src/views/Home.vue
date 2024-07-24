@@ -1,6 +1,11 @@
 <script setup>
 import MainLayout from "@/components/MainLayout.vue";
 import { PictureOutlined } from "@ant-design/icons-vue";
+import { ref } from "vue";
+
+const searchQuery = ref(null);
+
+const handleSearch = () => {};
 </script>
 
 <template>
@@ -17,6 +22,8 @@ import { PictureOutlined } from "@ant-design/icons-vue";
           </button>
           <a-dropdown :trigger="['click']">
             <input
+              @input="handleSearch()"
+              v-model="searchQuery"
               type="text"
               placeholder="Enter item name or scan barcode"
               class="bg-white w-full px-3 py-3 outline-none shadow-inner border border-slate-300 text-black"
@@ -463,7 +470,13 @@ import { PictureOutlined } from "@ant-design/icons-vue";
               <td class="text-right">459.00</td>
               <td class="text-right">459.00</td>
               <td class="text-right">459.00</td>
-              <td class="text-right">1</td>
+              <td class="text-right">
+                <input
+                  type="number"
+                  value="1"
+                  class="text-right bg-transparent outline-none text-red-600"
+                />
+              </td>
               <td class="text-right">1000</td>
             </tr>
           </tbody>
