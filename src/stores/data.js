@@ -15,7 +15,7 @@ export const useDataStore = defineStore("dataStore", {
     async handleLogin(data, router) {
       this.isLoading = true;
       try {
-        const response = await axios.post(`${apiBase}/inventory-management/api/login`, data);
+        const response = await axios.post(`${apiBase}/pharmacy-app/api/login`, data);
         this.isLoading = false;
         if (response?.status === 200) {
           const res = response?.data;
