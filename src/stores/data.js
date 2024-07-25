@@ -55,6 +55,7 @@ export const useDataStore = defineStore("dataStore", {
     },
     // Product Search
     async getSearch(query) {
+      if (query?.length < 2) return 0
       this.isLoading = true;
       try {
         const token = Cookies.get("token");
@@ -66,11 +67,9 @@ export const useDataStore = defineStore("dataStore", {
         const response = await axios.get(`${apiBase}/pharmacy-app/api/products/search?term=${query}`, config);
         this.isLoading = false;
         if (response?.status == 200)
-          this.searchProduct = response?.data;
-
+          return response?.data;
       } catch (error) {
         this.isLoading = false;
-        this.searchProduct = null;
         console.log(error);
       }
     },
