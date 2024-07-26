@@ -1,11 +1,11 @@
 <script>
 import MainLayout from "@/components/MainLayout.vue";
-import ItemInfo from "@/components/ItemInfo.vue";
-import Variations from "@/components/Variations.vue";
-import Pricing from "@/components/Pricing.vue";
-import Inventory from "@/components/Inventory.vue";
-import Images from "@/components/Images.vue";
-import Locations from "@/components/Locations.vue";
+import ItemInfo from "@/components/item/ItemInfo.vue";
+import Variations from "@/components/item/Variations.vue";
+import Pricing from "@/components/item/Pricing.vue";
+import Inventory from "@/components/item/Inventory.vue";
+import Images from "@/components/item/Images.vue";
+import Locations from "@/components/item/Locations.vue";
 
 export default {
   components: {
