@@ -187,10 +187,10 @@
       </div>
     </div>
     <div class="flex justify-end space-x-4">
-      <button type="button" class="px-4 py-2 bg-blue-800 text-white rounded-lg">
+      <button type="button" class="px-4 py-2 bg-[#000180] text-white rounded-lg">
         Done
       </button>
-      <button type="button" class="px-4 py-2 bg-blue-800 text-white rounded-lg">
+      <button type="button" class="px-4 py-2 bg-[#000180] text-white rounded-lg">
         Save
       </button>
     </div>
