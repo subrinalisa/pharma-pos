@@ -1,6 +1,70 @@
 <script setup>
 import MainLayout from "@/components/MainLayout.vue";
+import { useDataStore } from "@/stores/data";
 import { PictureOutlined } from "@ant-design/icons-vue";
+import { storeToRefs } from "pinia";
+import { nextTick, ref } from "vue";
+
+const dataStore = useDataStore();
+const { isLoading } = storeToRefs(dataStore);
+const { getSearch } = dataStore;
+const searchQuery = ref(null);
+const searchProduct = ref(null);
+const productQuantity = ref(null);
+const productList = ref([]);
+
+const handleSearch = async (query) => {
+  searchProduct.value = await getSearch(query);
+};
+
+const calculateTotalPrice = (product, quantity) => {
+  const costPrice = Number(
+    product?.pack_size?.selling_price + product?.pack_size?.vat
+  )?.toFixed(2);
+  return (costPrice * quantity)?.toFixed(2);
+};
+
+const storeProducts = (product) => {
+  let quantity = 1;
+  const existingProductIndex = productList.value.findIndex(
+    (item) => item?.product_id === product?.product_id
+  );
+  if (existingProductIndex !== -1) {
+    quantity++;
+    productList.value[existingProductIndex].quantity++;
+    productList.value[existingProductIndex].total = calculateTotalPrice(
+      product,
+      quantity
+    );
+    nextTick(() => {
+      productQuantity.value[existingProductIndex]?.focus();
+    });
+  } else {
+    productList.value.push({
+      product_id: product?.product_id,
+      product_name: product?.name,
+      pack_size_id: product?.pack_size?.id,
+      tp: product?.pack_size?.selling_price,
+      vat: product?.pack_size?.vat,
+      cost: Number(
+        product?.pack_size?.selling_price + product?.pack_size?.vat
+      )?.toFixed(2),
+      quantity: quantity,
+      total: calculateTotalPrice(product, quantity),
+      size: product?.pack_size?.quantity,
+      generic_name: product?.description,
+      serial: 1,
+      stock: product?.pack_size?.quantity,
+      cost_price_preview: product?.pack_size?.selling_price,
+      item_id: product?.product_id,
+      batch_no: product?.product_id,
+      expiry_date: product?.created_at,
+    });
+    nextTick(() => {
+      productQuantity.value?.at(-1)?.focus();
+    });
+  }
+};
 </script>
 
 <template>
@@ -17,34 +81,32 @@ import { PictureOutlined } from "@ant-design/icons-vue";
           </button>
           <a-dropdown :trigger="['click']">
             <input
+              @input="handleSearch(searchQuery)"
+              v-model="searchQuery"
               type="text"
               placeholder="Enter item name or scan barcode"
               class="bg-white w-full px-3 py-3 outline-none shadow-inner border border-slate-300 text-black"
             />
             <template #overlay>
               <a-menu class="max-h-80 overflow-y-auto">
-                <!-- a-menu-item -->
-                <a-menu-item>
-                  <div class="flex">
-                    <div class="mr-3">
-                      <a-avatar :size="32">
-                        <PictureOutlined class="align-middle mb-2" />
-                      </a-avatar>
-                    </div>
-                    <div>
-                      <h6 class="font-bold">
-                        Lorem ipsum dolor sit amet consectetur.
-                      </h6>
-                      <p class="text-gray-500">
-                        Item: lorem 200ml; Size: 30gm; Category:
-                        <span class="text-green-600">oral</span>; Qty:
-                        <span class="text-green-600">2</span>
-                      </p>
-                    </div>
-                  </div>
+                <!-- Loading  -->
+                <a-menu-item v-if="isLoading">Loading...</a-menu-item>
+                <!-- No Products Currently Available -->
+                <a-menu-item
+                  v-if="
+                    !isLoading && (!searchProduct || !searchProduct?.length)
+                  "
+                >
+                  <h6 class="font-bold text-red-600">
+                    No Products Currently Available...
+                  </h6>
                 </a-menu-item>
                 <!-- a-menu-item -->
-                <a-menu-item>
+                <a-menu-item
+                  v-for="data in searchProduct"
+                  :key="data?.id"
+                  @click="storeProducts(data)"
+                >
                   <div class="flex">
                     <div class="mr-3">
                       <a-avatar :size="32">
@@ -53,372 +115,36 @@ import { PictureOutlined } from "@ant-design/icons-vue";
                     </div>
                     <div>
                       <h6 class="font-bold">
-                        Lorem ipsum dolor sit amet consectetur.
+                        {{ data?.name }} - {{ data?.description }}
                       </h6>
                       <p class="text-gray-500">
-                        Item: lorem 200ml; Size: 30gm; Category:
-                        <span class="text-green-600">oral</span>; Qty:
-                        <span class="text-green-600">2</span>
-                      </p>
-                    </div>
-                  </div>
-                </a-menu-item>
-                <!-- a-menu-item -->
-                <a-menu-item>
-                  <div class="flex">
-                    <div class="mr-3">
-                      <a-avatar :size="32">
-                        <PictureOutlined class="align-middle mb-2" />
-                      </a-avatar>
-                    </div>
-                    <div>
-                      <h6 class="font-bold">
-                        Lorem ipsum dolor sit amet consectetur.
-                      </h6>
-                      <p class="text-gray-500">
-                        Item: lorem 200ml; Size: 30gm; Category:
-                        <span class="text-green-600">oral</span>; Qty:
-                        <span class="text-green-600">2</span>
-                      </p>
-                    </div>
-                  </div>
-                </a-menu-item>
-                <!-- a-menu-item -->
-                <a-menu-item>
-                  <div class="flex">
-                    <div class="mr-3">
-                      <a-avatar :size="32">
-                        <PictureOutlined class="align-middle mb-2" />
-                      </a-avatar>
-                    </div>
-                    <div>
-                      <h6 class="font-bold">
-                        Lorem ipsum dolor sit amet consectetur.
-                      </h6>
-                      <p class="text-gray-500">
-                        Item: lorem 200ml; Size: 30gm; Category:
-                        <span class="text-green-600">oral</span>; Qty:
-                        <span class="text-green-600">2</span>
-                      </p>
-                    </div>
-                  </div>
-                </a-menu-item>
-                <!-- a-menu-item -->
-                <a-menu-item>
-                  <div class="flex">
-                    <div class="mr-3">
-                      <a-avatar :size="32">
-                        <PictureOutlined class="align-middle mb-2" />
-                      </a-avatar>
-                    </div>
-                    <div>
-                      <h6 class="font-bold">
-                        Lorem ipsum dolor sit amet consectetur.
-                      </h6>
-                      <p class="text-gray-500">
-                        Item: lorem 200ml; Size: 30gm; Category:
-                        <span class="text-green-600">oral</span>; Qty:
-                        <span class="text-green-600">2</span>
-                      </p>
-                    </div>
-                  </div>
-                </a-menu-item>
-                <!-- a-menu-item -->
-                <a-menu-item>
-                  <div class="flex">
-                    <div class="mr-3">
-                      <a-avatar :size="32">
-                        <PictureOutlined class="align-middle mb-2" />
-                      </a-avatar>
-                    </div>
-                    <div>
-                      <h6 class="font-bold">
-                        Lorem ipsum dolor sit amet consectetur.
-                      </h6>
-                      <p class="text-gray-500">
-                        Item: lorem 200ml; Size: 30gm; Category:
-                        <span class="text-green-600">oral</span>; Qty:
-                        <span class="text-green-600">2</span>
-                      </p>
-                    </div>
-                  </div>
-                </a-menu-item>
-                <!-- a-menu-item -->
-                <a-menu-item>
-                  <div class="flex">
-                    <div class="mr-3">
-                      <a-avatar :size="32">
-                        <PictureOutlined class="align-middle mb-2" />
-                      </a-avatar>
-                    </div>
-                    <div>
-                      <h6 class="font-bold">
-                        Lorem ipsum dolor sit amet consectetur.
-                      </h6>
-                      <p class="text-gray-500">
-                        Item: lorem 200ml; Size: 30gm; Category:
-                        <span class="text-green-600">oral</span>; Qty:
-                        <span class="text-green-600">2</span>
-                      </p>
-                    </div>
-                  </div>
-                </a-menu-item>
-                <!-- a-menu-item -->
-                <a-menu-item>
-                  <div class="flex">
-                    <div class="mr-3">
-                      <a-avatar :size="32">
-                        <PictureOutlined class="align-middle mb-2" />
-                      </a-avatar>
-                    </div>
-                    <div>
-                      <h6 class="font-bold">
-                        Lorem ipsum dolor sit amet consectetur.
-                      </h6>
-                      <p class="text-gray-500">
-                        Item: lorem 200ml; Size: 30gm; Category:
-                        <span class="text-green-600">oral</span>; Qty:
-                        <span class="text-green-600">2</span>
-                      </p>
-                    </div>
-                  </div>
-                </a-menu-item>
-                <!-- a-menu-item -->
-                <a-menu-item>
-                  <div class="flex">
-                    <div class="mr-3">
-                      <a-avatar :size="32">
-                        <PictureOutlined class="align-middle mb-2" />
-                      </a-avatar>
-                    </div>
-                    <div>
-                      <h6 class="font-bold">
-                        Lorem ipsum dolor sit amet consectetur.
-                      </h6>
-                      <p class="text-gray-500">
-                        Item: lorem 200ml; Size: 30gm; Category:
-                        <span class="text-green-600">oral</span>; Qty:
-                        <span class="text-green-600">2</span>
-                      </p>
-                    </div>
-                  </div>
-                </a-menu-item>
-                <!-- a-menu-item -->
-                <a-menu-item>
-                  <div class="flex">
-                    <div class="mr-3">
-                      <a-avatar :size="32">
-                        <PictureOutlined class="align-middle mb-2" />
-                      </a-avatar>
-                    </div>
-                    <div>
-                      <h6 class="font-bold">
-                        Lorem ipsum dolor sit amet consectetur.
-                      </h6>
-                      <p class="text-gray-500">
-                        Item: lorem 200ml; Size: 30gm; Category:
-                        <span class="text-green-600">oral</span>; Qty:
-                        <span class="text-green-600">2</span>
-                      </p>
-                    </div>
-                  </div>
-                </a-menu-item>
-                <!-- a-menu-item -->
-                <a-menu-item>
-                  <div class="flex">
-                    <div class="mr-3">
-                      <a-avatar :size="32">
-                        <PictureOutlined class="align-middle mb-2" />
-                      </a-avatar>
-                    </div>
-                    <div>
-                      <h6 class="font-bold">
-                        Lorem ipsum dolor sit amet consectetur.
-                      </h6>
-                      <p class="text-gray-500">
-                        Item: lorem 200ml; Size: 30gm; Category:
-                        <span class="text-green-600">oral</span>; Qty:
-                        <span class="text-green-600">2</span>
-                      </p>
-                    </div>
-                  </div>
-                </a-menu-item>
-                <!-- a-menu-item -->
-                <a-menu-item>
-                  <div class="flex">
-                    <div class="mr-3">
-                      <a-avatar :size="32">
-                        <PictureOutlined class="align-middle mb-2" />
-                      </a-avatar>
-                    </div>
-                    <div>
-                      <h6 class="font-bold">
-                        Lorem ipsum dolor sit amet consectetur.
-                      </h6>
-                      <p class="text-gray-500">
-                        Item: lorem 200ml; Size: 30gm; Category:
-                        <span class="text-green-600">oral</span>; Qty:
-                        <span class="text-green-600">2</span>
-                      </p>
-                    </div>
-                  </div>
-                </a-menu-item>
-                <!-- a-menu-item -->
-                <a-menu-item>
-                  <div class="flex">
-                    <div class="mr-3">
-                      <a-avatar :size="32">
-                        <PictureOutlined class="align-middle mb-2" />
-                      </a-avatar>
-                    </div>
-                    <div>
-                      <h6 class="font-bold">
-                        Lorem ipsum dolor sit amet consectetur.
-                      </h6>
-                      <p class="text-gray-500">
-                        Item: lorem 200ml; Size: 30gm; Category:
-                        <span class="text-green-600">oral</span>; Qty:
-                        <span class="text-green-600">2</span>
-                      </p>
-                    </div>
-                  </div>
-                </a-menu-item>
-                <!-- a-menu-item -->
-                <a-menu-item>
-                  <div class="flex">
-                    <div class="mr-3">
-                      <a-avatar :size="32">
-                        <PictureOutlined class="align-middle mb-2" />
-                      </a-avatar>
-                    </div>
-                    <div>
-                      <h6 class="font-bold">
-                        Lorem ipsum dolor sit amet consectetur.
-                      </h6>
-                      <p class="text-gray-500">
-                        Item: lorem 200ml; Size: 30gm; Category:
-                        <span class="text-green-600">oral</span>; Qty:
-                        <span class="text-green-600">2</span>
-                      </p>
-                    </div>
-                  </div>
-                </a-menu-item>
-                <!-- a-menu-item -->
-                <a-menu-item>
-                  <div class="flex">
-                    <div class="mr-3">
-                      <a-avatar :size="32">
-                        <PictureOutlined class="align-middle mb-2" />
-                      </a-avatar>
-                    </div>
-                    <div>
-                      <h6 class="font-bold">
-                        Lorem ipsum dolor sit amet consectetur.
-                      </h6>
-                      <p class="text-gray-500">
-                        Item: lorem 200ml; Size: 30gm; Category:
-                        <span class="text-green-600">oral</span>; Qty:
-                        <span class="text-green-600">2</span>
-                      </p>
-                    </div>
-                  </div>
-                </a-menu-item>
-                <!-- a-menu-item -->
-                <a-menu-item>
-                  <div class="flex">
-                    <div class="mr-3">
-                      <a-avatar :size="32">
-                        <PictureOutlined class="align-middle mb-2" />
-                      </a-avatar>
-                    </div>
-                    <div>
-                      <h6 class="font-bold">
-                        Lorem ipsum dolor sit amet consectetur.
-                      </h6>
-                      <p class="text-gray-500">
-                        Item: lorem 200ml; Size: 30gm; Category:
-                        <span class="text-green-600">oral</span>; Qty:
-                        <span class="text-green-600">2</span>
-                      </p>
-                    </div>
-                  </div>
-                </a-menu-item>
-                <!-- a-menu-item -->
-                <a-menu-item>
-                  <div class="flex">
-                    <div class="mr-3">
-                      <a-avatar :size="32">
-                        <PictureOutlined class="align-middle mb-2" />
-                      </a-avatar>
-                    </div>
-                    <div>
-                      <h6 class="font-bold">
-                        Lorem ipsum dolor sit amet consectetur.
-                      </h6>
-                      <p class="text-gray-500">
-                        Item: lorem 200ml; Size: 30gm; Category:
-                        <span class="text-green-600">oral</span>; Qty:
-                        <span class="text-green-600">2</span>
-                      </p>
-                    </div>
-                  </div>
-                </a-menu-item>
-                <!-- a-menu-item -->
-                <a-menu-item>
-                  <div class="flex">
-                    <div class="mr-3">
-                      <a-avatar :size="32">
-                        <PictureOutlined class="align-middle mb-2" />
-                      </a-avatar>
-                    </div>
-                    <div>
-                      <h6 class="font-bold">
-                        Lorem ipsum dolor sit amet consectetur.
-                      </h6>
-                      <p class="text-gray-500">
-                        Item: lorem 200ml; Size: 30gm; Category:
-                        <span class="text-green-600">oral</span>; Qty:
-                        <span class="text-green-600">2</span>
-                      </p>
-                    </div>
-                  </div>
-                </a-menu-item>
-                <!-- a-menu-item -->
-                <a-menu-item>
-                  <div class="flex">
-                    <div class="mr-3">
-                      <a-avatar :size="32">
-                        <PictureOutlined class="align-middle mb-2" />
-                      </a-avatar>
-                    </div>
-                    <div>
-                      <h6 class="font-bold">
-                        Lorem ipsum dolor sit amet consectetur.
-                      </h6>
-                      <p class="text-gray-500">
-                        Item: lorem 200ml; Size: 30gm; Category:
-                        <span class="text-green-600">oral</span>; Qty:
-                        <span class="text-green-600">2</span>
-                      </p>
-                    </div>
-                  </div>
-                </a-menu-item>
-                <!-- a-menu-item -->
-                <a-menu-item>
-                  <div class="flex">
-                    <div class="mr-3">
-                      <a-avatar :size="32">
-                        <PictureOutlined class="align-middle mb-2" />
-                      </a-avatar>
-                    </div>
-                    <div>
-                      <h6 class="font-bold">
-                        Lorem ipsum dolor sit amet consectetur.
-                      </h6>
-                      <p class="text-gray-500">
-                        Item: lorem 200ml; Size: 30gm; Category:
-                        <span class="text-green-600">oral</span>; Qty:
-                        <span class="text-green-600">2</span>
+                        <span class="mr-2"
+                          ><strong>Product Id:</strong>
+                          {{ data?.product_id }};</span
+                        >
+                        <span class="mr-2"
+                          ><strong>Manufacturer:</strong>
+                          {{ data?.manufacturer }};</span
+                        >
+                        <span class="mr-2"
+                          ><strong>Supplier:</strong>
+                          {{ data?.supplier?.company_name }} -
+                          {{ data?.supplier?.address }} ({{
+                            data?.supplier?.mobile
+                          }});</span
+                        >
+                        <span class="mr-2"
+                          ><strong>Selling Price:</strong>
+                          {{ data?.pack_size?.selling_price }}</span
+                        >
+                        <span class="mr-2"
+                          ><strong>Category:</strong>
+                          {{ data?.category || "N/A" }};</span
+                        >
+                        <span class="mr-2">
+                          <strong>Available Qty:</strong>
+                          {{ data?.product_inventories?.quantity }}</span
+                        >
                       </p>
                     </div>
                   </div>
@@ -451,20 +177,32 @@ import { PictureOutlined } from "@ant-design/icons-vue";
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr v-for="(product, index) in productList" :key="index">
               <td class="text-center">
-                <button type="button" class="w-full">
+                <button
+                  type="button"
+                  class="w-full"
+                  @click="console.log(index)"
+                >
                   <i class="bi bi-x-lg text-red-500"></i>
                 </button>
               </td>
-              <td class="text-center">1</td>
-              <td>Discount (Dis)</td>
-              <td class="text-right">Pack (510)</td>
-              <td class="text-right">459.00</td>
-              <td class="text-right">459.00</td>
-              <td class="text-right">459.00</td>
-              <td class="text-right">1</td>
-              <td class="text-right">1000</td>
+              <td class="text-center">{{ index + 1 }}</td>
+              <td>{{ product?.product_name }}</td>
+              <td class="text-right">{{ product?.pack_size_id }}</td>
+              <td class="text-right">{{ product?.tp }}</td>
+              <td class="text-right">{{ product?.vat }}</td>
+              <td class="text-right">{{ product?.cost }}</td>
+              <td class="text-right">
+                <input
+                  type="number"
+                  :value="product?.quantity"
+                  class="text-right bg-transparent outline-none text-red-600 focus:bg-white w-full focus:shadow-lg"
+                  ref="productQuantity"
+                  @focus="productQuantity[index].select()"
+                />
+              </td>
+              <td class="text-right">{{ product?.total }}</td>
             </tr>
           </tbody>
         </table>

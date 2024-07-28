@@ -4,12 +4,18 @@ import Cookies from "js-cookie";
 import Login from "@/views/Login.vue";
 import Home from "@/views/Home.vue";
 import Item from "@/views/Item.vue";
+import Dashboard from "@/views/Dashboard.vue";
 
 const routes = [
   {
     path: "/",
     name: "login",
     component: Login,
+  },
+  {
+    path: "/dashboard",
+    name: "dashboard",
+    component: Dashboard,
   },
   {
     path: "/home",

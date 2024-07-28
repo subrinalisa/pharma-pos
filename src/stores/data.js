@@ -8,6 +8,7 @@ export const useDataStore = defineStore("dataStore", {
   state: () => ({
     isLoading: false,
     userInfo: null,
+    searchProduct: null,
   }),
 
   actions: {
@@ -15,7 +16,7 @@ export const useDataStore = defineStore("dataStore", {
     async handleLogin(data, router) {
       this.isLoading = true;
       try {
-        const response = await axios.post(`${apiBase}/inventory-management/api/login`, data);
+        const response = await axios.post(`${apiBase}/pharmacy-app/api/login`, data);
         this.isLoading = false;
         if (response?.status === 200) {
           const res = response?.data;
@@ -41,7 +42,7 @@ export const useDataStore = defineStore("dataStore", {
             'Authorization': `Bearer ${token}`,
           },
         }
-        const response = await axios.get(`${apiBase}/inventory-management/api/loggeduser`, config);
+        const response = await axios.get(`${apiBase}/pharmacy-app/api/loggeduser`, config);
         this.isLoading = false;
         if (response?.status == 200)
           this.userInfo = response?.data?.user;
@@ -49,6 +50,26 @@ export const useDataStore = defineStore("dataStore", {
       } catch (error) {
         this.isLoading = false;
         this.userInfo = null;
+        console.log(error);
+      }
+    },
+    // Product Search
+    async getSearch(query) {
+      if (query?.length < 2) return 0
+      this.isLoading = true;
+      try {
+        const token = Cookies.get("token");
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+        const response = await axios.get(`${apiBase}/pharmacy-app/api/products/search?term=${query}`, config);
+        this.isLoading = false;
+        if (response?.status == 200)
+          return response?.data;
+      } catch (error) {
+        this.isLoading = false;
         console.log(error);
       }
     },
