@@ -3,7 +3,9 @@ import Cookies from "js-cookie";
 
 import Login from "@/views/Login.vue";
 import Home from "@/views/Home.vue";
+import Item from "@/views/Item.vue";
 import Dashboard from "@/views/Dashboard.vue";
+import ItemCreate from "@/views/ItemCreate.vue";
 
 const routes = [
   {
@@ -16,8 +18,6 @@ const routes = [
     name: "dashboard",
     component: Dashboard,
   },
-
-
   {
     path: "/home",
     name: "home",
@@ -31,7 +31,12 @@ const routes = [
   {
     path: "/item",
     name: "item",
-    component: Home,
+    component: Item,
+  },
+  {
+    path: "/item/add",
+    name: "item-add",
+    component: ItemCreate,
   },
   {
     path: "/supplier",
