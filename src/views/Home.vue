@@ -14,6 +14,8 @@ const searchProduct = ref(null);
 const supplierList = ref(null);
 const mrrList = ref(null);
 const mrrName = ref(null);
+const gatisPercentage = ref(null);
+const gatisAmount = ref(null);
 const supplierInfo = ref();
 const searchInput = ref(null);
 const productQuantity = ref(null);
@@ -406,6 +408,7 @@ watch(
                 type="number"
                 class="shadow-inner bg-transparent text-right px-2 border border-slate-400 w-full py-2"
                 placeholder="Getis Percent"
+                v-model="gatisPercentage"
               />
             </li>
             <li class="mb-4 w-1/2">
@@ -413,6 +416,7 @@ watch(
                 type="number"
                 class="shadow-inner bg-transparent text-right px-2 border border-slate-400 w-full py-2"
                 placeholder="Amount"
+                v-model="gatisAmount"
               />
             </li>
           </ul>
