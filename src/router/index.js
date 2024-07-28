@@ -3,9 +3,7 @@ import Cookies from "js-cookie";
 
 import Login from "@/views/Login.vue";
 import Home from "@/views/Home.vue";
-import Item from "@/views/Item.vue";
-import Dashboard from "@/views/Dashboard.vue";
-import ItemCreate from "@/views/ItemCreate.vue";
+
 
 import Users from "@/views/User Management/Users.vue";
 import Useradd from "@/views/User Management/Useradd.vue";
@@ -15,7 +13,9 @@ import Role from "@/views/User Management/Role.vue";
 import Roleadd from "@/views/User Management/Roleadd.vue";
 import Roleedit from "@/views/User Management/Roleedit.vue";
 
+
 import Item from "@/views/Item.vue";
+
 import Dashboard from "@/views/Dashboard.vue";
 import ItemCreate from "@/views/ItemCreate.vue";
 
