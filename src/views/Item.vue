@@ -44,7 +44,7 @@ export default {
         };
 
         const response = await axios.get(
-          `${apiBase}/pharmacy-app/api/all-products-paginated?page=${page}`,
+          `${apiBase}/all-products-paginated?page=${page}`,
           config
         );
         this.items = response.data.data;
