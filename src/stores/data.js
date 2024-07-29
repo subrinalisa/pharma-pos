@@ -77,6 +77,26 @@ export const useDataStore = defineStore("dataStore", {
         console.log(error);
       }
     },
+    // Product Sale Search
+    async getSaleProduct(query) {
+
+      this.isLoading = true;
+      try {
+        const token = Cookies.get("token");
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+        const response = await axios.get(`${apiBase}/sales/products/search?term=${query}`, config);
+        this.isLoading = false;
+        if (response?.status == 200)
+          return response?.data;
+      } catch (error) {
+        this.isLoading = false;
+        console.log(error);
+      }
+    },
     // Supplier Search
     async getSupplier(query) {
       if (!query) return 0
@@ -94,6 +114,25 @@ export const useDataStore = defineStore("dataStore", {
           return response?.data;
       } catch (error) {
         this.isSupplier = false;
+        console.log(error);
+      }
+    },
+    // Customer Search
+    async getCustomer() {
+
+      try {
+        const token = Cookies.get("token");
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+        const response = await axios.get(`${apiBase}/customer_all`, config);
+
+        if (response?.status == 200)
+          return response?.data;
+      } catch (error) {
+
         console.log(error);
       }
     },
@@ -145,6 +184,24 @@ export const useDataStore = defineStore("dataStore", {
         }
         const response = await axios.post(`${apiBase}/purchases`, data, config);
         if (response?.status == 200) {
+          showNotification("success", response?.data?.message)
+          return 1
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    // Sale Insert
+    async saleInsert(data) {
+      try {
+        const token = Cookies.get("token");
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+        const response = await axios.post(`${apiBase}/sales`, data, config);
+        if (response?.status == 201) {
           showNotification("success", response?.data?.message)
           return 1
         }
