@@ -50,11 +50,7 @@ const addNewUser = async () => {
       },
     };
 
-    const res = await axios.post(
-      `${apiBase}/pharmacy-app/api/register`,
-      form,
-      config
-    );
+    const res = await axios.post(`${apiBase}/register`, form, config);
 
     if (res) {
       router.push({ name: "users" });
@@ -76,7 +72,7 @@ onMounted(async () => {
   };
 
   try {
-    const res = await axios.get(`${apiBase}/pharmacy-app/api/roles`, config);
+    const res = await axios.get(`${apiBase}/roles`, config);
     roleList.value = res.data.role.map((role) => role.name); // Corrected mapping
   } catch (err) {
     console.error(err);

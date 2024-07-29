@@ -66,7 +66,7 @@ const getRoles = async () => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.get(`${apiBase}/pharmacy-app/api/roles`, config);
+    const res = await axios.get(`${apiBase}/roles`, config);
 
     isLoading.value = false;
     roleList.value = res?.data?.role?.map((role) => role.name);
@@ -86,7 +86,7 @@ const fetchUsers = async () => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.get(`${apiBase}/pharmacy-app/api/user_list`, config);
+    const res = await axios.get(`${apiBase}/user_list`, config);
 
     isLoading.value = false;
     users.value = res?.data?.users;
@@ -106,7 +106,7 @@ const deleteUser = async (id) => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.delete(`${apiBase}/pharmacy-app/api/user_delete/${id}`, config);
+    const res = await axios.delete(`${apiBase}/user_delete/${id}`, config);
 
     if (res.data.status === "Success") {
       isDeleteUser.value = false;
@@ -169,19 +169,19 @@ const avatarText = (name) => {
             class="border border-gray-300 rounded p-2"
           />
           <button
-          @click="$router.push({ path: 'role' })"
+            @click="$router.push({ path: 'role' })"
             class="bg-blue-500 text-white px-4 py-2 rounded"
           >
-          Role List
+            Role List
           </button>
           <button
-          @click="$router.push({ path: 'permissions' })"
+            @click="$router.push({ path: 'permissions' })"
             class="bg-blue-500 text-white px-4 py-2 rounded"
           >
-          Permissions List
+            Permissions List
           </button>
           <button
-          @click="$router.push({ path: 'useradd' })"
+            @click="$router.push({ path: 'useradd' })"
             class="bg-blue-500 text-white px-4 py-2 rounded"
           >
             Add New User
@@ -199,11 +199,7 @@ const avatarText = (name) => {
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="user in users"
-              :key="user.id"
-              class="border-t"
-            >
+            <tr v-for="user in users" :key="user.id" class="border-t">
               <td class="py-2 px-4 border-gray-300 flex items-center">
                 <div
                   class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-2"
@@ -240,10 +236,12 @@ const avatarText = (name) => {
               <td class="py-2 px-4 border border-gray-300">
                 <span
                   :class="`px-2 py-1 rounded-full ${
-                    user.status == 1 ? 'bg-blue-200 text-blue-800' : 'bg-yellow-200 text-yellow-800'
+                    user.status == 1
+                      ? 'bg-blue-200 text-blue-800'
+                      : 'bg-yellow-200 text-yellow-800'
                   }`"
                 >
-                  {{ user.status == 1 ? 'Active' : 'Inactive' }}
+                  {{ user.status == 1 ? "Active" : "Inactive" }}
                 </span>
               </td>
               <td class="py-2 px-4 border-gray-300 flex gap-2">
@@ -254,7 +252,13 @@ const avatarText = (name) => {
                   Delete
                 </button>
                 <button
-                  @click="$router.push({ path: 'useredit', params: { id: user.id }, query: { name: user.name, email: user?.email,},})"
+                  @click="
+                    $router.push({
+                      path: 'useredit',
+                      params: { id: user.id },
+                      query: { name: user.name, email: user?.email },
+                    })
+                  "
                   class="bg-yellow-500 text-white px-2 py-1 rounded"
                 >
                   Edit
