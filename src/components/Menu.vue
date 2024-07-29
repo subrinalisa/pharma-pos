@@ -52,5 +52,11 @@ const menuItems = reactive([
     icon: "bi bi-hand-index-thumb",
     path: "renew",
   },
+  {
+    name: "User Management",
+    icon: "bi bi-people",
+    path: "users",
+  },
+     
 ]);
 </script>
