@@ -3,7 +3,19 @@ import Cookies from "js-cookie";
 
 import Login from "@/views/Login.vue";
 import Home from "@/views/Home.vue";
+
+
+import Users from "@/views/User Management/Users.vue";
+import Useradd from "@/views/User Management/Useradd.vue";
+import Useredit from "@/views/User Management/Useredit.vue";
+
+import Role from "@/views/User Management/Role.vue";
+import Roleadd from "@/views/User Management/Roleadd.vue";
+import Roleedit from "@/views/User Management/Roleedit.vue";
+
+
 import Item from "@/views/Item.vue";
+
 import Dashboard from "@/views/Dashboard.vue";
 import ItemCreate from "@/views/ItemCreate.vue";
 
@@ -62,6 +74,41 @@ const routes = [
     path: "/renew",
     name: "renew",
     component: Home,
+  },
+  {
+    path: "/users",
+    name: "users",
+    component: Users,
+  },
+
+  {
+    path: "/useradd",
+    name: "useradd",
+    component: Useradd,
+  },
+
+  {
+    path: "/useredit",
+    name: "useredit",
+    component: Useredit,
+  },
+
+  {
+    path: "/role",
+    name: "role",
+    component: Role,
+  },
+
+  {
+    path: "/roleadd",
+    name: "roleadd",
+    component: Roleadd,
+  },
+
+  {
+    path: "/roleedit",
+    name: "roleedit",
+    component: Roleedit,
   },
 
   {

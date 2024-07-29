@@ -7,6 +7,8 @@ import { defineStore } from "pinia";
 export const useDataStore = defineStore("dataStore", {
   state: () => ({
     isLoading: false,
+    isSupplier: false,
+    isMRR: false,
     userInfo: null,
     searchProduct: null,
   }),
@@ -54,7 +56,7 @@ export const useDataStore = defineStore("dataStore", {
       }
     },
     // Product Search
-    async getSearch(query) {
+    async getProduct(query) {
       if (query?.length < 2) return 0
       this.isLoading = true;
       try {
@@ -70,6 +72,46 @@ export const useDataStore = defineStore("dataStore", {
           return response?.data;
       } catch (error) {
         this.isLoading = false;
+        console.log(error);
+      }
+    },
+    // Supplier Search
+    async getSupplier(query) {
+      if (!query) return 0
+      this.isSupplier = true;
+      try {
+        const token = Cookies.get("token");
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+        const response = await axios.get(`${apiBase}/pharmacy-app/api/supplier/search?term=${query}`, config);
+        this.isSupplier = false;
+        if (response?.status == 200)
+          return response?.data;
+      } catch (error) {
+        this.isSupplier = false;
+        console.log(error);
+      }
+    },
+    // MRR Search
+    async getMRR(query) {
+      if (!query) return 0
+      this.isMRR = true;
+      try {
+        const token = Cookies.get("token");
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+        const response = await axios.get(`${apiBase}/pharmacy-app/api/mrr/search?term=${query}`, config);
+        this.isMRR = false;
+        if (response?.status == 200)
+          return response?.data;
+      } catch (error) {
+        this.isMRR = false;
         console.log(error);
       }
     },
