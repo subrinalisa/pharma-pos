@@ -28,6 +28,11 @@ const reset = () => {
 };
 
 const addOrUpdateRole = async () => {
+  if (!form.name || form.permission.length === 0) {
+    isSnackbarVisible.value = true;
+    return;
+  }
+
   isLoading.value = true;
   try {
     const token = Cookies.get("token");
@@ -93,7 +98,6 @@ const fetchRoleData = async () => {
     };
     const res = await axios.get(`${apiBase}/pharmacy-app/api/roles/${roleId.value}`, config);
     const roleData = res.data.role;
-    console.log(roleData);
     form.name = roleData.name;
     form.permission = roleData.permissions.map(permission => permission.name);
   } catch (err) {
@@ -174,6 +178,15 @@ onMounted(async () => {
         </v-card-text>
       </v-card>
     </v-navigation-drawer>
+
+    <v-snackbar
+      v-model="isSnackbarVisible"
+      :timeout="3000"
+      color="red"
+      top
+    >
+      Please fill in all fields.
+    </v-snackbar>
   </MainLayout>
 </template>
 
