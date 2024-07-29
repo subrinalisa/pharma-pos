@@ -12,10 +12,10 @@ const userData = ref([]);
 const isLoading = ref(false);
 
 const form = reactive({
-  name: '',
-  email: '',
+  name: "",
+  email: "",
   roles: [],
-  status: '',
+  status: "",
 });
 
 const roleList = ref([]);
@@ -23,8 +23,8 @@ const permissionList = ref([]);
 const permissions = ref([]);
 
 const statusList = ref([
-  { title: 'Active', value: 1 },
-  { title: 'Inactive', value: 0 },
+  { title: "Active", value: 1 },
+  { title: "Inactive", value: 0 },
 ]);
 
 const message = ref();
@@ -35,15 +35,20 @@ const getUserByID = async () => {
   try {
     const token = Cookies.get("token");
     const config = { headers: { Authorization: `Bearer ${token}` } };
-    const res = await axios.get(`${apiBase}/pharmacy-app/api/user_edit/${route.params.id}`, config);
+    const res = await axios.get(
+      `${apiBase}/user_edit/${route.params.id}`,
+      config
+    );
     if (res.data?.status == "success") {
       isLoading.value = false;
       userData.value = res.data?.user_info;
       form.name = userData.value.name;
       form.email = userData.value.email;
       form.status = userData.value.status;
-      form.roles = userData.value?.roles?.map(role => role.name);
-      permissions.value = userData.value?.permissions?.map(permission => permission.name);
+      form.roles = userData.value?.roles?.map((role) => role.name);
+      permissions.value = userData.value?.permissions?.map(
+        (permission) => permission.name
+      );
     }
   } catch (error) {
     isLoading.value = false;
@@ -55,18 +60,20 @@ console.log(userData);
 const getRoleList = async () => {
   const token = Cookies.get("token");
   const config = { headers: { Authorization: `Bearer ${token}` } };
-  const res = await axios.get(`${apiBase}/pharmacy-app/api/roles/`, config);
+  const res = await axios.get(`${apiBase}/roles/`, config);
   if (res.data?.status == "Success") {
-    roleList.value = res.data?.role.map(role => role.name);
+    roleList.value = res.data?.role.map((role) => role.name);
   }
 };
 
 const getPermissionList = async () => {
   const token = Cookies.get("token");
   const config = { headers: { Authorization: `Bearer ${token}` } };
-  const res = await axios.get(`${apiBase}/pharmacy-app/api/permissions/`, config);
+  const res = await axios.get(`${apiBase}/permissions/`, config);
   if (res.data?.status == "Success") {
-    permissionList.value = res.data?.permissions.map(permission => permission.name);
+    permissionList.value = res.data?.permissions.map(
+      (permission) => permission.name
+    );
   }
 };
 
@@ -79,8 +86,11 @@ onMounted(async () => {
 const editUser = async () => {
   const token = Cookies.get("token");
   const config = { headers: { Authorization: `Bearer ${token}` } };
-  const res = await axios.put(`${apiBase}/pharmacy-app/api/user_update/${route.params.id}?name=${form.name}&email=${form.email}`, config);
-  if (res.data?.status == 'success') {
+  const res = await axios.put(
+    `${apiBase}/user_update/${route.params.id}?name=${form.name}&email=${form.email}`,
+    config
+  );
+  if (res.data?.status == "success") {
     message.value = res.data.message;
     isSnackbarTopStartVisible.value = true;
   }
@@ -89,8 +99,11 @@ const editUser = async () => {
 const updatePermission = async () => {
   const token = Cookies.get("token");
   const config = { headers: { Authorization: `Bearer ${token}` } };
-  const res = await axios.put(`${apiBase}/pharmacy-app/api/assign_permission/${route.params.id}`, config);
-  if (res.data?.status == 'success') {
+  const res = await axios.put(
+    `${apiBase}/assign_permission/${route.params.id}`,
+    config
+  );
+  if (res.data?.status == "success") {
     message.value = res.data.message;
     isSnackbarTopStartVisible.value = true;
   }
@@ -98,7 +111,10 @@ const updatePermission = async () => {
 </script>
 <template>
   <MainLayout>
-    <div v-if="isLoading" class="fixed inset-0 flex items-center justify-center">
+    <div
+      v-if="isLoading"
+      class="fixed inset-0 flex items-center justify-center"
+    >
       <div class="loader"></div>
     </div>
     <div v-else class="container mx-auto py-8">
@@ -133,35 +149,73 @@ const updatePermission = async () => {
               <div class="grid grid-cols-1 gap-4">
                 <div>
                   <label class="block text-gray-700">Name</label>
-                  <input type="text" v-model="form.name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                  <input
+                    type="text"
+                    v-model="form.name"
+                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    required
+                  />
                 </div>
                 <div>
                   <label class="block text-gray-700">Email</label>
-                  <input type="email" v-model="form.email" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                  <input
+                    type="email"
+                    v-model="form.email"
+                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    required
+                  />
                 </div>
                 <div>
                   <label class="block text-gray-700">Change Password</label>
-                  <input type="password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                  <input
+                    type="password"
+                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  />
                 </div>
                 <div>
                   <label class="block text-gray-700">Status</label>
-                  <select v-model="form.status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
-                    <option v-for="status in statusList" :value="status.value">{{ status.title }}</option>
+                  <select
+                    v-model="form.status"
+                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    required
+                  >
+                    <option v-for="status in statusList" :value="status.value">
+                      {{ status.title }}
+                    </option>
                   </select>
                 </div>
                 <div>
                   <label class="block text-gray-700">Roles</label>
                   <div class="flex flex-wrap">
-                    <div v-for="(role, index) in roleList" :key="index" class="mr-2 mb-2">
-                      <input type="checkbox" v-model="form.roles" :value="role">
+                    <div
+                      v-for="(role, index) in roleList"
+                      :key="index"
+                      class="mr-2 mb-2"
+                    >
+                      <input
+                        type="checkbox"
+                        v-model="form.roles"
+                        :value="role"
+                      />
                       <label class="ml-2">{{ role }}</label>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="mt-4 flex justify-end">
-                <button type="submit" class="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700">Submit</button>
-                <button type="reset" @click="router.go(-1)" class="ml-2 bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700">Cancel</button>
+                <button
+                  type="submit"
+                  class="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700"
+                >
+                  Submit
+                </button>
+                <button
+                  type="reset"
+                  @click="router.go(-1)"
+                  class="ml-2 bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700"
+                >
+                  Cancel
+                </button>
               </div>
             </form>
           </div>
@@ -171,21 +225,43 @@ const updatePermission = async () => {
               <div>
                 <label class="block text-gray-700">Select Permissions</label>
                 <div class="flex flex-wrap">
-                  <div v-for="(permission, index) in permissionList" :key="index" class="mr-2 mb-2">
-                    <input type="checkbox" v-model="permissions" :value="permission">
+                  <div
+                    v-for="(permission, index) in permissionList"
+                    :key="index"
+                    class="mr-2 mb-2"
+                  >
+                    <input
+                      type="checkbox"
+                      v-model="permissions"
+                      :value="permission"
+                    />
                     <label class="ml-2">{{ permission }}</label>
                   </div>
                 </div>
               </div>
               <div class="mt-4 flex justify-end">
-                <button type="submit" class="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700">Submit</button>
-                <button type="reset" @click="router.go(-1)" class="ml-2 bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700">Cancel</button>
+                <button
+                  type="submit"
+                  class="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700"
+                >
+                  Submit
+                </button>
+                <button
+                  type="reset"
+                  @click="router.go(-1)"
+                  class="ml-2 bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700"
+                >
+                  Cancel
+                </button>
               </div>
             </form>
           </div>
         </div>
       </div>
-      <div v-if="isSnackbarTopStartVisible" class="fixed top-0 right-0 m-4 bg-green-600 text-white py-2 px-4 rounded-md">
+      <div
+        v-if="isSnackbarTopStartVisible"
+        class="fixed top-0 right-0 m-4 bg-green-600 text-white py-2 px-4 rounded-md"
+      >
         {{ message }}
       </div>
     </div>
@@ -203,7 +279,11 @@ const updatePermission = async () => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>
