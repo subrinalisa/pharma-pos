@@ -90,7 +90,7 @@ export default {
         description: "",
       },
       product_prices: {
-        cost_price: "220.3",
+        cost_price_without_tax: "220.3",
         selling_price: "333.30",
         trade_price: "33.77",
         vat: "12.2",
@@ -99,9 +99,9 @@ export default {
         promo_start_date: "2024-09-08",
         promo_end_date: "2024-09-10",
         disable_from_price_rules: true,
-        allow_price_override: true,
+        allow_price_override_regardless_of_permissions: true,
         prices_include_tax: true,
-        only_allow_whole_numbers: true,
+        only_allow_items_to_be_sold_in_whole_numbers: true,
         change_cost_price_during_sale: true,
         override_default_commission: true,
         override_default_tax: true,
@@ -666,7 +666,7 @@ export default {
                   >
                   <input
                     type="text"
-                    v-model="product_prices.cost_price"
+                    v-model="product_prices.cost_price_without_tax"
                     class="border border-grey rounded-md shadow-sm px-2 py-1 w-full"
                   />
                 </div>
@@ -746,7 +746,9 @@ export default {
                 <div class="flex items-center gap-2">
                   <input
                     type="checkbox"
-                    v-model="product_prices.allow_price_override"
+                    v-model="
+                      product_prices.allow_price_override_regardless_of_permissions
+                    "
                   />
                   <label>Allow price override regardless of permissions</label>
                 </div>
@@ -781,7 +783,9 @@ export default {
                 <div class="flex items-center gap-2">
                   <input
                     type="checkbox"
-                    v-model="product_prices.only_allow_whole_numbers"
+                    v-model="
+                      product_prices.only_allow_items_to_be_sold_in_whole_numbers
+                    "
                   />
                   <label>Only allow items to be sold in whole numbers</label>
                 </div>
