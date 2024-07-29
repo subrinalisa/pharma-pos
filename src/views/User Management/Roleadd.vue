@@ -53,11 +53,7 @@ const addNewRole = async () => {
     // Debugging: Log the payload to ensure it's correct
     console.log("Payload:", payload);
 
-    const res = await axios.post(
-      `${apiBase}/pharmacy-app/api/roles`,
-      payload,
-      config
-    );
+    const res = await axios.post(`${apiBase}/roles`, payload, config);
 
     if (res) {
       router.push({ name: "role" });
@@ -81,10 +77,7 @@ onMounted(async () => {
   };
 
   try {
-    const res = await axios.get(
-      `${apiBase}/pharmacy-app/api/permissions`,
-      config
-    );
+    const res = await axios.get(`${apiBase}/permissions`, config);
     permissionsList.value = res.data.permissions.map((permission) => ({
       id: permission.id,
       name: permission.name,

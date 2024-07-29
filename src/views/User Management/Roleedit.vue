@@ -56,16 +56,12 @@ const addOrUpdateRole = async () => {
     let res;
     if (props.roleId) {
       res = await axios.put(
-        `${apiBase}/pharmacy-app/api/roles/${props.roleId}`,
+        `${apiBase}/roles/${props.roleId}`,
         payload,
         config
       );
     } else {
-      res = await axios.post(
-        `${apiBase}/pharmacy-app/api/roles`,
-        payload,
-        config
-      );
+      res = await axios.post(`${apiBase}/roles`, payload, config);
     }
 
     if (res) {
@@ -90,10 +86,7 @@ const fetchPermissions = async () => {
   };
 
   try {
-    const res = await axios.get(
-      `${apiBase}/pharmacy-app/api/permissions`,
-      config
-    );
+    const res = await axios.get(`${apiBase}/permissions`, config);
     permissionsList.value = res.data.permissions.map((permission) => ({
       id: permission.id,
       name: permission.name,
@@ -112,10 +105,7 @@ const fetchRoleData = async () => {
   };
 
   try {
-    const res = await axios.get(
-      `${apiBase}/pharmacy-app/api/roles/${route.params.id}`,
-      config
-    );
+    const res = await axios.get(`${apiBase}/roles/${route.params.id}`, config);
     const roleData = res.data.role;
     form.name = roleData.name;
     form.permission = roleData.permissions.map((permission) => permission.name);
