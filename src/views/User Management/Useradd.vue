@@ -4,7 +4,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import MainLayout from "@/components/MainLayout.vue";
 import { apiBase } from "@/config";
-import { defineProps, defineEmits } from "vue";
+
 import { useRouter } from "vue-router";
 
 // Define props and emits
@@ -50,7 +50,11 @@ const addNewUser = async () => {
       },
     };
 
-    const res = await axios.post(`${apiBase}/pharmacy-app/api/register`, form, config);
+    const res = await axios.post(
+      `${apiBase}/pharmacy-app/api/register`,
+      form,
+      config
+    );
 
     if (res) {
       router.push({ name: "users" });
@@ -94,7 +98,9 @@ onMounted(async () => {
           <form @submit.prevent="addNewUser">
             <div class="p-4 space-y-4">
               <div class="flex flex-col">
-                <label for="name" class="text-sm font-semibold mb-1">Name</label>
+                <label for="name" class="text-sm font-semibold mb-1"
+                  >Name</label
+                >
                 <input
                   id="name"
                   v-model="form.name"
@@ -105,7 +111,9 @@ onMounted(async () => {
               </div>
 
               <div class="flex flex-col">
-                <label for="email" class="text-sm font-semibold mb-1">Email</label>
+                <label for="email" class="text-sm font-semibold mb-1"
+                  >Email</label
+                >
                 <input
                   id="email"
                   v-model="form.email"
@@ -116,7 +124,9 @@ onMounted(async () => {
               </div>
 
               <div class="flex flex-col">
-                <label for="password" class="text-sm font-semibold mb-1">Password</label>
+                <label for="password" class="text-sm font-semibold mb-1"
+                  >Password</label
+                >
                 <input
                   id="password"
                   v-model="form.password"
@@ -127,13 +137,18 @@ onMounted(async () => {
               </div>
 
               <div class="flex flex-col">
-                <label for="roles" class="text-sm font-semibold mb-1">Select Role</label>
+                <label for="roles" class="text-sm font-semibold mb-1"
+                  >Select Role</label
+                >
                 <select
                   id="roles"
                   v-model="form.roles"
                   class="border border-gray-300 rounded-lg p-2"
                 >
-                  <option v-for="(role, index) in roleList" :key="index">{{ role }}</option> <!-- Corrected option value -->
+                  <option v-for="(role, index) in roleList" :key="index">
+                    {{ role }}
+                  </option>
+                  <!-- Corrected option value -->
                 </select>
               </div>
 

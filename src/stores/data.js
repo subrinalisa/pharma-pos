@@ -11,6 +11,8 @@ export const useDataStore = defineStore("dataStore", {
     isMRR: false,
     userInfo: null,
     searchProduct: null,
+    paymentList: null,
+
   }),
 
   actions: {
@@ -18,7 +20,7 @@ export const useDataStore = defineStore("dataStore", {
     async handleLogin(data, router) {
       this.isLoading = true;
       try {
-        const response = await axios.post(`${apiBase}/pharmacy-app/api/login`, data);
+        const response = await axios.post(`${apiBase}/login`, data);
         this.isLoading = false;
         if (response?.status === 200) {
           const res = response?.data;
@@ -44,7 +46,7 @@ export const useDataStore = defineStore("dataStore", {
             'Authorization': `Bearer ${token}`,
           },
         }
-        const response = await axios.get(`${apiBase}/pharmacy-app/api/loggeduser`, config);
+        const response = await axios.get(`${apiBase}/loggeduser`, config);
         this.isLoading = false;
         if (response?.status == 200)
           this.userInfo = response?.data?.user;
@@ -66,7 +68,7 @@ export const useDataStore = defineStore("dataStore", {
             'Authorization': `Bearer ${token}`,
           },
         }
-        const response = await axios.get(`${apiBase}/pharmacy-app/api/products/search?term=${query}`, config);
+        const response = await axios.get(`${apiBase}/products/search?term=${query}`, config);
         this.isLoading = false;
         if (response?.status == 200)
           return response?.data;
@@ -86,7 +88,7 @@ export const useDataStore = defineStore("dataStore", {
             'Authorization': `Bearer ${token}`,
           },
         }
-        const response = await axios.get(`${apiBase}/pharmacy-app/api/supplier/search?term=${query}`, config);
+        const response = await axios.get(`${apiBase}/supplier/search?term=${query}`, config);
         this.isSupplier = false;
         if (response?.status == 200)
           return response?.data;
@@ -106,12 +108,47 @@ export const useDataStore = defineStore("dataStore", {
             'Authorization': `Bearer ${token}`,
           },
         }
-        const response = await axios.get(`${apiBase}/pharmacy-app/api/mrr/search?term=${query}`, config);
+        const response = await axios.get(`${apiBase}/mrr/search?term=${query}`, config);
         this.isMRR = false;
         if (response?.status == 200)
           return response?.data;
       } catch (error) {
         this.isMRR = false;
+        console.log(error);
+      }
+    },
+    // Payment Gateway
+    async getPayment() {
+      try {
+        const token = Cookies.get("token");
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+        const response = await axios.get(`${apiBase}/all-payment-methods`, config);
+        if (response?.status == 200)
+          this.paymentList = response?.data
+      } catch (error) {
+        this.paymentList = null
+        console.log(error);
+      }
+    },
+    // Purchase Insert
+    async purchaseInsert(data) {
+      try {
+        const token = Cookies.get("token");
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+        const response = await axios.post(`${apiBase}/purchases`, data, config);
+        if (response?.status == 200) {
+          showNotification("success", response?.data?.message)
+          return 1
+        }
+      } catch (error) {
         console.log(error);
       }
     },
