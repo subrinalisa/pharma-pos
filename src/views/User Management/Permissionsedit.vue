@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, watch, onMounted } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import axios from "axios";
 import Cookies from "js-cookie";
 import MainLayout from "@/components/MainLayout.vue";
@@ -13,21 +13,18 @@ const emit = defineEmits(["update:isDrawerOpen"]);
 
 const isSnackbarVisible = ref(false);
 const isLoading = ref(false);
-const permissionsList = ref([]);
 const form = reactive({
   name: "",
-  permission: [],
 });
 
-const roleId = ref(route.params.id || null);
+const permissionId = ref(route.params.id || null);
 
 const reset = () => {
   emit("update:isDrawerOpen", false);
   form.name = "";
-  form.permission = [];
 };
 
-const addOrUpdateRole = async () => {
+const addOrUpdatePermissions = async () => {
   isLoading.value = true;
   try {
     const token = Cookies.get("token");
@@ -39,20 +36,19 @@ const addOrUpdateRole = async () => {
 
     const payload = {
       name: form.name,
-      permission: form.permission,
     };
 
     console.log("Payload:", payload);
 
     let res;
-    if (roleId.value) {
-      res = await axios.put(`${apiBase}/pharmacy-app/api/roles/${roleId.value}`, payload, config);
+    if (permissionId.value) {
+      res = await axios.put(`${apiBase}/pharmacy-app/api/permissions/${permissionId.value}`, payload, config);
     } else {
-      res = await axios.post(`${apiBase}/pharmacy-app/api/roles`, payload, config);
+      res = await axios.post(`${apiBase}/pharmacy-app/api/permissions`, payload, config);
     }
 
     if (res.status === 200 || res.status === 201) {
-      router.push({ name: "role" });
+      router.push({ name: "permissions" });
     } else {
       console.error(res.data.message);
     }
@@ -63,27 +59,9 @@ const addOrUpdateRole = async () => {
   }
 };
 
-const fetchPermissions = async () => {
-  const token = Cookies.get("token");
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
 
-  try {
-    const res = await axios.get(`${apiBase}/pharmacy-app/api/permissions`, config);
-    permissionsList.value = res.data.permissions.map((permission) => ({
-      id: permission.id,
-      name: permission.name,
-    }));
-  } catch (err) {
-    console.error(err);
-  }
-};
-
-const fetchRoleData = async () => {
-  if (!roleId.value) return;
+const fetchPermissionData = async () => {
+  if (!permissionId.value) return;
   try {
     const token = Cookies.get("token");
     const config = {
@@ -91,21 +69,20 @@ const fetchRoleData = async () => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.get(`${apiBase}/pharmacy-app/api/roles/${roleId.value}`, config);
-    const roleData = res.data.role;
-    console.log(roleData);
-    form.name = roleData.name;
-    form.permission = roleData.permissions.map(permission => permission.name);
+    const res = await axios.get(`${apiBase}/pharmacy-app/api/permissions/${permissionId.value}/edit`, config);
+    const permissionData = res?.data?.permission;
+    if (permissionData) {
+      form.name = permissionData.name;
+    } else {
+      console.error("Permission data is undefined");
+    }
   } catch (err) {
     console.error(err);
   }
 };
 
 onMounted(async () => {
-  await fetchPermissions();
-  if (roleId.value) {
-    await fetchRoleData();
-  }
+  await fetchPermissionData();
 });
 </script>
 
@@ -120,37 +97,17 @@ onMounted(async () => {
     >
       <v-card flat>
         <v-card-text>
-          <form @submit.prevent="addOrUpdateRole" class="space-y-6">
+          <form @submit.prevent="addOrUpdatePermissions" class="space-y-6">
             <div class="space-y-4">
               <div class="flex flex-col">
-                <label for="name" class="text-sm font-semibold mb-2">Role Name</label>
+                <label for="name" class="text-sm font-semibold mb-2">Permission Name</label>
                 <input
                   id="name"
                   v-model="form.name"
                   type="text"
-                  placeholder="Enter role name.."
+                  placeholder="Enter permission name.."
                   class="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-              </div>
-
-              <div class="flex flex-col">
-                <label for="permissions" class="text-sm font-semibold mb-2">Select Permissions</label>
-                <div class="flex flex-col gap-2">
-                  <div
-                    v-for="permission in permissionsList"
-                    :key="permission.id"
-                    class="flex items-center"
-                  >
-                    <input
-                      type="checkbox"
-                      :id="`permission-${permission.name}`"
-                      :value="permission.name"
-                      v-model="form.permission"
-                      class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                    />
-                    <label :for="`permission-${permission.name}`" class="ml-2 text-sm">{{ permission.name }}</label>
-                  </div>
-                </div>
               </div>
             </div>
 

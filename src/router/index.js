@@ -4,14 +4,17 @@ import Cookies from "js-cookie";
 import Login from "@/views/Login.vue";
 import Home from "@/views/Home.vue";
 
-
+//Start User Management
 import Users from "@/views/User Management/Users.vue";
 import Useradd from "@/views/User Management/Useradd.vue";
 import Useredit from "@/views/User Management/Useredit.vue";
-
 import Role from "@/views/User Management/Role.vue";
 import Roleadd from "@/views/User Management/Roleadd.vue";
 import Roleedit from "@/views/User Management/Roleedit.vue";
+import Permissions from "@/views/User Management/Permissions.vue";
+import Permissionsadd from "@/views/User Management/Permissionsadd.vue";
+import Permissionsedit from "@/views/User Management/Permissionsedit.vue";
+//End User Management
 
 
 import Item from "@/views/Item.vue";
@@ -88,7 +91,7 @@ const routes = [
   },
 
   {
-    path: "/useredit",
+    path: "/users/:id",
     name: "useredit",
     component: Useredit,
   },
@@ -106,9 +109,27 @@ const routes = [
   },
 
   {
-    path: "/roleedit",
+    path: "/role/:id",
     name: "roleedit",
     component: Roleedit,
+  },
+
+  {
+    path: "/permissions",
+    name: "permissions",
+    component: Permissions,
+  },
+
+  {
+    path: "/permissionsadd",
+    name: "permissionsadd",
+    component: Permissionsadd,
+  },
+
+  {
+    path: "/permissions/:id",
+    name: "permissionsedit",
+    component: Permissionsedit,
   },
 
   {

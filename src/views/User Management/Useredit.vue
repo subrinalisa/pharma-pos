@@ -8,7 +8,7 @@ import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
 const router = useRouter();
-const userData = ref([]);
+const userData = ref({});
 const isLoading = ref(false);
 
 const form = reactive({
@@ -27,7 +27,7 @@ const statusList = ref([
   { title: 'Inactive', value: 0 },
 ]);
 
-const message = ref();
+const message = ref("");
 const isSnackbarTopStartVisible = ref(false);
 
 const getUserByID = async () => {
@@ -36,37 +36,44 @@ const getUserByID = async () => {
     const token = Cookies.get("token");
     const config = { headers: { Authorization: `Bearer ${token}` } };
     const res = await axios.get(`${apiBase}/pharmacy-app/api/user_edit/${route.params.id}`, config);
-    if (res.data?.status == "success") {
-      isLoading.value = false;
+    if (res.data?.status === "success") {
       userData.value = res.data?.user_info;
       form.name = userData.value.name;
       form.email = userData.value.email;
       form.status = userData.value.status;
-      form.roles = userData.value?.roles?.map(role => role.name);
-      permissions.value = userData.value?.permissions?.map(permission => permission.name);
+      form.roles = userData.value?.roles?.map(role => role.name) || [];
+      permissions.value = userData.value?.permissions?.map(permission => permission.name) || [];
     }
   } catch (error) {
+    console.error(error);
+  } finally {
     isLoading.value = false;
   }
 };
 
-console.log(userData);
-
 const getRoleList = async () => {
-  const token = Cookies.get("token");
-  const config = { headers: { Authorization: `Bearer ${token}` } };
-  const res = await axios.get(`${apiBase}/pharmacy-app/api/roles/`, config);
-  if (res.data?.status == "Success") {
-    roleList.value = res.data?.role.map(role => role.name);
+  try {
+    const token = Cookies.get("token");
+    const config = { headers: { Authorization: `Bearer ${token}` } };
+    const res = await axios.get(`${apiBase}/pharmacy-app/api/roles/`, config);
+    if (res.data?.status === "Success") {
+      roleList.value = res.data?.role.map(role => role.name);
+    }
+  } catch (error) {
+    console.error(error);
   }
 };
 
 const getPermissionList = async () => {
-  const token = Cookies.get("token");
-  const config = { headers: { Authorization: `Bearer ${token}` } };
-  const res = await axios.get(`${apiBase}/pharmacy-app/api/permissions/`, config);
-  if (res.data?.status == "Success") {
-    permissionList.value = res.data?.permissions.map(permission => permission.name);
+  try {
+    const token = Cookies.get("token");
+    const config = { headers: { Authorization: `Bearer ${token}` } };
+    const res = await axios.get(`${apiBase}/pharmacy-app/api/permissions/`, config);
+    if (res.data?.status === "Success") {
+      permissionList.value = res.data?.permissions.map(permission => permission.name);
+    }
+  } catch (error) {
+    console.error(error);
   }
 };
 
@@ -77,39 +84,76 @@ onMounted(async () => {
 });
 
 const editUser = async () => {
-  const token = Cookies.get("token");
-  const config = { headers: { Authorization: `Bearer ${token}` } };
-  const res = await axios.put(`${apiBase}/pharmacy-app/api/user_update/${route.params.id}?name=${form.name}&email=${form.email}`, config);
-  if (res.data?.status == 'success') {
-    message.value = res.data.message;
-    isSnackbarTopStartVisible.value = true;
+  isLoading.value = true;
+  try {
+    const token = Cookies.get("token");
+    const config = { headers: { Authorization: `Bearer ${token}` } };
+    const payload = {
+      name: form.name,
+      email: form.email,
+      roles: form.roles,
+      status: form.status,
+    };
+    const res = await axios.put(`${apiBase}/pharmacy-app/api/user_update/${route.params.id}`, payload, config);
+    if (res.data?.status === 'success') {
+      message.value = res.data.message;
+      isSnackbarTopStartVisible.value = true;
+      await getUserByID();
+    }
+  } catch (error) {
+    console.error(error);
+  } finally {
+    isLoading.value = false;
   }
 };
 
 const updatePermission = async () => {
-  const token = Cookies.get("token");
-  const config = { headers: { Authorization: `Bearer ${token}` } };
-  const res = await axios.put(`${apiBase}/pharmacy-app/api/assign_permission/${route.params.id}`, config);
-  if (res.data?.status == 'success') {
-    message.value = res.data.message;
+  isLoading.value = true;
+  try {
+    const token = Cookies.get("token");
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    };
+
+    const payload = {
+      permissions: permissions.value,  // Send the array of selected permissions
+    };
+
+    const res = await axios.put(`${apiBase}/pharmacy-app/api/assign_permission/${route.params.id}`, payload, config);
+    
+    if (res.data?.status === 'success') {
+      message.value = res.data.message;
+      isSnackbarTopStartVisible.value = true;
+      await getUserByID();  // Refresh user data
+    } else {
+      message.value = "Failed to update permissions.";
+      isSnackbarTopStartVisible.value = true;
+    }
+  } catch (error) {
+    console.error("Error updating permissions:", error);
+    message.value = "An error occurred while updating permissions.";
     isSnackbarTopStartVisible.value = true;
+  } finally {
+    isLoading.value = false;
   }
 };
+
 </script>
+
 <template>
   <MainLayout>
-    <div v-if="isLoading" class="fixed inset-0 flex items-center justify-center">
+    <div v-if="isLoading" class="fixed inset-0 flex items-center justify-center bg-opacity-50 bg-gray-500">
       <div class="loader"></div>
     </div>
     <div v-else class="container mx-auto py-8">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div class="col-span-1">
           <div class="bg-white shadow-md rounded p-4">
-            <!-- <div v-if="userData">
+            <div v-if="userData">
               <div class="text-center mb-4">
-                <div class="w-24 h-24 mx-auto rounded-full bg-primary text-white flex items-center justify-center text-5xl">
-                  {{ userData.name[0] }}
-                </div>
                 <h2 class="text-xl font-semibold mt-4">{{ userData.name }}</h2>
                 <div class="flex flex-wrap justify-center mt-2">
                   <span v-for="(role, index) in userData.roles" :key="index" class="bg-gray-200 text-gray-700 rounded-full px-3 py-1 text-sm font-semibold mr-2 mb-2">{{ role.name }}</span>
@@ -123,7 +167,7 @@ const updatePermission = async () => {
                 <p><strong>Roles:</strong> <span v-for="(role, index) in userData.roles" :key="index">{{ role.name }}<span v-if="index < userData.roles.length - 1">, </span></span></p>
                 <p v-if="userData.permissions?.length"><strong>Permissions:</strong> <span v-for="(permission, index) in userData.permissions" :key="index">{{ permission.name }}<span v-if="index < userData.permissions.length - 1">, </span></span></p>
               </div>
-            </div> -->
+            </div>
           </div>
         </div>
         <div class="col-span-2">
@@ -138,10 +182,6 @@ const updatePermission = async () => {
                 <div>
                   <label class="block text-gray-700">Email</label>
                   <input type="email" v-model="form.email" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
-                </div>
-                <div>
-                  <label class="block text-gray-700">Change Password</label>
-                  <input type="password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                 </div>
                 <div>
                   <label class="block text-gray-700">Status</label>
@@ -166,7 +206,7 @@ const updatePermission = async () => {
             </form>
           </div>
           <div class="bg-white shadow-md rounded p-4">
-            <h2 class="text-xl font-semibold mb-4">Update Permission</h2>
+            <h2 class="text-xl font-semibold mb-4">Update Permissions</h2>
             <form @submit.prevent="updatePermission">
               <div>
                 <label class="block text-gray-700">Select Permissions</label>
