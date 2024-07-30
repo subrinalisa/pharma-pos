@@ -160,33 +160,34 @@ const avatarText = (name) => {
         {{ deletedMessage }}
       </v-snackbar>
       <div class="card bg-white shadow-md rounded-lg p-6">
-        <div class="flex justify-between items-center mb-4">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-4 w-full space-y-4 md:space-y-0 md:space-x-4">
           <input
             v-model="searchQuery"
             @input="handleSearch"
             type="text"
-            placeholder="Search"
-            class="border border-gray-300 rounded p-2"
+            placeholder="Search User name .........................."
+            class="flex-1 border border-gray-300 rounded p-2 w-full md:w-auto"
           />
           <button
             @click="$router.push({ path: 'role' })"
-            class="bg-blue-500 text-white px-4 py-2 rounded"
+            class="bg-blue-500 text-white px-4 py-2 rounded w-full md:w-auto"
           >
             Role List
           </button>
           <button
             @click="$router.push({ path: 'permissions' })"
-            class="bg-blue-500 text-white px-4 py-2 rounded"
+            class="bg-blue-500 text-white px-4 py-2 rounded w-full md:w-auto"
           >
             Permissions List
           </button>
           <button
             @click="$router.push({ path: 'useradd' })"
-            class="bg-blue-500 text-white px-4 py-2 rounded"
+            class="bg-blue-500 text-white px-4 py-2 rounded w-full md:w-auto"
           >
             Add New User
           </button>
         </div>
+
         <table class="min-w-full bg-white border border-gray-300">
           <thead>
             <tr>
@@ -199,7 +200,11 @@ const avatarText = (name) => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="user in users" :key="user.id" class="border-t">
+            <tr
+              v-for="user in users"
+              :key="user.id"
+              class="border-t"
+            >
               <td class="py-2 px-4 border-gray-300 flex items-center">
                 <div
                   class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-2"
@@ -236,12 +241,10 @@ const avatarText = (name) => {
               <td class="py-2 px-4 border border-gray-300">
                 <span
                   :class="`px-2 py-1 rounded-full ${
-                    user.status == 1
-                      ? 'bg-blue-200 text-blue-800'
-                      : 'bg-yellow-200 text-yellow-800'
+                    user.status == 1 ? 'bg-blue-200 text-blue-800' : 'bg-yellow-200 text-yellow-800'
                   }`"
                 >
-                  {{ user.status == 1 ? "Active" : "Inactive" }}
+                  {{ user.status == 1 ? 'Active' : 'Inactive' }}
                 </span>
               </td>
               <td class="py-2 px-4 border-gray-300 flex gap-2">
@@ -252,13 +255,7 @@ const avatarText = (name) => {
                   Delete
                 </button>
                 <button
-                  @click="
-                    $router.push({
-                      path: 'useredit',
-                      params: { id: user.id },
-                      query: { name: user.name, email: user?.email },
-                    })
-                  "
+                  @click="$router.push({ name: 'useredit', params: { id: user.id }, query: { name: user.name, email: user?.email,},})"
                   class="bg-yellow-500 text-white px-2 py-1 rounded"
                 >
                   Edit
