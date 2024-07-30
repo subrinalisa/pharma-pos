@@ -38,27 +38,6 @@ export const useDataStore = defineStore("dataStore", {
         else showNotification("error", error?.message);
       }
     },
-    // User Info
-    // async getUser() {
-    //   this.isLoading = true;
-    //   try {
-    //     const token = Cookies.get("token");
-    //     const config = {
-    //       headers: {
-    //         'Authorization': `Bearer ${token}`,
-    //       },
-    //     }
-    //     const response = await axios.get(`${apiBase}/loggeduser`, config);
-    //     this.isLoading = false;
-    //     if (response?.status == 200)
-    //       this.userInfo = response?.data?.user;
-
-    //   } catch (error) {
-    //     this.isLoading = false;
-    //     this.userInfo = null;
-    //     console.log(error);
-    //   }
-    // },
     // Product Search
     async getProduct(query) {
       if (query?.length < 2) return 0
@@ -81,7 +60,6 @@ export const useDataStore = defineStore("dataStore", {
     },
     // Product Sale Search
     async getSaleProduct(query) {
-
       this.isLoading = true;
       try {
         const token = Cookies.get("token");
@@ -121,7 +99,6 @@ export const useDataStore = defineStore("dataStore", {
     },
     // Customer Search
     async getCustomer() {
-
       try {
         const token = Cookies.get("token");
         const config = {
@@ -208,6 +185,25 @@ export const useDataStore = defineStore("dataStore", {
           return 1
         }
       } catch (error) {
+        console.log(error);
+      }
+    },
+    // Product List
+    async getProducts(page, paginate) {
+      this.isLoading = true;
+      try {
+        const token = Cookies.get("token");
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+        const response = await axios.get(`${apiBase}/all-products-paginated?page=${page}&paginate=${paginate}`, config);
+        this.isLoading = false;
+        if (response?.status == 200)
+          return response?.data;
+      } catch (error) {
+        this.isLoading = false;
         console.log(error);
       }
     },
