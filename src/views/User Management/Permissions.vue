@@ -64,7 +64,7 @@ const deletePermission = async (id) => {
     if (res.status === 200 || res.status === 204) {
       deletedMessage.value = "Permission deleted successfully";
       isSnackbarVisible.value = true;
-      await getPermissions();  // Re-fetch the permissions
+      await getPermissions(); // Re-fetch the permissions
     } else {
       console.error(res.data.message);
     }
@@ -85,13 +85,7 @@ const deletePermission = async (id) => {
       >
         <div class="loader"></div>
       </div>
-      <v-snackbar
-        v-model="isSnackbarVisible"
-        :timeout="2000"
-        class="fixed top-4 right-4"
-      >
-        {{ deletedMessage }}
-      </v-snackbar>
+
       <div class="card bg-white shadow-md rounded-lg p-6">
         <div class="flex justify-between items-center mb-4">
           <input
@@ -132,7 +126,13 @@ const deletePermission = async (id) => {
                   Delete
                 </button>
                 <button
-                  @click="$router.push({ name: 'permissionsedit', params: { id: permission.id }, query: { name: permission.name } })"
+                  @click="
+                    $router.push({
+                      name: 'permissionsedit',
+                      params: { id: permission.id },
+                      query: { name: permission.name },
+                    })
+                  "
                   class="bg-yellow-500 text-white px-2 py-1 rounded"
                 >
                   Edit

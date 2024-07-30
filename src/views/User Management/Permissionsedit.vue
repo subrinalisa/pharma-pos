@@ -4,7 +4,6 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import MainLayout from "@/components/MainLayout.vue";
 import { apiBase } from "@/config";
-import { defineEmits } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
@@ -42,7 +41,11 @@ const addOrUpdatePermissions = async () => {
 
     let res;
     if (permissionId.value) {
-      res = await axios.put(`${apiBase}/permissions/${permissionId.value}`, payload, config);
+      res = await axios.put(
+        `${apiBase}/permissions/${permissionId.value}`,
+        payload,
+        config
+      );
     } else {
       res = await axios.post(`${apiBase}/permissions`, payload, config);
     }
@@ -59,7 +62,6 @@ const addOrUpdatePermissions = async () => {
   }
 };
 
-
 const fetchPermissionData = async () => {
   if (!permissionId.value) return;
   try {
@@ -69,7 +71,10 @@ const fetchPermissionData = async () => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.get(`${apiBase}/permissions/${permissionId.value}/edit`, config);
+    const res = await axios.get(
+      `${apiBase}/permissions/${permissionId.value}/edit`,
+      config
+    );
     const permissionData = res?.data?.permission;
     if (permissionData) {
       form.name = permissionData.name;
@@ -88,49 +93,39 @@ onMounted(async () => {
 
 <template>
   <MainLayout>
-    <v-navigation-drawer
-      temporary
-      :width="400"
-      location="end"
-      class="scrollable-content"
-      :model-value="isDrawerOpen"
-    >
-      <v-card flat>
-        <v-card-text>
-          <form @submit.prevent="addOrUpdatePermissions" class="space-y-6">
-            <div class="space-y-4">
-              <div class="flex flex-col">
-                <label for="name" class="text-sm font-semibold mb-2">Permission Name</label>
-                <input
-                  id="name"
-                  v-model="form.name"
-                  type="text"
-                  placeholder="Enter permission name.."
-                  class="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
+    <form @submit.prevent="addOrUpdatePermissions" class="space-y-6">
+      <div class="space-y-4">
+        <div class="flex flex-col">
+          <label for="name" class="text-sm font-semibold mb-2"
+            >Permission Name</label
+          >
+          <input
+            id="name"
+            v-model="form.name"
+            type="text"
+            placeholder="Enter permission name.."
+            class="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      </div>
 
-            <div class="flex gap-4 mt-4">
-              <button
-                type="submit"
-                class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-                :disabled="isLoading"
-              >
-                Submit
-              </button>
-              <button
-                type="button"
-                @click="reset"
-                class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </v-card-text>
-      </v-card>
-    </v-navigation-drawer>
+      <div class="flex gap-4 mt-4">
+        <button
+          type="submit"
+          class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+          :disabled="isLoading"
+        >
+          Submit
+        </button>
+        <button
+          type="button"
+          @click="reset"
+          class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
   </MainLayout>
 </template>
 
