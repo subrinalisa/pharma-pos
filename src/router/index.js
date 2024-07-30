@@ -30,7 +30,9 @@ import CustomerEdit from "@/views/customer/edit.vue";
 import SupplierList from "@/views/supplier/List.vue";
 import SupplierAdd from "@/views/supplier/Add.vue";
 import Report from "@/views/Report.vue";
-import Expenses from "@/views/Expenses.vue";
+import Expenses from "@/views/expenses/index.vue";
+import ExpensesCreate from "@/views/expenses/create.vue";
+import ExpensesEdit from "@/views/expenses/edit.vue";
 import VerifySales from "@/views/VerifySales.vue";
 
 const routes = [
@@ -103,6 +105,16 @@ const routes = [
     path: "/expenses",
     name: "expenses",
     component: Expenses,
+  },
+  {
+    path: "/expenses/create",
+    name: "expenses-create",
+    component: ExpensesCreate,
+  },
+  {
+    path: "/expenses/edit/:id",
+    name: "expenses-edit",
+    component: ExpensesEdit,
   },
   {
     path: "/sales",
