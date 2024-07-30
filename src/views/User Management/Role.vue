@@ -64,7 +64,7 @@ const deleteRole = async (id) => {
     if (res.status === 200 || res.status === 204) {
       deletedMessage.value = "Role deleted successfully";
       isSnackbarVisible.value = true;
-      await getRoles();  // Re-fetch the permissions
+      await getRoles(); // Re-fetch the permissions
     } else {
       console.error(res.data.message);
     }
@@ -85,13 +85,7 @@ const deleteRole = async (id) => {
       >
         <div class="loader"></div>
       </div>
-      <v-snackbar
-        v-model="isSnackbarVisible"
-        :timeout="2000"
-        class="fixed top-4 right-4"
-      >
-        {{ deletedMessage }}
-      </v-snackbar>
+
       <div class="card bg-white shadow-md rounded-lg p-6">
         <div class="flex justify-between items-center mb-4">
           <input
@@ -117,11 +111,7 @@ const deleteRole = async (id) => {
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="role in roles"
-              :key="role.id"
-              class="border-t"
-            >
+            <tr v-for="role in roles" :key="role.id" class="border-t">
               <td class="py-2 px-4 border border-gray-300">
                 {{ role.name }}
               </td>
@@ -145,7 +135,9 @@ const deleteRole = async (id) => {
                   Delete
                 </button>
                 <button
-                  @click="$router.push({ name: 'roleedit', params: { id: role.id } })"
+                  @click="
+                    $router.push({ name: 'roleedit', params: { id: role.id } })
+                  "
                   class="bg-yellow-500 text-white px-2 py-1 rounded"
                 >
                   Edit
