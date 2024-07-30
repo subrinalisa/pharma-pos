@@ -22,6 +22,7 @@ import Permissionsedit from "@/views/User Management/Permissionsedit.vue";
 
 import Item from "@/views/Item.vue";
 import ItemCreate from "@/views/ItemCreate.vue";
+import ItemEdit from "@/views/ItemEdit.vue";
 
 const routes = [
   {
@@ -53,6 +54,11 @@ const routes = [
     path: "/item/add",
     name: "item-add",
     component: ItemCreate,
+  },
+  {
+    path: "/item/edit/:id",
+    name: "item-edit",
+    component: ItemEdit,
   },
   {
     path: "/supplier",

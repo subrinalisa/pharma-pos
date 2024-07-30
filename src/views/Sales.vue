@@ -42,7 +42,7 @@ const findCustomer = (name) => {
     return;
   }
   supplierList.value = allSupplierList.value.filter((customer) =>
-    customer.name.toLowerCase().includes(name)
+    customer.name.toLowerCase().includes(name.toLowerCase())
   );
 };
 const getSupplierInfo = async (supplier) => {
