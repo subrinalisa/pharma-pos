@@ -4,6 +4,18 @@
       <router-link :to="{ name: item?.path }">
         <i :class="item?.icon"></i><span>{{ item?.name }}</span>
       </router-link>
+      <ul class="bg-white" v-if="item?.child">
+        <li
+          class="px-10"
+          v-for="(child, index) in item?.child"
+          :key="'c' + index"
+        >
+          <router-link :to="{ name: child?.path }">
+            <i :class="item?.icon"></i><span></span
+            ><span>{{ child?.name }}</span>
+          </router-link>
+        </li>
+      </ul>
     </li>
   </ul>
 </template>
@@ -36,6 +48,32 @@ const menuItems = reactive([
     name: "Reports",
     icon: "bi bi-graph-down",
     path: "report",
+    child: [
+      {
+        name: "Customer Report",
+        path: "report",
+      },
+      {
+        name: "Products Report",
+        path: "report",
+      },
+      {
+        name: "Suppliers Report",
+        path: "report",
+      },
+      {
+        name: "Expenses Report",
+        path: "report",
+      },
+      {
+        name: "Purchases Report",
+        path: "report",
+      },
+      {
+        name: "Sales Report",
+        path: "report",
+      },
+    ],
   },
   {
     name: "Expenses",
