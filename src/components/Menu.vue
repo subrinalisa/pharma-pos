@@ -13,9 +13,34 @@ import { reactive } from "vue";
 
 const menuItems = reactive([
   {
+    name: "Dashboard",
+    icon: "bi bi-speedometer2",
+    path: "dashboard",
+  },
+  {
+    name: "Customer",
+    icon: "bi bi-people",
+    path: "customer",
+  },
+  {
     name: "Item",
     icon: "bi bi-inbox",
     path: "item",
+  },
+  {
+    name: "Suppliers",
+    icon: "bi bi-download",
+    path: "supplier",
+  },
+  {
+    name: "Reports",
+    icon: "bi bi-graph-down",
+    path: "report",
+  },
+  {
+    name: "Expenses",
+    icon: "bi bi-cash-coin",
+    path: "expenses",
   },
   {
     name: "Purchases",
@@ -32,26 +57,11 @@ const menuItems = reactive([
     icon: "bi bi-people",
     path: "users",
   },
-  // {
-  //   name: "Customer",
-  //   icon: "bi bi-people",
-  //   path: "customer",
-  // },
-  // {
-  //   name: "Suppliers",
-  //   icon: "bi bi-download",
-  //   path: "supplier",
-  // },
-  // {
-  //   name: "Reports",
-  //   icon: "bi bi-graph-down",
-  //   path: "report",
-  // },
 
-  // {
-  //   name: "Renew",
-  //   icon: "bi bi-hand-index-thumb",
-  //   path: "renew",
-  // },
+  {
+    name: "Verify Sales",
+    icon: "bi bi-hand-index-thumb",
+    path: "verify-sales",
+  },
 ]);
 </script>

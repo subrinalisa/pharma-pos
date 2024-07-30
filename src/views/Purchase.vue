@@ -364,7 +364,7 @@ const handlePurchase = async () => {
       <div class="right-side">
         <!-- Cancel Recv. -->
         <div class="border border-slate-300 p-2 px-3 mb-4">
-          <ul class="flex items-center space-x-4 list-none p-0 w-full">
+          <!-- <ul class="flex items-center space-x-4 list-none p-0 w-full">
             <li class="mb-4 w-1/2">
               <button
                 type="button"
@@ -381,7 +381,7 @@ const handlePurchase = async () => {
                 <i class="bi bi-x-lg mr-3 text-red-600"></i>Cancel Recv.
               </button>
             </li>
-          </ul>
+          </ul> -->
           <!-- Supplier -->
           <div class="flex mb-4">
             <button

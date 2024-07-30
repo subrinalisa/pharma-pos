@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Cookies from "js-cookie";
 import Login from "@/views/Login.vue";
 import Home from "@/views/Home.vue";
+import Dashboard from "@/views/Dashboard.vue";
 
 //Start User Management
 
@@ -23,12 +24,25 @@ import Permissionsedit from "@/views/User Management/Permissionsedit.vue";
 import Item from "@/views/Item.vue";
 import ItemCreate from "@/views/ItemCreate.vue";
 import ItemEdit from "@/views/ItemEdit.vue";
+import Customer from "@/views/customer/index.vue"
+import CustomerCreate from "@/views/customer/create.vue";
+import CustomerEdit from "@/views/customer/edit.vue";
+import SupplierList from "@/views/supplier/List.vue";
+import SupplierAdd from "@/views/supplier/Add.vue";
+import Report from "@/views/Report.vue";
+import Expenses from "@/views/Expenses.vue";
+import VerifySales from "@/views/VerifySales.vue";
 
 const routes = [
   {
     path: "/",
     name: "login",
     component: Login,
+  },
+  {
+    path: "/dashboard",
+    name: "dashboard",
+    component: Dashboard,
   },
   {
     path: "/purchases",
@@ -43,7 +57,17 @@ const routes = [
   {
     path: "/customer",
     name: "customer",
-    component: Home,
+    component: Customer,
+  },
+  {
+    path: "/customer/create",
+    name: "customer-create",
+    component: CustomerCreate,
+  },
+  {
+    path: "/customer/edit/:id",
+    name: "customer-edit",
+    component: CustomerEdit,
   },
   {
     path: "/item",
@@ -63,17 +87,22 @@ const routes = [
   {
     path: "/supplier",
     name: "supplier",
-    component: Home,
+    component: SupplierList,
+  },
+  {
+    path: "/supplier/add",
+    name: "supplier-add",
+    component: SupplierAdd,
   },
   {
     path: "/report",
     name: "report",
-    component: Home,
+    component: Report,
   },
   {
     path: "/expenses",
     name: "expenses",
-    component: Home,
+    component: Expenses,
   },
   {
     path: "/sales",
@@ -107,6 +136,11 @@ const routes = [
     path: "/role",
     name: "role",
     component: Role,
+  },
+  {
+    path: "/verify-sales",
+    name: "verify-sales",
+    component: VerifySales,
   },
 
   {
