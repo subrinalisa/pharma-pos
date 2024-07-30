@@ -77,3 +77,7 @@ body {
         padding: 4px 8px;
     }
 }
+
+.input-text {
+    @apply w-full border bg-transparent rounded-md px-3 py-2 mt-1 text-sm outline-none focus:border-black disabled:bg-[#EBEBE4] disabled:border-[#EBEBE4]
+}
