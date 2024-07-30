@@ -24,12 +24,14 @@ export const useDataStore = defineStore("dataStore", {
         this.isLoading = false;
         if (response?.status === 200) {
           const res = response?.data;
+          this.userInfo = res?.user;
           Cookies.set("token", res?.token, { expires: null });
           showNotification("success", res?.message || "Welcome back! You've successfully logged in");
           router.push({ name: "home" });
         }
       } catch (error) {
         this.isLoading = false;
+        this.userInfo = null;
         Cookies.set("token", "");
         if (error?.response?.status == 401)
           showNotification("error", error?.response?.data?.message || "Login failed. Please check your credentials and try again");
@@ -37,26 +39,26 @@ export const useDataStore = defineStore("dataStore", {
       }
     },
     // User Info
-    async getUser() {
-      this.isLoading = true;
-      try {
-        const token = Cookies.get("token");
-        const config = {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        }
-        const response = await axios.get(`${apiBase}/loggeduser`, config);
-        this.isLoading = false;
-        if (response?.status == 200)
-          this.userInfo = response?.data?.user;
+    // async getUser() {
+    //   this.isLoading = true;
+    //   try {
+    //     const token = Cookies.get("token");
+    //     const config = {
+    //       headers: {
+    //         'Authorization': `Bearer ${token}`,
+    //       },
+    //     }
+    //     const response = await axios.get(`${apiBase}/loggeduser`, config);
+    //     this.isLoading = false;
+    //     if (response?.status == 200)
+    //       this.userInfo = response?.data?.user;
 
-      } catch (error) {
-        this.isLoading = false;
-        this.userInfo = null;
-        console.log(error);
-      }
-    },
+    //   } catch (error) {
+    //     this.isLoading = false;
+    //     this.userInfo = null;
+    //     console.log(error);
+    //   }
+    // },
     // Product Search
     async getProduct(query) {
       if (query?.length < 2) return 0

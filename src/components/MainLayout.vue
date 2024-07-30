@@ -37,11 +37,7 @@
                   <i
                     class="bi bi-person-circle text-lg mr-2 text-indigo-500"
                   ></i>
-                  <span
-                    >{{ userInfo?.name }} ({{
-                      userInfo?.roles?.at(-1)?.name
-                    }})</span
-                  >
+                  <span>{{ userInfo?.name }} ({{ userInfo?.email }})</span>
                 </a>
                 <template #overlay>
                   <a-menu>
@@ -77,8 +73,7 @@ import { storeToRefs } from "pinia";
 import { onMounted, ref } from "vue";
 
 const dataStore = useDataStore();
-const { isLoading, userInfo } = storeToRefs(dataStore);
-const { getUser } = dataStore;
+const { userInfo } = storeToRefs(dataStore);
 
 let timeOptions = {
   hour: "2-digit",
@@ -101,7 +96,6 @@ function updateDateTime() {
   date.value = now.toLocaleString("en-US", dateOptions);
 }
 onMounted(() => {
-  getUser();
   updateDateTime();
   setInterval(updateDateTime, 60000);
 });
