@@ -66,7 +66,7 @@ const getRoles = async () => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.get(`${apiBase}/pharmacy-app/api/roles`, config);
+    const res = await axios.get(`${apiBase}/roles`, config);
 
     isLoading.value = false;
     roleList.value = res?.data?.role?.map((role) => role.name);
@@ -86,7 +86,7 @@ const fetchUsers = async () => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.get(`${apiBase}/pharmacy-app/api/user_list`, config);
+    const res = await axios.get(`${apiBase}/user_list`, config);
 
     isLoading.value = false;
     users.value = res?.data?.users;
@@ -106,7 +106,7 @@ const deleteUser = async (id) => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.delete(`${apiBase}/pharmacy-app/api/user_delete/${id}`, config);
+    const res = await axios.delete(`${apiBase}/user_delete/${id}`, config);
 
     if (res.data.status === "Success") {
       isDeleteUser.value = false;

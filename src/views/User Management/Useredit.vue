@@ -35,7 +35,7 @@ const getUserByID = async () => {
   try {
     const token = Cookies.get("token");
     const config = { headers: { Authorization: `Bearer ${token}` } };
-    const res = await axios.get(`${apiBase}/pharmacy-app/api/user_edit/${route.params.id}`, config);
+    const res = await axios.get(`${apiBase}/user_edit/${route.params.id}`, config);
     if (res.data?.status === "success") {
       userData.value = res.data?.user_info;
       form.name = userData.value.name;
@@ -55,7 +55,7 @@ const getRoleList = async () => {
   try {
     const token = Cookies.get("token");
     const config = { headers: { Authorization: `Bearer ${token}` } };
-    const res = await axios.get(`${apiBase}/pharmacy-app/api/roles/`, config);
+    const res = await axios.get(`${apiBase}/roles/`, config);
     if (res.data?.status === "Success") {
       roleList.value = res.data?.role.map(role => role.name);
     }
@@ -68,7 +68,7 @@ const getPermissionList = async () => {
   try {
     const token = Cookies.get("token");
     const config = { headers: { Authorization: `Bearer ${token}` } };
-    const res = await axios.get(`${apiBase}/pharmacy-app/api/permissions/`, config);
+    const res = await axios.get(`${apiBase}/permissions/`, config);
     if (res.data?.status === "Success") {
       permissionList.value = res.data?.permissions.map(permission => permission.name);
     }
@@ -94,7 +94,7 @@ const editUser = async () => {
       roles: form.roles,
       status: form.status,
     };
-    const res = await axios.put(`${apiBase}/pharmacy-app/api/user_update/${route.params.id}`, payload, config);
+    const res = await axios.put(`${apiBase}/user_update/${route.params.id}`, payload, config);
     if (res.data?.status === 'success') {
       message.value = res.data.message;
       isSnackbarTopStartVisible.value = true;
@@ -122,7 +122,7 @@ const updatePermission = async () => {
       permissions: permissions.value,  // Send the array of selected permissions
     };
 
-    const res = await axios.put(`${apiBase}/pharmacy-app/api/assign_permission/${route.params.id}`, payload, config);
+    const res = await axios.put(`${apiBase}/assign_permission/${route.params.id}`, payload, config);
     
     if (res.data?.status === 'success') {
       message.value = res.data.message;

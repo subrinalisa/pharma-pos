@@ -30,7 +30,7 @@ const getPermissions = async () => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.get(`${apiBase}/pharmacy-app/api/permissions`, config);
+    const res = await axios.get(`${apiBase}/permissions`, config);
     permissions.value = res?.data?.permissions || [];
     backupPermissions.value = res?.data?.permissions || [];
   } catch (err) {
@@ -60,7 +60,7 @@ const deletePermission = async (id) => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.delete(`${apiBase}/pharmacy-app/api/permissions/${id}`, config);
+    const res = await axios.delete(`${apiBase}/permissions/${id}`, config);
     if (res.status === 200 || res.status === 204) {
       deletedMessage.value = "Permission deleted successfully";
       isSnackbarVisible.value = true;

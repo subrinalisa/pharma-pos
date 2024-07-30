@@ -30,7 +30,7 @@ const getRoles = async () => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.get(`${apiBase}/pharmacy-app/api/roles`, config);
+    const res = await axios.get(`${apiBase}/roles`, config);
     roles.value = res?.data?.role || [];
     backupRoles.value = res?.data?.role || [];
   } catch (err) {
@@ -60,7 +60,7 @@ const deleteRole = async (id) => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.delete(`${apiBase}/pharmacy-app/api/roles/${id}`, config);
+    const res = await axios.delete(`${apiBase}/roles/${id}`, config);
     if (res.status === 200 || res.status === 204) {
       deletedMessage.value = "Role deleted successfully";
       isSnackbarVisible.value = true;

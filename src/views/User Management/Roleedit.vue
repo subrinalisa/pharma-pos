@@ -51,9 +51,9 @@ const addOrUpdateRole = async () => {
 
     let res;
     if (roleId.value) {
-      res = await axios.put(`${apiBase}/pharmacy-app/api/roles/${roleId.value}`, payload, config);
+      res = await axios.put(`${apiBase}/roles/${roleId.value}`, payload, config);
     } else {
-      res = await axios.post(`${apiBase}/pharmacy-app/api/roles`, payload, config);
+      res = await axios.post(`${apiBase}/roles`, payload, config);
     }
 
     if (res.status === 200 || res.status === 201) {
@@ -77,7 +77,7 @@ const fetchPermissions = async () => {
   };
 
   try {
-    const res = await axios.get(`${apiBase}/pharmacy-app/api/permissions`, config);
+    const res = await axios.get(`${apiBase}/permissions`, config);
     permissionsList.value = res.data.permissions.map((permission) => ({
       id: permission.id,
       name: permission.name,
@@ -96,7 +96,7 @@ const fetchRoleData = async () => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.get(`${apiBase}/pharmacy-app/api/roles/${roleId.value}`, config);
+    const res = await axios.get(`${apiBase}/roles/${roleId.value}`, config);
     const roleData = res.data.role;
     form.name = roleData.name;
     form.permission = roleData.permissions.map(permission => permission.name);

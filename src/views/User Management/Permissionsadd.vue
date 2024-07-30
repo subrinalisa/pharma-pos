@@ -50,7 +50,7 @@ const addNewPermissions = async () => {
     // Debugging: Log the payload to ensure it's correct
     console.log("Payload:", payload);
 
-    const res = await axios.post(`${apiBase}/pharmacy-app/api/permissions`, payload, config);
+    const res = await axios.post(`${apiBase}/permissions`, payload, config);
 
     if (res) {
       router.push({ name: "permissions" });

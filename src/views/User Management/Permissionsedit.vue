@@ -42,9 +42,9 @@ const addOrUpdatePermissions = async () => {
 
     let res;
     if (permissionId.value) {
-      res = await axios.put(`${apiBase}/pharmacy-app/api/permissions/${permissionId.value}`, payload, config);
+      res = await axios.put(`${apiBase}/permissions/${permissionId.value}`, payload, config);
     } else {
-      res = await axios.post(`${apiBase}/pharmacy-app/api/permissions`, payload, config);
+      res = await axios.post(`${apiBase}/permissions`, payload, config);
     }
 
     if (res.status === 200 || res.status === 201) {
@@ -69,7 +69,7 @@ const fetchPermissionData = async () => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.get(`${apiBase}/pharmacy-app/api/permissions/${permissionId.value}/edit`, config);
+    const res = await axios.get(`${apiBase}/permissions/${permissionId.value}/edit`, config);
     const permissionData = res?.data?.permission;
     if (permissionData) {
       form.name = permissionData.name;
