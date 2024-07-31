@@ -40,7 +40,7 @@ export const useDataStore = defineStore("dataStore", {
     },
     // Product Search
     async getProduct(query) {
-      if (query?.length < 2) return 0
+      if (!query) return 0
       this.isLoading = true;
       try {
         const token = Cookies.get("token");
