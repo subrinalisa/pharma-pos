@@ -33,7 +33,7 @@ let priceList = reactive({
   tradePrice: 0,
   vat: 0,
   total: 0,
-  due: 0,
+  due: null,
 });
 
 const handleProductSearch = async (query) => {
@@ -168,6 +168,7 @@ const handlePurchase = async () => {
     showNotification("error", "Please insert a product");
     return 0;
   }
+
   const currDate = moment().format("YYYY-MM-DD");
   const purchaseData = {
     supplier_id: supplierInfo.value?.id,
