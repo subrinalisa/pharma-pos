@@ -1,164 +1,149 @@
 <template>
   <MainLayout>
-    <div class="grid grid-cols-3">
-      <form @submit.prevent="submitForm()">
-        <!-- Company Name -->
-        <div class="mb-4 flex items-center">
-          <label for="company_name" class="w-32 text-right mr-4"
-            >Company Name:</label
+    <div class="bg-white p-3 rounded-md">
+      <div class="flex justify-between items-center">
+        <div class="mb-3"><h6 class="font-medium">Create New Supplier</h6></div>
+        <div class="mb-3">
+          <button
+            type="button"
+            class="px-4 py-2 bg-[#000180] text-white rounded hover:bg-indigo-600"
+            @click="$router.go(-1)"
           >
+            Back
+          </button>
+        </div>
+      </div>
+      <hr />
+      <form @submit.prevent="submitForm()">
+        <div class="lg:grid grid-cols-3 gap-4 items-center mt-4">
+          <!-- Company Name -->
+          <label for="company_name">Company Name:</label>
           <input
+            placeholder="Enter here . . ."
             type="text"
             id="company_name"
             v-model="form.company_name"
             :class="{ 'border-red-500': formErrors.company_name }"
-            class="flex-1 p-2 border border-gray-300"
+            class="input-text col-span-2"
           />
-        </div>
-
-        <!-- First Name -->
-        <div class="mb-4 flex items-center">
-          <label for="first_name" class="w-32 text-right mr-4"
-            >First Name:</label
-          >
+          <!-- First Name -->
+          <label for="first_name">First Name:</label>
           <input
+            placeholder="Enter here . . ."
             type="text"
             id="firstName"
             v-model="form.first_name"
             :class="{ 'border-red-500': formErrors.first_name }"
-            class="flex-1 p-2 border border-gray-300 rounded w-full"
+            class="input-text col-span-2"
           />
-        </div>
-
-        <!-- Last Name -->
-        <div class="mb-4 flex items-center">
-          <label for="lastName" class="w-32 text-right mr-4">Last Name:</label>
+          <!-- Last Name -->
+          <label for="lastName">Last Name:</label>
           <input
+            placeholder="Enter here . . ."
             type="text"
             id="lastName"
             v-model="form.last_name"
-            class="flex-1 p-2 border border-gray-300 rounded w-full"
+            class="input-text col-span-2"
           />
-        </div>
-
-        <!-- Email -->
-        <div class="mb-4 flex items-center">
-          <label for="email" class="w-32 text-right mr-4">Email:</label>
+          <!-- Email -->
+          <label for="email">Email:</label>
           <input
+            placeholder="Enter here . . ."
             type="email"
             id="email"
             v-model="form.email"
-            class="flex-1 p-2 border border-gray-300 rounded w-full"
+            class="input-text col-span-2"
           />
-        </div>
-
-        <!-- Contact -->
-        <div class="mb-4 flex items-center">
-          <label for="contact" class="w-32 text-right mr-4">Contact:</label>
+          <!-- Contact -->
+          <label for="contact">Contact:</label>
           <input
+            placeholder="Enter here . . ."
             type="text"
             id="contact"
             v-model="form.contact"
             :class="{ 'border-red-500': formErrors.contact }"
-            class="flex-1 p-2 border border-gray-300 rounded w-full"
+            class="input-text col-span-2"
           />
-        </div>
-        <!-- Select Image -->
-        <div class="mb-4 flex items-center">
-          <label for="image_path" class="w-32 text-right mr-4"
-            >Select Image:</label
-          >
+          <!-- Select Image -->
+          <label for="image_path">Select Image:</label>
           <input
+            placeholder="Enter here . . ."
             type="file"
             id="image_path"
             @change="handleImageUpload($event)"
-            class="flex-1 p-2 border border-gray-300 rounded"
+            class="input-text col-span-2"
           />
-        </div>
-
-        <!-- Contact -->
-        <div class="mb-4 flex items-center">
-          <label for="address_1" class="w-32 text-right mr-4">Address 1:</label>
+          <!-- Contact -->
+          <label for="address_1">Address 1:</label>
           <input
+            placeholder="Enter here . . ."
             type="text"
             id="address_1"
             v-model="form.address_1"
-            class="flex-1 p-2 border border-gray-300 rounded w-full"
+            class="input-text col-span-2"
           />
-        </div>
-        <!-- Contact -->
-        <div class="mb-4 flex items-center">
-          <label for="address_2" class="w-32 text-right mr-4">Address 2:</label>
+          <!-- Contact -->
+          <label for="address_2">Address 2:</label>
           <input
+            placeholder="Enter here . . ."
             type="text"
             id="address_2"
             v-model="form.address_2"
-            class="flex-1 p-2 border border-gray-300 rounded w-full"
+            class="input-text col-span-2"
           />
-        </div>
-        <!-- Contact -->
-        <div class="mb-4 flex items-center">
-          <label for="city" class="w-32 text-right mr-4">City:</label>
+          <!-- Contact -->
+          <label for="city">City:</label>
           <input
+            placeholder="Enter here . . ."
             type="text"
             id="city"
             v-model="form.city"
-            class="flex-1 p-2 border border-gray-300 rounded w-full"
+            class="input-text col-span-2"
           />
-        </div>
-        <!-- Contact -->
-        <div class="mb-4 flex items-center">
-          <label for="state" class="w-32 text-right mr-4"
-            >State/Proviance:</label
-          >
+          <!-- Contact -->
+          <label for="state">State/Proviance:</label>
           <input
+            placeholder="Enter here . . ."
             type="text"
             id="state_or_province"
             v-model="form.state_or_province"
-            class="flex-1 p-2 border border-gray-300 rounded w-full"
+            class="input-text col-span-2"
           />
-        </div>
-        <!-- Contact -->
-        <div class="mb-4 flex items-center">
-          <label for="zip" class="w-32 text-right mr-4">Zip:</label>
+          <!-- Contact -->
+          <label for="zip">Zip:</label>
           <input
+            placeholder="Enter here . . ."
             type="text"
             id="zip"
             v-model="form.zip"
-            class="flex-1 p-2 border border-gray-300 rounded w-full"
+            class="input-text col-span-2"
           />
-        </div>
-        <!-- Contact -->
-        <div class="mb-4 flex items-center">
-          <label for="country" class="w-32 text-right mr-4">Country:</label>
+          <!-- Contact -->
+          <label for="country">Country:</label>
           <input
+            placeholder="Enter here . . ."
             type="text"
             id="country"
             v-model="form.country"
-            class="flex-1 p-2 border border-gray-300 rounded w-full"
+            class="input-text col-span-2"
           />
-        </div>
-        <!-- Contact -->
-        <div class="mb-4 flex items-center">
-          <label for="comments" class="w-32 text-right mr-4">Comments:</label>
+          <!-- Contact -->
+          <label for="comments">Comments:</label>
           <textarea
+            placeholder="Enter here . . ."
             type="text"
             id="comments"
             v-model="form.comments"
-            class="flex-1 p-2 border border-gray-300 rounded w-full"
+            class="input-text col-span-2"
           />
-        </div>
-        <div class="mb-4 flex items-center">
-          <label for="account_no" class="w-32 text-right mr-4">Account#:</label>
+          <label for="account_no">Account#:</label>
           <input
+            placeholder="Enter here . . ."
             type="text"
             id="account_no"
             v-model="form.account_no"
-            class="flex-1 p-2 border border-gray-300 rounded w-full"
+            class="input-text col-span-2"
           />
-        </div>
-
-        <div class="mb-4 items-center">
           <button
             type="button"
             @click="addFileInput()"
@@ -166,36 +151,34 @@
           >
             Add Files
           </button>
-        </div>
-
-        <div class="mb-4">
-          <label class="w-32 text-right mr-4">Select Files:</label>
-          <div
-            v-for="(file, index) in form.files"
-            :key="index"
-            class="mb-2 flex items-center col-span-1"
-          >
-            <input
-              type="file"
-              @change="handleFileUpload($event, index)"
-              class="flex-1 p-2 border border-gray-300 rounded w-full"
-              multiple
-            />
-            <button
-              type="button"
-              @click="removeFileInput(index)"
-              class="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+          <div class="col-span-2">
+            <label>Select Files:</label>
+            <div
+              v-for="(file, index) in form.files"
+              :key="index"
+              class="mb-2 flex items-center col-span-1"
             >
-              <i class="bi bi-closed text-white text-lg"></i>
-            </button>
+              <input
+                type="file"
+                @change="handleFileUpload($event, index)"
+                class="input-text"
+                multiple
+              />
+              <button
+                type="button"
+                @click="removeFileInput(index)"
+                class="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                <i class="bi bi-trash text-white text-lg"></i>
+              </button>
+            </div>
           </div>
+          <!-- Submit Button -->
         </div>
-
-        <!-- Submit Button -->
-        <div class="text-center">
+        <div>
           <button
             type="submit"
-            class="in-line px-4 py-2 bg-[#000180] text-white w-full hover:bg-[#000180]-600"
+            class="px-4 py-2 min-w-32 inline-block bg-[#000180] text-white rounded-lg mt-3"
           >
             Submit
           </button>
@@ -204,7 +187,6 @@
     </div>
   </MainLayout>
 </template>
-
 <script setup>
 import MainLayout from "@/components/MainLayout.vue";
 import supplier from "@/stores/supplier_api.js";
@@ -232,18 +214,15 @@ const form = ref({
 });
 // Define reactive form error state
 const formErrors = ref({});
-
 // Basic validation function
 function validateForm() {
   const errors = {};
-
   if (!form.value.company_name)
     errors.company_name = "Company Name is required";
   if (!form.value.first_name) errors.first_name = "First Name is required";
   if (!form.value.email || !/\S+@\S+\.\S+/.test(form.value.email))
     errors.email = "A valid Email is required";
   // Add more validations as needed
-
   formErrors.value = errors;
   return Object.keys(errors).length === 0;
 }
@@ -251,13 +230,11 @@ const handleImageUpload = (event) => {
   const img = event.target.files[0];
   form.value.image_path = img;
 };
-
 const handleFileUpload = (event, index) => {
   const file = event.target.files[0];
   form.value.files[index] = file;
   console.log(form.value.files[index]); // Log the first file
 };
-
 const addFileInput = () => {
   form.value.files.push(null);
 };

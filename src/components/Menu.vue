@@ -69,11 +69,6 @@ const menuItems = reactive([
     icon: "bi bi-cart",
     path: "sales",
   },
-  {
-    name: "User Management",
-    icon: "bi bi-people",
-    path: "users",
-  },
 
   {
     name: "Verify Sales",
@@ -82,8 +77,13 @@ const menuItems = reactive([
   },
   {
     name: "Branch",
-    icon: "bi bi-hand-index-thumb",
+    icon: "bi bi-git",
     path: "branch",
+  },
+  {
+    name: "User Management",
+    icon: "bi bi-people",
+    path: "users",
   },
 ]);
 </script>
