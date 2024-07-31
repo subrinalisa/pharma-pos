@@ -32,7 +32,7 @@ body {
 }
 
 .sidebar {
-    @apply border-b;
+    @apply border-b whitespace-nowrap;
 
     li {
         @apply border border-slate-300 border-b-0;

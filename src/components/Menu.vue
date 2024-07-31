@@ -11,8 +11,7 @@
           :key="'c' + index"
         >
           <router-link :to="{ name: child?.path }">
-            <i :class="item?.icon"></i><span></span
-            ><span>{{ child?.name }}</span>
+            <span></span><span>{{ child?.name }}</span>
           </router-link>
         </li>
       </ul>
@@ -50,26 +49,6 @@ const menuItems = reactive([
     path: "report",
     child: [
       {
-        name: "Customer Report",
-        path: "report",
-      },
-      {
-        name: "Products Report",
-        path: "report",
-      },
-      {
-        name: "Suppliers Report",
-        path: "report",
-      },
-      {
-        name: "Expenses Report",
-        path: "report",
-      },
-      {
-        name: "Purchases Report",
-        path: "report",
-      },
-      {
         name: "Sales Report",
         path: "report",
       },
@@ -100,6 +79,11 @@ const menuItems = reactive([
     name: "Verify Sales",
     icon: "bi bi-hand-index-thumb",
     path: "verify-sales",
+  },
+  {
+    name: "Branch",
+    icon: "bi bi-hand-index-thumb",
+    path: "branch",
   },
 ]);
 </script>

@@ -1,21 +1,16 @@
 <script setup>
 import MainLayout from "@/components/MainLayout.vue";
 import {
-  PlusOutlined,
-  EditOutlined,
   DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
 } from "@ant-design/icons-vue";
 
-import { useDataStore } from "@/stores/data";
-import { storeToRefs } from "pinia";
+import customer from "@/stores/customer_api.js";
 import { onMounted, ref } from "vue";
 
-const dataStore = useDataStore();
-const { getCustomers } = dataStore;
-const { isLoading } = storeToRefs(dataStore);
-
-const customerData = ref(null);
-const allItems = ref(null);
+const customerData = ref([]);
+const allItems = ref([]);
 let page = ref(1);
 let paginate = ref(10);
 
@@ -24,15 +19,20 @@ const deleteItem = (index) => {};
 onMounted(() => getAllCustomers());
 
 const getAllCustomers = async () => {
-  allItems.value = await getCustomers(page.value, paginate.value);
-  customerData.value = allItems.value?.data;
+  const response = await customer.fetchCustomerList(page.value, paginate.value);
+  allItems.value = response.data.data;
+  customerData.value = response.data.data;
+  console.log(allItems.value.length);
 };
-const customerSearch = (input) => {
-  if (input)
-    customerData.value = allItems.value?.data?.filter((customer) =>
-      customer.name.toLowerCase().includes(input.toLowerCase())
-    );
-  else customerData.value = allItems.value?.data;
+const customerSearch = async (input) => {
+  console.log(input);
+  if (input) {
+    const response = await customer.searchCustomerList(input);
+    allItems.value = response.data.data;
+    customerData.value = response.data.data;
+  } else {
+    getAllCustomers();
+  }
 };
 const handlePagination = (pageNo) => {
   page.value = pageNo;
@@ -58,7 +58,7 @@ const handlePagination = (pageNo) => {
         </button>
       </router-link>
     </div>
-    <h6 class="font-medium">Customers ({{ allItems?.data?.length || 0 }})</h6>
+    <h6 class="font-medium">Customers ({{ allItems.length || 0 }})</h6>
     <table
       class="table border-collapse border border-slate-400 w-full bg-white my-4"
     >
@@ -66,11 +66,11 @@ const handlePagination = (pageNo) => {
         <tr>
           <th>Actions</th>
           <th class="text-left">Name</th>
-          <th class="text-left">Person ID</th>
-          <th class="text-left">Email</th>
+          <th class="text-left">Account No</th>
+          <th class="text-left">Company Name</th>
           <th class="text-left">Contact</th>
-          <th class="text-right">Balance</th>
-          <th class="text-left">MRR</th>
+          <th class="text-center">Balance</th>
+          <th class="text-center">MRR</th>
         </tr>
       </thead>
       <tbody class="table-body">
@@ -100,12 +100,12 @@ const handlePagination = (pageNo) => {
               <DeleteOutlined class="align-middle" />
             </button>
           </td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td>{{ item.first_name }}</td>
+          <td>{{ item.account_no }}</td>
+          <td>{{ item.company_name }}</td>
+          <td>{{ item.contact }}</td>
+          <td class="text-right">{{ item.store_account_balance }}</td>
+          <td class="text-right">{{ item.mrr }}</td>
         </tr>
       </tbody>
     </table>

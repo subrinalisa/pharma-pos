@@ -34,6 +34,7 @@ import Expenses from "@/views/expenses/index.vue";
 import ExpensesCreate from "@/views/expenses/create.vue";
 import ExpensesEdit from "@/views/expenses/edit.vue";
 import VerifySales from "@/views/VerifySales.vue";
+import Branch from "@/views/Branch.vue";
 
 const routes = [
   {
@@ -183,6 +184,11 @@ const routes = [
     path: "/permissions/:id",
     name: "permissionsedit",
     component: Permissionsedit,
+  },
+  {
+    path: "/branch",
+    name: "branch",
+    component: Branch,
   },
 
   {
