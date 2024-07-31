@@ -245,6 +245,25 @@ export const useDataStore = defineStore("dataStore", {
         console.log(error);
       }
     },
+    // Expenses List
+    async getSaleReport(from, to) {
+      this.isLoading = true;
+      try {
+        const token = Cookies.get("token");
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+        const response = await axios.get(`${apiBase}/report/detailed-sales-report?sale_date_from=${from}&sale_date_to=${to}`, config);
+        this.isLoading = false;
+        if (response?.status == 200)
+          return response?.data;
+      } catch (error) {
+        this.isLoading = false;
+        console.log(error);
+      }
+    },
   },
 
   persist: true,
