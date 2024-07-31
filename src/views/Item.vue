@@ -19,8 +19,6 @@ const allItems = ref(null);
 let page = ref(1);
 let paginate = ref(10);
 
-const addItem = () => {};
-
 const deleteItem = (index) => {};
 
 onMounted(() => {
@@ -55,7 +53,6 @@ const handlePagination = (pageNo) => {
       />
       <router-link :to="{ name: 'item-add' }">
         <button
-          @click="addItem"
           class="flex items-center px-4 py-2 bg-[#000180] text-white rounded hover:bg-indigo-600"
         >
           <PlusOutlined class="mr-2" />
@@ -63,6 +60,7 @@ const handlePagination = (pageNo) => {
         </button>
       </router-link>
     </div>
+
     <table
       class="table border-collapse border border-slate-400 w-full bg-white mb-4"
     >

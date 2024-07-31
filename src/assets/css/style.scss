@@ -32,9 +32,13 @@ body {
 }
 
 .sidebar {
+    @apply border-b whitespace-nowrap;
+
     li {
+        @apply border border-slate-300 border-b-0;
+
         a {
-            @apply border border-slate-300 inline-block px-5 py-3 w-full
+            @apply inline-block px-5 py-3 w-full
         }
 
         i {
@@ -76,4 +80,8 @@ body {
     td {
         padding: 4px 8px;
     }
+}
+
+.input-text {
+    @apply w-full border bg-transparent rounded-md px-3 py-2 mt-1 text-sm outline-none focus:border-black disabled:bg-[#EBEBE4] disabled:border-[#EBEBE4]
 }
