@@ -38,7 +38,9 @@ body {
         @apply border border-slate-300 border-b-0;
 
         a {
-            @apply inline-block px-5 py-3 w-full
+            @apply inline-block px-5 py-3 w-full;
+
+
         }
 
         i {
@@ -47,6 +49,12 @@ body {
 
         .router-link-exact-active {
             @apply bg-white
+        }
+
+        li {
+            a {
+                @apply px-10
+            }
         }
     }
 
