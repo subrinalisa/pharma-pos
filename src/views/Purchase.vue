@@ -6,6 +6,7 @@ import { PictureOutlined, UserOutlined } from "@ant-design/icons-vue";
 import { storeToRefs } from "pinia";
 import { nextTick, ref, reactive, watch, onMounted } from "vue";
 import { imgBase } from "@/config";
+import { showNotification } from "@/utilities/notification";
 
 const dataStore = useDataStore();
 const { isLoading, isSupplier, paymentList } = storeToRefs(dataStore);
@@ -22,7 +23,7 @@ const gatisAmount = ref(null);
 const supplierInfo = ref();
 const searchInput = ref(null);
 const productQuantity = ref(null);
-const paymentIndex = ref(null);
+const paymentIndex = ref(5);
 const paymentAmount = ref(null);
 const notes = ref(null);
 
@@ -163,6 +164,10 @@ const storeProducts = (product) => {
 onMounted(async () => await getPayment());
 
 const handlePurchase = async () => {
+  if (!productList.value?.length) {
+    showNotification("error", "Please insert a product");
+    return 0;
+  }
   const currDate = moment().format("YYYY-MM-DD");
   const purchaseData = {
     supplier_id: supplierInfo.value?.id,
@@ -309,7 +314,9 @@ const handlePurchase = async () => {
           </button>
         </div>
         <!-- Table -->
-        <table class="table border-collapse border border-slate-400 w-full">
+        <table
+          class="table text-sm border-collapse border border-slate-400 w-full"
+        >
           <thead>
             <tr>
               <th>-</th>
@@ -615,7 +622,7 @@ const handlePurchase = async () => {
           <template v-for="(payment, index) in paymentList" :key="index">
             <button
               type="button"
-              class="border px-3 py-1 rounded-md mt-3"
+              class="border px-3 py-1 rounded-md mt-3 mr-2"
               :class="
                 paymentIndex == payment?.id
                   ? 'bg-blue-600 text-white'
@@ -638,6 +645,13 @@ const handlePurchase = async () => {
             placeholder="Notes . . ."
             v-model="notes"
           ></textarea>
+          <button
+            class="bg-[#000180] px-5 py-2 text-white min-w-fit mt-4 rounded-md"
+            type="button"
+            @click="handlePurchase"
+          >
+            <i class="bi bi-cart mr-2"></i> <span>Purchased</span>
+          </button>
         </div>
       </div>
     </div>

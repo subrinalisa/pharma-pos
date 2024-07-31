@@ -1,21 +1,16 @@
 <script setup>
 import MainLayout from "@/components/MainLayout.vue";
+import expense from "@/stores/expense_api.js";
 import {
-  PlusOutlined,
-  EditOutlined,
   DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
 } from "@ant-design/icons-vue";
 
-import { useDataStore } from "@/stores/data";
-import { storeToRefs } from "pinia";
 import { onMounted, ref } from "vue";
 
-const dataStore = useDataStore();
-const { getExpenses } = dataStore;
-const { isLoading } = storeToRefs(dataStore);
-
-const expenseData = ref(null);
-const allItems = ref(null);
+const expenseData = ref([]);
+const allItems = ref([]);
 let page = ref(1);
 let paginate = ref(10);
 
@@ -24,15 +19,20 @@ const deleteItem = (index) => {};
 onMounted(() => getAllExpenses());
 
 const getAllExpenses = async () => {
-  allItems.value = await getExpenses(page.value, paginate.value);
-  expenseData.value = allItems.value?.data;
+  const response = await expense.fetchExpenseList(page.value, paginate.value);
+  allItems.value = response.data.data;
+  expenseData.value = response.data.data;
+  console.log(allItems.value.length);
 };
-const expenseSearch = (input) => {
-  if (input)
-    expenseData.value = allItems.value?.data?.filter((expense) =>
-      expense.name.toLowerCase().includes(input.toLowerCase())
-    );
-  else expenseData.value = allItems.value?.data;
+
+const expenseSearch = async (input) => {
+  if (input) {
+    const response = await expense.searchExpenseList(input);
+    allItems.value = response.data.data;
+    expenseData.value = response.data.data;
+  } else {
+    getAllExpenses();
+  }
 };
 const handlePagination = (pageNo) => {
   page.value = pageNo;
@@ -58,19 +58,23 @@ const handlePagination = (pageNo) => {
         </button>
       </router-link>
     </div>
-    <h6 class="font-medium">Expenses ({{ allItems?.data?.length || 0 }})</h6>
+    <h6 class="font-medium">Expenses ({{ allItems?.length || 0 }})</h6>
     <table
-      class="table border-collapse border border-slate-400 w-full bg-white my-4"
+      class="table text-sm border-collapse border border-slate-400 w-full bg-white my-4"
     >
       <thead class="table-header">
         <tr>
           <th>Actions</th>
-          <th class="text-left">Name</th>
-          <th class="text-left">Person ID</th>
-          <th class="text-left">Email</th>
-          <th class="text-left">Contact</th>
-          <th class="text-right">Balance</th>
-          <th class="text-left">MRR</th>
+          <th class="text-left">ID</th>
+          <th class="text-left">Type</th>
+          <th class="text-left">Description</th>
+          <th class="text-left">Category</th>
+          <th class="text-left">Date</th>
+          <th class="text-center">Amount</th>
+          <th class="text-center">Payment Type</th>
+          <th class="text-center">Tax</th>
+          <th class="text-center">Receipient Name</th>
+          <th class="text-center">Approved By</th>
         </tr>
       </thead>
       <tbody class="table-body">
@@ -100,12 +104,16 @@ const handlePagination = (pageNo) => {
               <DeleteOutlined class="align-middle" />
             </button>
           </td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td>{{ item.id }}</td>
+          <td>{{ item.type }}</td>
+          <td>{{ item.description }}</td>
+          <td>{{ item.category }}</td>
+          <td>{{ item.date }}</td>
+          <td class="text-right">{{ item.amount }}</td>
+          <td>{{ item.type }}</td>
+          <td class="text-right">{{ item.tax }}</td>
+          <td class="text-right">{{ item.recipient_id }}</td>
+          <td class="text-right">{{ item.approved_by }}</td>
         </tr>
       </tbody>
     </table>

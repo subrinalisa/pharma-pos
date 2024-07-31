@@ -30,6 +30,7 @@ import CustomerEdit from "@/views/customer/edit.vue";
 import SupplierList from "@/views/supplier/List.vue";
 import SupplierAdd from "@/views/supplier/Add.vue";
 import Report from "@/views/Report.vue";
+import PurchaseReport from "@/views/PurchaseReport.vue";
 import Expenses from "@/views/expenses/index.vue";
 import ExpensesCreate from "@/views/expenses/create.vue";
 import ExpensesEdit from "@/views/expenses/edit.vue";
@@ -104,6 +105,12 @@ const routes = [
     path: "/report",
     name: "report",
     component: Report,
+
+  },
+  {
+    path: "/purchase-report",
+    name: "purchase-report",
+    component: PurchaseReport,
   },
   {
     path: "/expenses",

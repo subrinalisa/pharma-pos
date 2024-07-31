@@ -60,7 +60,7 @@ const handlePagination = (pageNo) => {
     </div>
     <h6 class="font-medium">Customers ({{ allItems.length || 0 }})</h6>
     <table
-      class="table border-collapse border border-slate-400 w-full bg-white my-4"
+      class="table text-sm border-collapse border border-slate-400 w-full bg-white my-4"
     >
       <thead class="table-header">
         <tr>
@@ -81,7 +81,7 @@ const handlePagination = (pageNo) => {
           <td colspan="9" class="text-red-600">No Customer Found . . .</td>
         </tr>
         <tr v-for="(item, index) in customerData" :key="index">
-          <td class="text-center">
+          <td class="text-center w-24 whitespace-nowrap">
             <button
               @click="
                 $router.push({
