@@ -35,7 +35,10 @@ import Expenses from "@/views/expenses/index.vue";
 import ExpensesCreate from "@/views/expenses/create.vue";
 import ExpensesEdit from "@/views/expenses/edit.vue";
 import VerifySales from "@/views/VerifySales.vue";
-import Branch from "@/views/Branch.vue";
+
+import Branch from "@/views/branch/index.vue"
+import BranchCreate from "@/views/branch/create.vue";
+import BranchEdit from "@/views/branch/edit.vue";
 
 const routes = [
   {
@@ -197,7 +200,16 @@ const routes = [
     name: "branch",
     component: Branch,
   },
-
+  {
+    path: "/branch/create",
+    name: "branch-create",
+    component: BranchCreate,
+  },
+  {
+    path: "/branch/edit/:id",
+    name: "branch-edit",
+    component: BranchEdit,
+  },
   {
     path: "/:catchAll(.*)",
     redirect: "/",
