@@ -6,6 +6,7 @@ import { PictureOutlined } from "@ant-design/icons-vue";
 import { storeToRefs } from "pinia";
 import { nextTick, ref, reactive, watch, onMounted } from "vue";
 import { imgBase } from "@/config";
+import { showNotification } from "@/utilities/notification";
 
 const dataStore = useDataStore();
 const { isLoading, isSupplier, paymentList } = storeToRefs(dataStore);
@@ -19,7 +20,7 @@ const comment_on_receipt = ref(false);
 const supplierInfo = ref();
 const searchInput = ref(null);
 const productQuantity = ref(null);
-const paymentIndex = ref(3);
+const paymentIndex = ref(5);
 const paymentAmount = ref(null);
 const notes = ref(null);
 const productList = ref([]);
@@ -126,6 +127,10 @@ const storeProducts = (product) => {
 onMounted(async () => await getPayment());
 
 const handleSale = async () => {
+  if (!productList.value?.length) {
+    showNotification("error", "Please insert a product");
+    return 0;
+  }
   const currDate = moment().format("YYYY-MM-DD");
   const purchaseData = {
     sale_date: currDate,
@@ -256,7 +261,9 @@ const handleSale = async () => {
           </button>
         </div>
         <!-- Table -->
-        <table class="table border-collapse border border-slate-400 w-full">
+        <table
+          class="table text-sm border-collapse border border-slate-400 w-full"
+        >
           <thead>
             <tr>
               <th>-</th>
@@ -307,12 +314,12 @@ const handleSale = async () => {
       <div class="right-side">
         <!-- customer -->
         <div class="border border-slate-300 p-2 px-3 mb-4">
-          <button
+          <!-- <button
             type="button"
             class="shadow-inner border border-slate-400 w-full py-2 mb-4"
           >
             ...
-          </button>
+          </button> -->
           <div class="flex mb-4">
             <button
               type="button"
@@ -448,7 +455,7 @@ const handleSale = async () => {
           <template v-for="(payment, index) in paymentList" :key="index">
             <button
               type="button"
-              class="border px-3 py-1 rounded-md mt-3"
+              class="border px-3 py-1 rounded-md mt-3 mr-2"
               :class="
                 paymentIndex == payment?.id
                   ? 'bg-blue-600 text-white'
@@ -480,6 +487,13 @@ const handleSale = async () => {
             />Comment on receipt</label
           >
         </div>
+        <button
+          class="bg-[#000180] px-5 py-2 text-white min-w-fit mt-4 rounded-md"
+          type="button"
+          @click="handleSale"
+        >
+          <i class="bi bi-cart mr-2"></i> <span>Sale</span>
+        </button>
       </div>
     </div>
   </MainLayout>

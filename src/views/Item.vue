@@ -60,32 +60,29 @@ const handlePagination = (pageNo) => {
         </button>
       </router-link>
     </div>
-
+    <h1 class="font-medium mb-4">All Products ({{ allItems?.total || 0 }})</h1>
     <table
-      class="table border-collapse border border-slate-400 w-full bg-white mb-4"
+      class="table text-sm border-collapse border border-slate-400 w-full bg-white mb-4"
     >
       <thead class="table-header">
         <tr>
           <th>Actions</th>
           <th class="text-left">Name</th>
           <th class="text-left">UPC/EAN/ISBN</th>
-          <th class="text-left">Category Full Path</th>
-          <th class="text-right">Selling Price</th>
+          <th class="text-left">Category</th>
+          <th class="text-right">Price</th>
           <th class="text-right">Quantity</th>
           <th class="text-left">Supplier</th>
           <th class="text-left">Product ID</th>
-          <th class="text-right">Location Cost Price</th>
+          <th>Location Cost Price</th>
         </tr>
       </thead>
       <tbody class="table-body">
-        <tr v-if="isLoading">
-          <td colspan="9" class="text-red-600">Loading . . .</td>
-        </tr>
         <tr v-if="!isLoading && !filteredItems?.length">
           <td colspan="9" class="text-red-600">No Product Found . . .</td>
         </tr>
         <tr v-for="(item, index) in filteredItems" :key="index">
-          <td class="text-center">
+          <td class="text-center w-24 whitespace-nowrap">
             <button
               @click="
                 $router.push({ name: 'item-edit', params: { id: item?.id } })
@@ -104,16 +101,16 @@ const handlePagination = (pageNo) => {
 
           <td>{{ item.name }}</td>
           <td>
-            {{ item.upc_ean_isbn }}
+            {{ item.upc_ean_isbn || "-" }}
           </td>
           <td>
             {{ item.category ? item.category.name : "N/A" }}
           </td>
           <td class="text-right">
-            {{ item.sellingPrice || "-" }}
+            {{ item?.product_prices?.selling_price || "0.00" }}
           </td>
           <td class="text-right">
-            {{ item.quantity || "-" }}
+            {{ item?.pack_size?.quantity || "0.00" }}
           </td>
           <td>
             {{
@@ -123,11 +120,14 @@ const handlePagination = (pageNo) => {
             }}
           </td>
           <td>
-            {{ item.product_id }}
+            {{ item.product_id || "-" }}
           </td>
-          <td class="text-right">
-            {{ item.locationCostPrice || "-" }}
+          <td class="text-center">
+            {{ item.locationCostPrice || "Not Set" }}
           </td>
+        </tr>
+        <tr v-if="isLoading">
+          <td colspan="9" class="text-red-600">Loading . . .</td>
         </tr>
       </tbody>
     </table>
