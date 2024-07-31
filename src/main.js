@@ -1,4 +1,5 @@
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
+import VueApexCharts from "vue3-apexcharts";
 import { createPinia } from "pinia";
 import { createApp } from "vue";
 
@@ -12,4 +13,4 @@ const app = createApp(App);
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 
-app.use(router).use(Antd).use(pinia).mount("#app");
+app.use(router).use(Antd).use(pinia).use(VueApexCharts).mount("#app");

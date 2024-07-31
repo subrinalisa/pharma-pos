@@ -53,7 +53,11 @@ export default {
           },
         };
 
-        const response = await axios.post(`${apiBase}/product-store`, payload, config);
+        const response = await axios.post(
+          `${apiBase}/product-store`,
+          payload,
+          config
+        );
 
         console.log("Save successful:", response.data);
       } catch (error) {

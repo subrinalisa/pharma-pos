@@ -9,8 +9,8 @@ import { useRouter } from "vue-router";
 const searchQuery = ref("");
 const isLoading = ref(false);
 
-const roles = ref([]);
-const backupRoles = ref([]);
+const permissions = ref([]);
+const backupPermissions = ref([]);
 
 const isSnackbarVisible = ref(false);
 const deletedMessage = ref(null);
@@ -18,10 +18,10 @@ const deletedMessage = ref(null);
 const router = useRouter();
 
 onMounted(async () => {
-  await getRoles();
+  await getPermissions();
 });
 
-const getRoles = async () => {
+const getPermissions = async () => {
   isLoading.value = true;
   try {
     const token = Cookies.get("token");
@@ -30,9 +30,9 @@ const getRoles = async () => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.get(`${apiBase}/roles`, config);
-    roles.value = res?.data?.role || [];
-    backupRoles.value = res?.data?.role || [];
+    const res = await axios.get(`${apiBase}/permissions`, config);
+    permissions.value = res?.data?.permissions || [];
+    backupPermissions.value = res?.data?.permissions || [];
   } catch (err) {
     console.error(err);
   } finally {
@@ -43,15 +43,15 @@ const getRoles = async () => {
 const handleSearch = () => {
   const searchTerm = searchQuery.value.toLowerCase();
   if (searchTerm) {
-    roles.value = backupRoles.value.filter((role) =>
-      role.name.toLowerCase().includes(searchTerm)
+    permissions.value = backupPermissions.value.filter((permission) =>
+      permission.name.toLowerCase().includes(searchTerm)
     );
   } else {
-    roles.value = backupRoles.value;
+    permissions.value = backupPermissions.value;
   }
 };
 
-const deleteRole = async (id) => {
+const deletePermission = async (id) => {
   isLoading.value = true;
   try {
     const token = Cookies.get("token");
@@ -60,11 +60,11 @@ const deleteRole = async (id) => {
         Authorization: `Bearer ${token}`,
       },
     };
-    const res = await axios.delete(`${apiBase}/roles/${id}`, config);
+    const res = await axios.delete(`${apiBase}/permissions/${id}`, config);
     if (res.status === 200 || res.status === 204) {
-      deletedMessage.value = "Role deleted successfully";
+      deletedMessage.value = "Permission deleted successfully";
       isSnackbarVisible.value = true;
-      await getRoles(); // Re-fetch the permissions
+      await getPermissions(); // Re-fetch the permissions
     } else {
       console.error(res.data.message);
     }
@@ -96,47 +96,42 @@ const deleteRole = async (id) => {
             class="border border-gray-300 rounded p-2"
           />
           <button
-            @click="$router.push({ path: 'roleadd' })"
+            @click="$router.push({ path: 'permissionsadd' })"
             class="bg-blue-500 text-white px-4 py-2 rounded"
           >
-            Add New Role
+            Add New Permission
           </button>
         </div>
         <table class="min-w-full bg-white border border-gray-300">
           <thead>
             <tr>
-              <th class="py-2 px-4 border border-gray-300">Role Name</th>
-              <th class="py-2 px-4 border border-gray-300">Permissions</th>
+              <th class="py-2 px-4 border border-gray-300">Permission Name</th>
               <th class="py-2 px-4 border border-gray-300">Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="role in roles" :key="role.id" class="border-t">
+            <tr
+              v-for="permission in permissions"
+              :key="permission.id"
+              class="border-t"
+            >
               <td class="py-2 px-4 border border-gray-300">
-                {{ role.name }}
-              </td>
-              <td class="py-2 px-4 border border-gray-300">
-                <div v-if="!role.permissions.length">-</div>
-                <div v-else class="flex gap-2 flex-wrap">
-                  <span
-                    v-for="(permission, index) in role.permissions"
-                    :key="index"
-                    class="bg-blue-200 text-blue-800 rounded-full px-2"
-                  >
-                    {{ permission.name }}
-                  </span>
-                </div>
+                {{ permission.name }}
               </td>
               <td class="py-2 px-4 border-gray-300 flex gap-2">
                 <button
-                  @click="deleteRole(role.id)"
+                  @click="deletePermission(permission.id)"
                   class="bg-red-500 text-white px-2 py-1 rounded"
                 >
                   Delete
                 </button>
                 <button
                   @click="
-                    $router.push({ name: 'roleedit', params: { id: role.id } })
+                    $router.push({
+                      name: 'permissionsedit',
+                      params: { id: permission.id },
+                      query: { name: permission.name },
+                    })
                   "
                   class="bg-yellow-500 text-white px-2 py-1 rounded"
                 >

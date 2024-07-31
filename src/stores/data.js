@@ -24,37 +24,18 @@ export const useDataStore = defineStore("dataStore", {
         this.isLoading = false;
         if (response?.status === 200) {
           const res = response?.data;
+          this.userInfo = res?.user;
           Cookies.set("token", res?.token, { expires: null });
           showNotification("success", res?.message || "Welcome back! You've successfully logged in");
           router.push({ name: "home" });
         }
       } catch (error) {
         this.isLoading = false;
+        this.userInfo = null;
         Cookies.set("token", "");
         if (error?.response?.status == 401)
           showNotification("error", error?.response?.data?.message || "Login failed. Please check your credentials and try again");
         else showNotification("error", error?.message);
-      }
-    },
-    // User Info
-    async getUser() {
-      this.isLoading = true;
-      try {
-        const token = Cookies.get("token");
-        const config = {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        }
-        const response = await axios.get(`${apiBase}/loggeduser`, config);
-        this.isLoading = false;
-        if (response?.status == 200)
-          this.userInfo = response?.data?.user;
-
-      } catch (error) {
-        this.isLoading = false;
-        this.userInfo = null;
-        console.log(error);
       }
     },
     // Product Search
@@ -79,7 +60,6 @@ export const useDataStore = defineStore("dataStore", {
     },
     // Product Sale Search
     async getSaleProduct(query) {
-
       this.isLoading = true;
       try {
         const token = Cookies.get("token");
@@ -119,7 +99,6 @@ export const useDataStore = defineStore("dataStore", {
     },
     // Customer Search
     async getCustomer() {
-
       try {
         const token = Cookies.get("token");
         const config = {
@@ -206,6 +185,82 @@ export const useDataStore = defineStore("dataStore", {
           return 1
         }
       } catch (error) {
+        console.log(error);
+      }
+    },
+    // Product List
+    async getProducts(page, paginate) {
+      this.isLoading = true;
+      try {
+        const token = Cookies.get("token");
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+        const response = await axios.get(`${apiBase}/all-products-paginated?page=${page}&paginate=${paginate}`, config);
+        this.isLoading = false;
+        if (response?.status == 200)
+          return response?.data;
+      } catch (error) {
+        this.isLoading = false;
+        console.log(error);
+      }
+    },
+    // Customer List
+    async getCustomers(page, paginate) {
+      this.isLoading = true;
+      try {
+        const token = Cookies.get("token");
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+        const response = await axios.get(`${apiBase}/all-customers-paginated?page=${page}&paginate=${paginate}`, config);
+        this.isLoading = false;
+        if (response?.status == 200)
+          return response?.data;
+      } catch (error) {
+        this.isLoading = false;
+        console.log(error);
+      }
+    },
+    // Expenses List
+    async getExpenses(page, paginate) {
+      this.isLoading = true;
+      try {
+        const token = Cookies.get("token");
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+        const response = await axios.get(`${apiBase}/all-customers-paginated?page=${page}&paginate=${paginate}`, config);
+        this.isLoading = false;
+        if (response?.status == 200)
+          return response?.data;
+      } catch (error) {
+        this.isLoading = false;
+        console.log(error);
+      }
+    },
+    // Expenses List
+    async getSaleReport(from, to) {
+      this.isLoading = true;
+      try {
+        const token = Cookies.get("token");
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+        const response = await axios.get(`${apiBase}/report/detailed-sales-report?sale_date_from=${from}&sale_date_to=${to}`, config);
+        this.isLoading = false;
+        if (response?.status == 200)
+          return response?.data;
+      } catch (error) {
+        this.isLoading = false;
         console.log(error);
       }
     },

@@ -152,41 +152,38 @@ const avatarText = (name) => {
       >
         <div class="loader"></div>
       </div>
-      <v-snackbar
-        v-model="isSnackbarVisible"
-        :timeout="2000"
-        class="fixed top-4 right-4"
-      >
-        {{ deletedMessage }}
-      </v-snackbar>
+
       <div class="card bg-white shadow-md rounded-lg p-6">
-        <div class="flex justify-between items-center mb-4">
+        <div
+          class="flex flex-col md:flex-row justify-between items-center mb-4 w-full space-y-4 md:space-y-0 md:space-x-4"
+        >
           <input
             v-model="searchQuery"
             @input="handleSearch"
             type="text"
-            placeholder="Search"
-            class="border border-gray-300 rounded p-2"
+            placeholder="Search User name .........................."
+            class="flex-1 border border-gray-300 rounded p-2 w-full md:w-auto"
           />
           <button
             @click="$router.push({ path: 'role' })"
-            class="bg-blue-500 text-white px-4 py-2 rounded"
+            class="bg-blue-500 text-white px-4 py-2 rounded w-full md:w-auto"
           >
             Role List
           </button>
           <button
             @click="$router.push({ path: 'permissions' })"
-            class="bg-blue-500 text-white px-4 py-2 rounded"
+            class="bg-blue-500 text-white px-4 py-2 rounded w-full md:w-auto"
           >
             Permissions List
           </button>
           <button
             @click="$router.push({ path: 'useradd' })"
-            class="bg-blue-500 text-white px-4 py-2 rounded"
+            class="bg-blue-500 text-white px-4 py-2 rounded w-full md:w-auto"
           >
             Add New User
           </button>
         </div>
+
         <table class="min-w-full bg-white border border-gray-300">
           <thead>
             <tr>
@@ -254,7 +251,7 @@ const avatarText = (name) => {
                 <button
                   @click="
                     $router.push({
-                      path: 'useredit',
+                      name: 'useredit',
                       params: { id: user.id },
                       query: { name: user.name, email: user?.email },
                     })

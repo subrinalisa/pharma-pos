@@ -4,7 +4,6 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import MainLayout from "@/components/MainLayout.vue";
 import { apiBase } from "@/config";
-
 import { useRouter } from "vue-router";
 
 // Define props and emits
@@ -21,21 +20,19 @@ const isLoading = ref(false);
 const permissionsList = ref([]);
 const form = reactive({
   name: "",
-  permission: [],
 });
 
 // Reset function to clear form and close drawer
 const reset = () => {
   emit("update:isDrawerOpen", false);
   form.name = "";
-  form.permission = [];
 };
 
 // Get the router instance
 const router = useRouter();
 
-// Function to add new role
-const addNewRole = async () => {
+// Function to add new permissions
+const addNewPermissions = async () => {
   isLoading.value = true;
   try {
     const token = Cookies.get("token");
@@ -47,16 +44,15 @@ const addNewRole = async () => {
 
     const payload = {
       name: form.name,
-      permission: form.permission,
     };
 
     // Debugging: Log the payload to ensure it's correct
     console.log("Payload:", payload);
 
-    const res = await axios.post(`${apiBase}/roles`, payload, config);
+    const res = await axios.post(`${apiBase}/permissions`, payload, config);
 
     if (res) {
-      router.push({ name: "role" });
+      router.push({ name: "permissions" });
     } else {
       console.error(res.data.message);
     }
@@ -66,67 +62,23 @@ const addNewRole = async () => {
     isLoading.value = false;
   }
 };
-
-// Fetch permissions on component mount
-onMounted(async () => {
-  const token = Cookies.get("token");
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-
-  try {
-    const res = await axios.get(`${apiBase}/permissions`, config);
-    permissionsList.value = res.data.permissions.map((permission) => ({
-      id: permission.id,
-      name: permission.name,
-    }));
-  } catch (err) {
-    console.error(err);
-  }
-});
 </script>
 
 <template>
   <MainLayout>
-    <form @submit.prevent="addNewRole" class="space-y-6">
+    <form @submit.prevent="addNewPermissions" class="space-y-6">
       <div class="space-y-4">
         <div class="flex flex-col">
-          <label for="name" class="text-sm font-semibold mb-2">Role Name</label>
+          <label for="name" class="text-sm font-semibold mb-2"
+            >Permission Name</label
+          >
           <input
             id="name"
             v-model="form.name"
             type="text"
-            placeholder="Enter role name.."
+            placeholder="Enter permission name.."
             class="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-        </div>
-
-        <div class="flex flex-col">
-          <label for="permissions" class="text-sm font-semibold mb-2"
-            >Select Permissions</label
-          >
-          <div class="flex flex-col gap-2">
-            <div
-              v-for="permission in permissionsList"
-              :key="permission.id"
-              class="flex items-center"
-            >
-              <input
-                type="checkbox"
-                :id="`permission-${permission.name}`"
-                :value="permission.name"
-                v-model="form.permission"
-                class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-              />
-              <label
-                :for="`permission-${permission.name}`"
-                class="ml-2 text-sm"
-                >{{ permission.name }}</label
-              >
-            </div>
-          </div>
         </div>
       </div>
 

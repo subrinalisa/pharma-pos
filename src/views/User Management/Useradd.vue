@@ -82,93 +82,77 @@ onMounted(async () => {
 
 <template>
   <MainLayout>
-    <v-navigation-drawer
-      temporary
-      :width="400"
-      location="end"
-      class="scrollable-content"
-      :model-value="props.isDrawerOpen"
-    >
-      <v-card flat>
-        <v-card-text>
-          <form @submit.prevent="addNewUser">
-            <div class="p-4 space-y-4">
-              <div class="flex flex-col">
-                <label for="name" class="text-sm font-semibold mb-1"
-                  >Name</label
-                >
-                <input
-                  id="name"
-                  v-model="form.name"
-                  type="text"
-                  placeholder="Enter here.."
-                  class="border border-gray-300 rounded-lg p-2"
-                />
-              </div>
+    <form @submit.prevent="addNewUser">
+      <div class="p-4 space-y-4">
+        <div class="flex flex-col">
+          <label for="name" class="text-sm font-semibold mb-1">Name</label>
+          <input
+            id="name"
+            v-model="form.name"
+            type="text"
+            placeholder="Enter here.."
+            class="border border-gray-300 rounded-lg p-2"
+          />
+        </div>
 
-              <div class="flex flex-col">
-                <label for="email" class="text-sm font-semibold mb-1"
-                  >Email</label
-                >
-                <input
-                  id="email"
-                  v-model="form.email"
-                  type="email"
-                  placeholder="example@demo.com"
-                  class="border border-gray-300 rounded-lg p-2"
-                />
-              </div>
+        <div class="flex flex-col">
+          <label for="email" class="text-sm font-semibold mb-1">Email</label>
+          <input
+            id="email"
+            v-model="form.email"
+            type="email"
+            placeholder="example@demo.com"
+            class="border border-gray-300 rounded-lg p-2"
+          />
+        </div>
 
-              <div class="flex flex-col">
-                <label for="password" class="text-sm font-semibold mb-1"
-                  >Password</label
-                >
-                <input
-                  id="password"
-                  v-model="form.password"
-                  type="password"
-                  placeholder="Password"
-                  class="border border-gray-300 rounded-lg p-2"
-                />
-              </div>
+        <div class="flex flex-col">
+          <label for="password" class="text-sm font-semibold mb-1"
+            >Password</label
+          >
+          <input
+            id="password"
+            v-model="form.password"
+            type="password"
+            placeholder="Password"
+            class="border border-gray-300 rounded-lg p-2"
+          />
+        </div>
 
-              <div class="flex flex-col">
-                <label for="roles" class="text-sm font-semibold mb-1"
-                  >Select Role</label
-                >
-                <select
-                  id="roles"
-                  v-model="form.roles"
-                  class="border border-gray-300 rounded-lg p-2"
-                >
-                  <option v-for="(role, index) in roleList" :key="index">
-                    {{ role }}
-                  </option>
-                  <!-- Corrected option value -->
-                </select>
-              </div>
+        <div class="flex flex-col">
+          <label for="roles" class="text-sm font-semibold mb-1"
+            >Select Role</label
+          >
+          <select
+            id="roles"
+            v-model="form.roles"
+            class="border border-gray-300 rounded-lg p-2"
+          >
+            <option v-for="(role, index) in roleList" :key="index">
+              {{ role }}
+            </option>
+            <!-- Corrected option value -->
+          </select>
+        </div>
 
-              <div class="flex gap-4 mt-4">
-                <button
-                  type="submit"
-                  class="bg-blue-500 text-white px-4 py-2 rounded-lg"
-                  :disabled="isLoading"
-                >
-                  Submit
-                </button>
-                <button
-                  type="button"
-                  @click="reset"
-                  class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </form>
-        </v-card-text>
-      </v-card>
-    </v-navigation-drawer>
+        <div class="flex gap-4 mt-4">
+          <button
+            type="submit"
+            class="bg-blue-500 text-white px-4 py-2 rounded-lg"
+            :disabled="isLoading"
+          >
+            Submit
+          </button>
+          <button
+            type="button"
+            @click="reset"
+            class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </form>
   </MainLayout>
 </template>
 

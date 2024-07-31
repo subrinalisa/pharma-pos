@@ -4,6 +4,17 @@
       <router-link :to="{ name: item?.path }">
         <i :class="item?.icon"></i><span>{{ item?.name }}</span>
       </router-link>
+      <ul class="bg-white" v-if="item?.child">
+        <li
+          class="px-10"
+          v-for="(child, index) in item?.child"
+          :key="'c' + index"
+        >
+          <router-link :to="{ name: child?.path }">
+            <span></span><span>{{ child?.name }}</span>
+          </router-link>
+        </li>
+      </ul>
     </li>
   </ul>
 </template>
@@ -13,9 +24,40 @@ import { reactive } from "vue";
 
 const menuItems = reactive([
   {
+    name: "Dashboard",
+    icon: "bi bi-speedometer2",
+    path: "dashboard",
+  },
+  {
+    name: "Customer",
+    icon: "bi bi-people",
+    path: "customer",
+  },
+  {
     name: "Item",
     icon: "bi bi-inbox",
     path: "item",
+  },
+  {
+    name: "Suppliers",
+    icon: "bi bi-download",
+    path: "supplier",
+  },
+  {
+    name: "Reports",
+    icon: "bi bi-graph-down",
+    path: "report",
+    child: [
+      {
+        name: "Sales Report",
+        path: "report",
+      },
+    ],
+  },
+  {
+    name: "Expenses",
+    icon: "bi bi-cash-coin",
+    path: "expenses",
   },
   {
     name: "Purchases",
@@ -32,26 +74,16 @@ const menuItems = reactive([
     icon: "bi bi-people",
     path: "users",
   },
-  // {
-  //   name: "Customer",
-  //   icon: "bi bi-people",
-  //   path: "customer",
-  // },
-  // {
-  //   name: "Suppliers",
-  //   icon: "bi bi-download",
-  //   path: "supplier",
-  // },
-  // {
-  //   name: "Reports",
-  //   icon: "bi bi-graph-down",
-  //   path: "report",
-  // },
 
-  // {
-  //   name: "Renew",
-  //   icon: "bi bi-hand-index-thumb",
-  //   path: "renew",
-  // },
+  {
+    name: "Verify Sales",
+    icon: "bi bi-hand-index-thumb",
+    path: "verify-sales",
+  },
+  {
+    name: "Branch",
+    icon: "bi bi-hand-index-thumb",
+    path: "branch",
+  },
 ]);
 </script>

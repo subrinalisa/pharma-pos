@@ -5,17 +5,12 @@ import Cookies from "js-cookie";
 import MainLayout from "@/components/MainLayout.vue";
 import { apiBase } from "@/config";
 
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
-const props = defineProps({
-  isDrawerOpen: Boolean,
-  fetchUsers: Function,
-  roleId: [String, Number],
-});
-
+const route = useRoute();
+const router = useRouter();
 const emit = defineEmits(["update:isDrawerOpen"]);
 
-// State management
 const isSnackbarVisible = ref(false);
 const isLoading = ref(false);
 const permissionsList = ref([]);
@@ -24,18 +19,20 @@ const form = reactive({
   permission: [],
 });
 
-// Reset function to clear form and close drawer
+const roleId = ref(route.params.id || null);
+
 const reset = () => {
   emit("update:isDrawerOpen", false);
   form.name = "";
   form.permission = [];
 };
 
-// Get the router instance
-const router = useRouter();
-
-// Function to add or update role
 const addOrUpdateRole = async () => {
+  if (!form.name || form.permission.length === 0) {
+    isSnackbarVisible.value = true;
+    return;
+  }
+
   isLoading.value = true;
   try {
     const token = Cookies.get("token");
@@ -50,13 +47,12 @@ const addOrUpdateRole = async () => {
       permission: form.permission,
     };
 
-    // Debugging: Log the payload to ensure it's correct
     console.log("Payload:", payload);
 
     let res;
-    if (props.roleId) {
+    if (roleId.value) {
       res = await axios.put(
-        `${apiBase}/roles/${props.roleId}`,
+        `${apiBase}/roles/${roleId.value}`,
         payload,
         config
       );
@@ -64,7 +60,7 @@ const addOrUpdateRole = async () => {
       res = await axios.post(`${apiBase}/roles`, payload, config);
     }
 
-    if (res) {
+    if (res.status === 200 || res.status === 201) {
       router.push({ name: "role" });
     } else {
       console.error(res.data.message);
@@ -76,7 +72,6 @@ const addOrUpdateRole = async () => {
   }
 };
 
-// Fetch permissions on component mount
 const fetchPermissions = async () => {
   const token = Cookies.get("token");
   const config = {
@@ -97,15 +92,15 @@ const fetchPermissions = async () => {
 };
 
 const fetchRoleData = async () => {
-  const token = Cookies.get("token");
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-
+  if (!roleId.value) return;
   try {
-    const res = await axios.get(`${apiBase}/roles/${route.params.id}`, config);
+    const token = Cookies.get("token");
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const res = await axios.get(`${apiBase}/roles/${roleId.value}`, config);
     const roleData = res.data.role;
     form.name = roleData.name;
     form.permission = roleData.permissions.map((permission) => permission.name);
@@ -114,91 +109,73 @@ const fetchRoleData = async () => {
   }
 };
 
-//console.log(roleData);
-
-// Watch for roleId changes to fetch the role data
-watch(() => props.roleId, fetchRoleData);
-
-// Fetch permissions on component mount
 onMounted(async () => {
   await fetchPermissions();
-  await fetchRoleData();
+  if (roleId.value) {
+    await fetchRoleData();
+  }
 });
 </script>
 
 <template>
   <MainLayout>
-    <v-navigation-drawer
-      temporary
-      :width="400"
-      location="end"
-      class="scrollable-content"
-      :model-value="props.isDrawerOpen"
-    >
-      <v-card flat>
-        <v-card-text>
-          <form @submit.prevent="addOrUpdateRole" class="space-y-6">
-            <div class="space-y-4">
-              <div class="flex flex-col">
-                <label for="name" class="text-sm font-semibold mb-2"
-                  >Role Name</label
-                >
-                <input
-                  id="name"
-                  v-model="form.name"
-                  type="text"
-                  placeholder="Enter role name.."
-                  class="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
+    <form @submit.prevent="addOrUpdateRole" class="space-y-6">
+      <div class="space-y-4">
+        <div class="flex flex-col">
+          <label for="name" class="text-sm font-semibold mb-2">Role Name</label>
+          <input
+            id="name"
+            v-model="form.name"
+            type="text"
+            placeholder="Enter role name.."
+            class="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
 
-              <div class="flex flex-col">
-                <label for="permissions" class="text-sm font-semibold mb-2"
-                  >Select Permissions</label
-                >
-                <div class="flex flex-col gap-2">
-                  <div
-                    v-for="permission in permissionsList"
-                    :key="permission.id"
-                    class="flex items-center"
-                  >
-                    <input
-                      type="checkbox"
-                      :id="`permission-${permission.name}`"
-                      :value="permission.name"
-                      v-model="form.permission"
-                      class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                    />
-                    <label
-                      :for="`permission-${permission.name}`"
-                      class="ml-2 text-sm"
-                      >{{ permission.name }}</label
-                    >
-                  </div>
-                </div>
-              </div>
+        <div class="flex flex-col">
+          <label for="permissions" class="text-sm font-semibold mb-2"
+            >Select Permissions</label
+          >
+          <div class="flex flex-col gap-2">
+            <div
+              v-for="permission in permissionsList"
+              :key="permission.id"
+              class="flex items-center"
+            >
+              <input
+                type="checkbox"
+                :id="`permission-${permission.name}`"
+                :value="permission.name"
+                v-model="form.permission"
+                class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
+              <label
+                :for="`permission-${permission.name}`"
+                class="ml-2 text-sm"
+                >{{ permission.name }}</label
+              >
             </div>
+          </div>
+        </div>
+      </div>
 
-            <div class="flex gap-4 mt-4">
-              <button
-                type="submit"
-                class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-                :disabled="isLoading"
-              >
-                Submit
-              </button>
-              <button
-                type="button"
-                @click="reset"
-                class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </v-card-text>
-      </v-card>
-    </v-navigation-drawer>
+      <div class="flex gap-4 mt-4">
+        <button
+          type="submit"
+          class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+          :disabled="isLoading"
+        >
+          Submit
+        </button>
+        <button
+          type="button"
+          @click="reset"
+          class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
   </MainLayout>
 </template>
 
