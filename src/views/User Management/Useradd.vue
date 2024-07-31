@@ -53,7 +53,7 @@ const addNewUser = async () => {
     const res = await axios.post(`${apiBase}/register`, form, config);
 
     if (res) {
-      router.push({ name: "users" });
+      router.push({ name: "item-add" });
     }
   } catch (err) {
     console.error(err);
