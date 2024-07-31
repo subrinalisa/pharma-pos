@@ -96,6 +96,9 @@ watch(
   paymentAmount,
   (newAmount) => {
     priceList.due = (priceList.total - newAmount)?.toFixed(2);
+    if (priceList.due < 0) {
+      priceList.due = 0;
+    }
   },
   { deep: true }
 );
