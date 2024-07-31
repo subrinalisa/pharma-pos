@@ -2,12 +2,12 @@
 import { apiBase } from "@/config";
 import { onMounted, ref } from "vue";
 import MainLayout from "@/components/MainLayout.vue";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons-vue";
 import axios from "axios";
 import Cookies from "js-cookie";
 
 // Store
 const searchQuery = ref("");
-const isDrawerOpen = ref(false);
 const isSnackbarVisible = ref(false);
 const isDeleteUser = ref(false);
 const deletedMessage = ref(null);
@@ -185,20 +185,40 @@ const avatarText = (name) => {
         </div>
 
         <table
-          class="table text-sm border-collapse border border-slate-400 w-full bg-white my-4"
+          class="table text-sm border-collapse border border-slate-400 w-full bg-white mb-4"
         >
           <thead class="table-header">
             <tr>
+              <th>Actions</th>
               <th>User</th>
               <th>Email</th>
               <th>Role</th>
               <th>Permissions</th>
               <th>Status</th>
-              <th>Actions</th>
             </tr>
           </thead>
           <tbody class="table-body">
             <tr v-for="user in users" :key="user.id" class="border-t">
+              <td class="text-center w-24 whitespace-nowrap">
+                <button
+                  @click="
+                    $router.push({
+                      name: 'useredit',
+                      params: { id: user.id },
+                      query: { name: user.name, email: user?.email },
+                    })
+                  "
+                  class="px-2 py-1 bg-[#000180] text-white rounded hover:bg-indigo-600 mr-2"
+                >
+                  <EditOutlined class="align-middle" />
+                </button>
+                <button
+                  @click="deleteUser(user.id)"
+                  class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                >
+                  <DeleteOutlined class="align-middle" />
+                </button>
+              </td>
               <td>
                 {{ user.name }}
               </td>
@@ -227,7 +247,7 @@ const avatarText = (name) => {
                   </span>
                 </div>
               </td>
-              <td>
+              <td class="text-center">
                 <span
                   :class="`px-2 py-1 rounded-full ${
                     user.status == 1
@@ -237,26 +257,6 @@ const avatarText = (name) => {
                 >
                   {{ user.status == 1 ? "Active" : "Inactive" }}
                 </span>
-              </td>
-              <td>
-                <button
-                  @click="deleteUser(user.id)"
-                  class="bg-red-500 text-white px-2 py-1 rounded"
-                >
-                  Delete
-                </button>
-                <button
-                  @click="
-                    $router.push({
-                      name: 'useredit',
-                      params: { id: user.id },
-                      query: { name: user.name, email: user?.email },
-                    })
-                  "
-                  class="bg-yellow-500 text-white px-2 py-1 rounded"
-                >
-                  Edit
-                </button>
               </td>
             </tr>
           </tbody>
