@@ -622,42 +622,42 @@ export default {
                       <input
                         type="number"
                         v-model="pack_size.quantity"
-                        class="w-full border border-gray rounded-md shadow-sm px-2 py-1"
+                        class="w-full border border-gray rounded-md shadow-sm px-2 py-1 text-right"
                       />
                     </td>
                     <td class="border px-4 py-2">
                       <input
                         type="number"
                         v-model="pack_size.tp"
-                        class="w-full border border-gray rounded-md shadow-sm px-2 py-1"
+                        class="w-full border border-gray rounded-md shadow-sm px-2 py-1 text-right"
                       />
                     </td>
                     <td class="border px-4 py-2">
                       <input
                         type="number"
                         v-model="pack_size.vat_percent"
-                        class="w-full border border-gray rounded-md shadow-sm px-2 py-1"
+                        class="w-full border border-gray rounded-md shadow-sm px-2 py-1 text-right"
                       />
                     </td>
                     <td class="border px-4 py-2">
                       <input
                         type="number"
                         v-model="pack_size.vat"
-                        class="w-full border border-gray rounded-md shadow-sm px-2 py-1"
+                        class="w-full border border-gray rounded-md shadow-sm px-2 py-1 text-right"
                       />
                     </td>
                     <td class="border px-4 py-2">
                       <input
                         type="number"
                         v-model="pack_size.selling_price"
-                        class="w-full border border-gray rounded-md shadow-sm px-2 py-1"
+                        class="w-full border border-gray rounded-md shadow-sm px-2 py-1 text-right"
                       />
                     </td>
                     <td class="border px-4 py-2">
                       <input
                         type="number"
                         v-model="pack_size.default_unit"
-                        class="w-full border border-gray rounded-md shadow-sm px-2 py-1"
+                        class="w-full border border-gray rounded-md shadow-sm px-2 py-1 text-right"
                       />
                     </td>
                   </tr>
@@ -681,7 +681,7 @@ export default {
           <input
             type="number"
             v-model="attribute.values"
-            class="w-full border border-gray rounded-md shadow-sm px-2 py-1 mb-4"
+            class="w-full border border-gray rounded-md shadow-sm px-2 py-1 mb-4 text-right"
           />
         </div>
       </div>
@@ -702,25 +702,25 @@ export default {
           <input
             type="number"
             v-model="variation.attributes"
-            class="w-full border border-gray rounded-md shadow-sm px-2 py-1 mb-4"
+            class="w-full border border-gray rounded-md shadow-sm px-2 py-1 mb-4 text-right"
           />
           <label class="block text-gray-700 font-semibold mb-2">Item Number</label>
           <input
             type="number"
             v-model="variation.item_number"
-            class="w-full border border-gray rounded-md shadow-sm px-2 py-1 mb-4"
+            class="w-full border border-gray rounded-md shadow-sm px-2 py-1 mb-4 text-right"
           />
           <label class="block text-gray-700 font-semibold mb-2">Is E-commerce Item</label>
           <input
             type="number"
             v-model="variation.is_ecommerce_item"
-            class="w-full border border-gray rounded-md shadow-sm px-2 py-1 mb-4"
+            class="w-full border border-gray rounded-md shadow-sm px-2 py-1 mb-4 text-right"
           />
           <label class="block text-gray-700 font-semibold mb-2">Variation ID</label>
           <input
             type="number"
             v-model="variation.variation_id"
-            class="w-full border border-gray rounded-md shadow-sm px-2 py-1 mb-4"
+            class="w-full border border-gray rounded-md shadow-sm px-2 py-1 mb-4 text-right"
           />
         </div>
       </div>
@@ -744,7 +744,7 @@ export default {
       </div>
     </form>
   </div>
-</template>
+      </template>
 
 
             <!-- <Pricing v-if="activeTab=='pricing'"></Pricing> -->
@@ -764,7 +764,7 @@ export default {
                   <input
                     type="number"
                     v-model="product_prices.cost_price_without_tax"
-                    class="border border-grey rounded-md shadow-sm px-2 py-1 w-full"
+                    class="border border-grey rounded-md shadow-sm px-2 py-1 w-full text-right text-right"
                   />
                 </div>
                 <div>
@@ -772,7 +772,7 @@ export default {
                   <input
                     type="number"
                     v-model="product_prices.selling_price"
-                    class="border border-grey rounded-md shadow-sm px-2 py-1 w-full"
+                    class="border border-grey rounded-md shadow-sm px-2 py-1 w-full text-right"
                   />
                 </div>
                 <div>
@@ -780,7 +780,7 @@ export default {
                   <input
                     type="number"
                     v-model="product_prices.trade_price"
-                    class="border border-grey rounded-md shadow-sm px-2 py-1 w-full"
+                    class="border border-grey rounded-md shadow-sm px-2 py-1 w-full text-right"
                   />
                 </div>
                 <div>
@@ -788,7 +788,7 @@ export default {
                   <input
                     type="number"
                     v-model="product_prices.vat"
-                    class="border border-grey rounded-md shadow-sm px-2 py-1 w-full"
+                    class="border border-grey rounded-md shadow-sm px-2 py-1 w-full text-right"
                   />
                 </div>
                 <div>
@@ -796,13 +796,13 @@ export default {
                   <input
                     type="number"
                     value="Present Off"
-                    class="border border-grey rounded-md shadow-sm px-1 py-1 mr-px w-1/6"
+                    class="border border-grey rounded-md shadow-sm px-1 py-1 mr-px w-1/6 text-right"
                     readonly
                   />
                   <input
                     type="number"
                     v-model="product_prices.wholesale"
-                    class="border border-grey rounded-md shadow-sm px-1 py-1 w-4/5"
+                    class="border border-grey rounded-md shadow-sm px-1 py-1 w-4/5 text-right"
                   />
                 </div>
                 <div>
@@ -810,7 +810,7 @@ export default {
                   <input
                     type="number"
                     v-model="product_prices.promo_price"
-                    class="border border-grey rounded-md shadow-sm px-2 py-1 w-full"
+                    class="border border-grey rounded-md shadow-sm px-2 py-1 w-full text-right"
                   />
                 </div>
               </div>
@@ -927,7 +927,7 @@ export default {
                     <input
                       type="number"
                       v-model="product_inventories.quantity"
-                      class="border border-grey rounded-md shadow-sm px-1 py-1 w-5/12"
+                      class="border border-grey rounded-md shadow-sm px-1 py-1 w-5/12 text-right"
                     />
                   </div>
                   <div>
@@ -940,7 +940,7 @@ export default {
                     <input
                       type="number"
                       v-model="product_inventories.recorder_level"
-                      class="border border-grey rounded-md shadow-sm px-1 py-1 w-5/12"
+                      class="border border-grey rounded-md shadow-sm px-1 py-1 w-5/12 text-right"
                     />
                   </div>
                 </div>
