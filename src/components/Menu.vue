@@ -34,12 +34,17 @@
       </li>
     </ul>
   </div>
+  <!-- {{ userInfo?.roles }} -->
 </template>
 
 <script setup>
 import { reactive, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { MenuFoldOutlined } from "@ant-design/icons-vue";
+import { useDataStore } from "@/stores/data";
+import { storeToRefs } from "pinia";
+const dataStore = useDataStore();
+const { userInfo } = storeToRefs(dataStore);
 
 // Sidebar state
 const isSidebarOpen = ref(true);
@@ -49,7 +54,7 @@ const menuItems = reactive([
   {
     name: "Dashboard",
     icon: "bi bi-speedometer2",
-    path: "dashboard",
+    path: "home",
     isExpanded: false,
   },
   {
