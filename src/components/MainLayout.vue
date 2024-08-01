@@ -44,7 +44,7 @@
                     <a-menu-item>
                       <button
                         type="button"
-                        class="w-full"
+                        class="w-full text-left"
                         @click="handleLogout($router)"
                       >
                         Logout

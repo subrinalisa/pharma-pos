@@ -41,6 +41,7 @@ import BranchCreate from "@/views/branch/create.vue";
 import BranchEdit from "@/views/branch/edit.vue";
 import ReportInvoice from "@/views/ReportInvoice.vue";
 
+
 const routes = [
   {
     path: "/",
@@ -48,21 +49,18 @@ const routes = [
     component: Login,
   },
   {
-    path: "/dashboard",
-
-    name: "dashboard",
+    path: "/home",
+    name: "home",
     component: Dashboard,
+
   },
   {
     path: "/purchases",
     name: "purchases",
     component: Purchase,
+
   },
-  {
-    path: "/home",
-    name: "home",
-    component: Purchase,
-  },
+
   {
     path: "/customer",
     name: "customer",
@@ -229,6 +227,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+
   const token = Cookies.get("token");
   if ((to.path === "/" || to.path === "/register") && !token) {
     next();
