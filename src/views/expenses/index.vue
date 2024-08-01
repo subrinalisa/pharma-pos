@@ -8,7 +8,7 @@ import {
 } from "@ant-design/icons-vue";
 
 import { onMounted, ref } from "vue";
-
+const isLoading = ref(false);
 const expenseData = ref([]);
 const allItems = ref([]);
 let page = ref(1);

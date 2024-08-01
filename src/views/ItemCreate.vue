@@ -13,6 +13,7 @@ const categoryList = ref([]);
 const supplierList = ref([]);
 const router = useRouter();
 const globalProductId = ref(null);
+const isLoading = ref(false);
 
 const products = reactive({
   products: {
