@@ -118,6 +118,7 @@ const itemInformation = async () => {
       console.log("Product ID:", productId);
       globalProductId.value = productId; // Assign the product ID to the global variable
       await itemVariations();
+      showNotification("success", "Added");
 
       activeTab.value = "variations";
     }
@@ -436,7 +437,7 @@ const onFileChange = (event) => {
         <!-- Form Fields -->
         <div class="mb-4">
           <label for="itemName" class="block text-gray-700 font-semibold">
-            Item Name
+            Item Name <span class="text-red-600">*</span>
           </label>
           <input
             id="itemName"
@@ -450,10 +451,11 @@ const onFileChange = (event) => {
           <!-- Category Select -->
           <div class="flex flex-col">
             <label for="category_id" class="text-sm font-semibold mb-1"
-              >Select Category</label
+              >Select Category <span class="text-red-600">*</span></label
             >
             <select
               id="category_id"
+              required
               v-model="products.products.category_id"
               class="border border-gray-300 rounded-lg p-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
@@ -498,7 +500,7 @@ const onFileChange = (event) => {
             class="w-full border border-gray rounded-md shadow-sm px-2 py-1"
           />
         </div>
-        <div class="mb-4">
+        <!-- <div class="mb-4">
           <label for="productId" class="block text-gray-700 font-semibold">
             Product ID
           </label>
@@ -508,7 +510,7 @@ const onFileChange = (event) => {
             v-model="products.products.product_id"
             class="w-full border border-gray rounded-md shadow-sm px-2 py-1"
           />
-        </div>
+        </div> -->
         <div class="mb-4">
           <label
             for="additionalItemNumbers"
@@ -588,7 +590,9 @@ const onFileChange = (event) => {
             <table class="w-full border-collapse">
               <thead>
                 <tr>
-                  <th class="border px-4 py-2 text-left">Pack Size Name</th>
+                  <th class="border px-4 py-2 text-left">
+                    Pack Size Name <span class="text-red-600">*</span>
+                  </th>
                   <th class="border px-4 py-2 text-left">Quantity</th>
                   <th class="border px-4 py-2 text-left">TP</th>
                   <th class="border px-4 py-2 text-left">Vat Percent</th>
@@ -603,12 +607,14 @@ const onFileChange = (event) => {
                     <input
                       type="text"
                       v-model="pack_size.name"
+                      required
                       class="w-full border border-gray rounded-md shadow-sm px-2 py-1"
                     />
                   </td>
                   <td class="border px-4 py-2">
                     <input
                       type="number"
+                      required
                       v-model="pack_size.quantity"
                       class="w-full border border-gray rounded-md shadow-sm px-2 py-1 text-right"
                     />
@@ -616,6 +622,7 @@ const onFileChange = (event) => {
                   <td class="border px-4 py-2">
                     <input
                       type="number"
+                      required
                       v-model="pack_size.tp"
                       class="w-full border border-gray rounded-md shadow-sm px-2 py-1 text-right"
                     />
@@ -623,6 +630,7 @@ const onFileChange = (event) => {
                   <td class="border px-4 py-2">
                     <input
                       type="number"
+                      required
                       v-model="pack_size.vat_percent"
                       class="w-full border border-gray rounded-md shadow-sm px-2 py-1 text-right"
                     />
@@ -630,6 +638,7 @@ const onFileChange = (event) => {
                   <td class="border px-4 py-2">
                     <input
                       type="number"
+                      required
                       v-model="pack_size.vat"
                       class="w-full border border-gray rounded-md shadow-sm px-2 py-1 text-right"
                     />
@@ -637,6 +646,7 @@ const onFileChange = (event) => {
                   <td class="border px-4 py-2">
                     <input
                       type="number"
+                      required
                       v-model="pack_size.selling_price"
                       class="w-full border border-gray rounded-md shadow-sm px-2 py-1 text-right"
                     />
@@ -644,6 +654,7 @@ const onFileChange = (event) => {
                   <td class="border px-4 py-2">
                     <input
                       type="number"
+                      required
                       v-model="pack_size.default_unit"
                       class="w-full border border-gray rounded-md shadow-sm px-2 py-1 text-right"
                     />
@@ -763,6 +774,7 @@ const onFileChange = (event) => {
               >
               <input
                 type="number"
+                required
                 v-model="product_prices.cost_price_without_tax"
                 class="border border-grey rounded-md shadow-sm px-2 py-1 w-full text-right text-right"
               />
@@ -771,22 +783,25 @@ const onFileChange = (event) => {
               <label class="block text-red-500 mb-2">Selling Price</label>
               <input
                 type="number"
+                required
                 v-model="product_prices.selling_price"
                 class="border border-grey rounded-md shadow-sm px-2 py-1 w-full text-right"
               />
             </div>
             <div>
-              <label class="block mb-2">Trade Price</label>
+              <label class="block mb-2 text-red-600">Trade Price</label>
               <input
                 type="number"
+                required
                 v-model="product_prices.trade_price"
                 class="border border-grey rounded-md shadow-sm px-2 py-1 w-full text-right"
               />
             </div>
             <div>
-              <label class="block mb-2">Vat</label>
+              <label class="block mb-2 text-red-600">Vat</label>
               <input
                 type="number"
+                required
                 v-model="product_prices.vat"
                 class="border border-grey rounded-md shadow-sm px-2 py-1 w-full text-right"
               />

@@ -128,7 +128,7 @@ watch(
 const storeProducts = (product) => {
   let quantity = 1;
   const existingProductIndex = productList.value.findIndex(
-    (item) => item?.product_id === product?.product_id
+    (item) => item?.id === product?.product_id
   );
   if (existingProductIndex !== -1) {
     quantity++;
@@ -142,7 +142,7 @@ const storeProducts = (product) => {
     });
   } else {
     productList.value.push({
-      product_id: product?.product_id,
+      product_id: product?.id,
       product_name: product?.name,
       pack_size_id: product?.pack_size?.id,
       tp: product?.product_prices?.selling_price,
@@ -158,8 +158,8 @@ const storeProducts = (product) => {
       serial: 1,
       stock: product?.pack_size?.quantity,
       cost_price_preview: product?.product_prices?.selling_price,
-      item_id: product?.product_id,
-      batch_no: product?.product_id,
+      item_id: product?.id,
+      batch_no: product?.id,
       expiry_date: moment(product?.created_at).format("YYYY-MM-DD"),
     });
     nextTick(() => {
