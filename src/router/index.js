@@ -39,6 +39,7 @@ import VerifySales from "@/views/VerifySales.vue";
 import Branch from "@/views/branch/index.vue"
 import BranchCreate from "@/views/branch/create.vue";
 import BranchEdit from "@/views/branch/edit.vue";
+import ReportInvoice from "@/views/ReportInvoice.vue";
 
 const routes = [
   {
@@ -106,6 +107,11 @@ const routes = [
     name: "report",
     component: Report,
 
+  },
+  {
+    path: "/report/invoice/:id",
+    name: "report-invoice",
+    component: ReportInvoice,
   },
   {
     path: "/purchase-report",

@@ -20,7 +20,7 @@
     >
       <thead class="table-header">
         <tr>
-          <th class="text-center">Actions</th>
+          <!-- <th class="text-center">Actions</th> -->
           <th class="text-left">SL No</th>
           <th class="text-left">Name</th>
           <th class="text-left">Company Name</th>
@@ -30,7 +30,7 @@
       </thead>
       <tbody class="table-body">
         <tr v-for="(item, index) in items" :key="index">
-          <td class="text-center w-24 whitespace-nowrap">
+          <!-- <td class="text-center w-24 whitespace-nowrap">
             <button
               class="px-2 py-1 bg-[#000180] text-white rounded hover:bg-indigo-600 mr-2"
             >
@@ -41,7 +41,7 @@
             >
               <DeleteOutlined class="align-middle" />
             </button>
-          </td>
+          </td> -->
           <td>{{ index + 1 }}</td>
           <td>{{ item.first_name || "-" }}</td>
           <td>{{ item.company_name || "-" }}</td>

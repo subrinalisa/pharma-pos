@@ -18,9 +18,8 @@ const deleteBranch = async (index) => {
   const branchId = branchData.value[index].id;
   try {
     const response = await branch.deleteBranch(branchId);
-      branchData.value.splice(index, 1);
-      allBranchs.value = branchData.value;
- 
+    branchData.value.splice(index, 1);
+    allBranchs.value = branchData.value;
   } catch (error) {
     console.error("Failed to delete branch:", error);
   }
@@ -74,7 +73,7 @@ const handlePagination = (pageNo) => {
     >
       <thead class="table-header">
         <tr>
-          <th>Actions</th>
+          <!-- <th>Actions</th> -->
           <th class="text-left">Organization Name</th>
           <th class="text-left">Branch</th>
           <th class="text-left">Address</th>
@@ -89,7 +88,7 @@ const handlePagination = (pageNo) => {
           <td colspan="9" class="text-red-600">No Branch Found . . .</td>
         </tr>
         <tr v-for="(item, index) in branchData" :key="index">
-          <td class="text-center">
+          <!-- <td class="text-center">
             <button
               @click="
                 $router.push({
@@ -107,7 +106,7 @@ const handlePagination = (pageNo) => {
             >
               <DeleteOutlined class="align-middle" />
             </button>
-          </td>
+          </td> -->
           <td>{{ item.organization_name }}</td>
           <td>{{ item.branch }}</td>
           <td>{{ item.address }}</td>

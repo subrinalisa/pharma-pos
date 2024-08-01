@@ -1,7 +1,15 @@
 <script setup>
 import MainLayout from "@/components/MainLayout.vue";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 
+import dashboard from "@/stores/dashboard_api.js";
+
+const topData = ref({
+  totalSales: 0,
+  totalPurchases: 0,
+  totalCustomers: 0,
+  totalProducts: 0,
+});
 const chartOptions = ref({
   chart: {
     type: "bar",
@@ -26,45 +34,30 @@ const chartOptions = ref({
   },
   tooltip: {},
 });
+
+const data = ref([
+  {
+    x: "",
+    y: "",
+  },
+]);
 const series = ref([
   {
     name: "sales",
-    data: [
-      {
-        x: "2019/01/01",
-        y: 400,
-      },
-      {
-        x: "2019/04/01",
-        y: 430,
-      },
-      {
-        x: "2019/07/01",
-        y: 448,
-      },
-      {
-        x: "2019/10/01",
-        y: 470,
-      },
-      {
-        x: "2020/01/01",
-        y: 540,
-      },
-      {
-        x: "2020/04/01",
-        y: 580,
-      },
-      {
-        x: "2020/07/01",
-        y: 690,
-      },
-      {
-        x: "2020/10/01",
-        y: 690,
-      },
-    ],
+    data: data,
   },
 ]);
+onMounted(() => getDashboardData());
+
+const getDashboardData = async () => {
+  const response = await dashboard.fetchDashboardData();
+  topData.value.totalSales = response.data.total_sale_amount;
+  topData.value.totalPurchases = response.data.total_purchase_amount;
+  topData.value.totalCustomers = response.data.total_customer;
+  topData.value.totalProducts = response.data.total_product;
+  data.value = response.data.monthly_sale;
+  console.log("data", data.value);
+};
 </script>
 
 <template>
@@ -75,9 +68,9 @@ const series = ref([
         <div class="flex justify-between">
           <div class="grow">
             <h6 class="text-2xl text-indigo-600 font-medium mb-2 px-3 pt-3">
-              242398
+              {{ topData.totalSales }}
             </h6>
-            <p class="px-3 pb-3">Total Sales</p>
+            <p class="px-3 pb-3">Total Sales Amount</p>
           </div>
           <div
             class="bg-indigo-500 text-white p-3 rounded min-w-24 text-center"
@@ -91,9 +84,9 @@ const series = ref([
         <div class="flex justify-between">
           <div class="grow">
             <h6 class="text-2xl text-indigo-600 font-medium mb-2 px-3 pt-3">
-              242398
+              {{ topData.totalPurchases }}
             </h6>
-            <p class="px-3 pb-3">Total Sales</p>
+            <p class="px-3 pb-3">Total Purchases Amount</p>
           </div>
           <div
             class="bg-indigo-500 text-white p-3 rounded min-w-24 text-center"
@@ -107,9 +100,9 @@ const series = ref([
         <div class="flex justify-between">
           <div class="grow">
             <h6 class="text-2xl text-indigo-600 font-medium mb-2 px-3 pt-3">
-              242398
+              {{ topData.totalProducts }}
             </h6>
-            <p class="px-3 pb-3">Total Sales</p>
+            <p class="px-3 pb-3">Total Items</p>
           </div>
           <div
             class="bg-indigo-500 text-white p-3 rounded min-w-24 text-center"
@@ -123,9 +116,9 @@ const series = ref([
         <div class="flex justify-between">
           <div class="grow">
             <h6 class="text-2xl text-indigo-600 font-medium mb-2 px-3 pt-3">
-              242398
+              {{ topData.totalCustomers }}
             </h6>
-            <p class="px-3 pb-3">Total Sales</p>
+            <p class="px-3 pb-3">Total Customers</p>
           </div>
           <div
             class="bg-indigo-500 text-white p-3 rounded min-w-24 text-center"

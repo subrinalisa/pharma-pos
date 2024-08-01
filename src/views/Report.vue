@@ -1,6 +1,8 @@
 <script setup>
 import MainLayout from "@/components/MainLayout.vue";
 import moment from "moment";
+import * as XLSX from "xlsx";
+
 import { ref } from "vue";
 import { useDataStore } from "@/stores/data";
 import { PlusOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons-vue";
@@ -9,18 +11,43 @@ const dataStore = useDataStore();
 const { getSaleReport } = dataStore;
 
 const saleReport = ref(null);
-const fromDate = ref(null);
-const toDate = ref(null);
+const fromDate = ref("2024-07-01");
+const toDate = ref("2024-07-31");
 const showProducts = ref(null);
 
 const handleFilter = async () => {
   saleReport.value = await getSaleReport(fromDate.value, toDate.value);
+};
+
+const exportToExcel = () => {
+  const worksheet = XLSX.utils.json_to_sheet(
+    saleReport.value.sales.map((sale) => ({
+      "Sale Id": sale?.id,
+      Date: sale?.sale_date,
+      "Payment Method": sale?.payment_method_id,
+      "Items Purchased": sale?.sale_products?.length,
+      "Sold By": sale?.sold_user.name,
+      Subtotal: sale?.sub_total,
+      Total: sale?.total,
+      "Payment Type": sale?.payment_method?.name,
+      Comments: sale?.comment_on_receipt,
+      "Discount Reason": sale?.note,
+      "Tier Name": sale?.item_tiers,
+    }))
+  );
+
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Sales Report");
+
+  // Export the file
+  XLSX.writeFile(workbook, "SalesReport.xlsx");
 };
 </script>
 
 <template>
   <MainLayout>
     <h6 class="font-medium mb-4">Reports</h6>
+
     <!-- Filter -->
     <div class="flex items-end">
       <div class="mr-3">
@@ -47,21 +74,22 @@ const handleFilter = async () => {
           class="px-4 py-2 bg-[#000180] text-white rounded-lg"
           @click="handleFilter"
         >
-          Submit
+          Generate Report
         </button>
       </div>
-      <div class="mr-3">
+      <!-- <div class="mr-3">
         <button
           type="button"
           class="px-4 py-2 bg-[#000180] text-white rounded-lg"
         >
           Print
         </button>
-      </div>
+      </div> -->
       <div class="mr-3">
         <button
           type="button"
-          class="px-4 py-2 bg-[#000180] text-white rounded-lg"
+          class="px-4 py-2 bg-green-700 text-white rounded-lg"
+          @click="exportToExcel"
         >
           Excel Export
         </button>
@@ -96,11 +124,11 @@ const handleFilter = async () => {
       >
         <tr class="text-center">
           <td>
-            <button
+            <!-- <button
               class="px-2 py-1 bg-green-600 text-white rounded hover:bg-indigo-600 mr-2"
             >
               <EditOutlined class="align-middle" />
-            </button>
+            </button> -->
             <button
               class="px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-600 mr-2"
               title="Show Products"
@@ -111,6 +139,12 @@ const handleFilter = async () => {
             <button
               class="px-2 py-1 bg-[#000180] text-white rounded hover:bg-indigo-600 mr-2"
               title="Show Receipt"
+              @click="
+                $router.push({
+                  name: 'report-invoice',
+                  params: { id: data?.id },
+                })
+              "
             >
               <EyeOutlined class="align-middle" />
             </button>

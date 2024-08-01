@@ -8,8 +8,21 @@ $text-color: #58595B;
 
 body {
     font-family: "Inter", sans-serif;
+    font-size: 14px;
     color: #000;
     background: #F5F5F5;
+}
+
+.tabButton {
+    @apply rounded-lg shadow px-5 py-3 w-full disabled:bg-slate-200;
+}
+
+.activeTab {
+    @apply bg-blue-800 text-white;
+}
+
+.inactiveTab {
+    @apply bg-white text-black;
 }
 
 .profile-menu {
