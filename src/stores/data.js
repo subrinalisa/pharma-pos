@@ -58,6 +58,9 @@ export const useDataStore = defineStore("dataStore", {
         console.log(error);
       }
     },
+
+    // Product Search
+    
     // Product Sale Search
     async getSaleProduct(query) {
       this.isLoading = true;
@@ -199,6 +202,25 @@ export const useDataStore = defineStore("dataStore", {
           },
         }
         const response = await axios.get(`${apiBase}/all-products-paginated?page=${page}&paginate=${paginate}`, config);
+        this.isLoading = false;
+        if (response?.status == 200)
+          return response?.data;
+      } catch (error) {
+        this.isLoading = false;
+        console.log(error);
+      }
+    },
+    // Sales Verify List
+    async getSalesVerify(page, paginate) {
+      this.isLoading = true;
+      try {
+        const token = Cookies.get("token");
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+        const response = await axios.get(`${apiBase}/verify-sales-list?page=${page}&paginate=${paginate}`, config);
         this.isLoading = false;
         if (response?.status == 200)
           return response?.data;
