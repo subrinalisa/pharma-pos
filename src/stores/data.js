@@ -13,6 +13,7 @@ export const useDataStore = defineStore("dataStore", {
     searchProduct: null,
     paymentList: null,
 
+
   }),
 
   actions: {
@@ -60,7 +61,7 @@ export const useDataStore = defineStore("dataStore", {
     },
 
     // Product Search
-    
+
     // Product Sale Search
     async getSaleProduct(query) {
       this.isLoading = true;
@@ -297,6 +298,25 @@ export const useDataStore = defineStore("dataStore", {
           },
         }
         const response = await axios.get(`${apiBase}/report/detailed-received-report?purchase_date_from=${from}&purchase_date_to=${to}`, config);
+        this.isLoading = false;
+        if (response?.status == 200)
+          return response?.data;
+      } catch (error) {
+        this.isLoading = false;
+        console.log(error);
+      }
+    },
+    // Invoice
+    async getInvoice(id) {
+      this.isLoading = true;
+      try {
+        const token = Cookies.get("token");
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+        const response = await axios.get(`${apiBase}/report/detailed-sales-invoice?id=${id}`, config);
         this.isLoading = false;
         if (response?.status == 200)
           return response?.data;

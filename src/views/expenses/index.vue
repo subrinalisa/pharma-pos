@@ -64,7 +64,7 @@ const handlePagination = (pageNo) => {
     >
       <thead class="table-header">
         <tr>
-          <th>Actions</th>
+          <!-- <th>Actions</th> -->
           <th class="text-left">ID</th>
           <th class="text-left">Type</th>
           <th class="text-left">Description</th>
@@ -85,7 +85,7 @@ const handlePagination = (pageNo) => {
           <td colspan="9" class="text-red-600">No Expense Found . . .</td>
         </tr>
         <tr v-for="(item, index) in expenseData" :key="index">
-          <td class="text-center">
+          <!-- <td class="text-center">
             <button
               @click="
                 $router.push({
@@ -103,7 +103,7 @@ const handlePagination = (pageNo) => {
             >
               <DeleteOutlined class="align-middle" />
             </button>
-          </td>
+          </td> -->
           <td>{{ item.id }}</td>
           <td>{{ item.type }}</td>
           <td>{{ item.description }}</td>

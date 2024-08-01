@@ -66,7 +66,7 @@ const handlePagination = (pageNo) => {
     >
       <thead class="table-header">
         <tr>
-          <th>Actions</th>
+          <!-- <th>Actions</th> -->
           <th class="text-left">Name</th>
           <th class="text-left">UPC/EAN/ISBN</th>
           <th class="text-left">Category</th>
@@ -82,7 +82,7 @@ const handlePagination = (pageNo) => {
           <td colspan="9" class="text-red-600">No Product Found . . .</td>
         </tr>
         <tr v-for="(item, index) in filteredItems" :key="index">
-          <td class="text-center w-24 whitespace-nowrap">
+          <!-- <td class="text-center w-24 whitespace-nowrap">
             <button
               @click="
                 $router.push({ name: 'item-edit', params: { id: item?.id } })
@@ -97,7 +97,7 @@ const handlePagination = (pageNo) => {
             >
               <DeleteOutlined class="align-middle" />
             </button>
-          </td>
+          </td> -->
 
           <td>{{ item.name }}</td>
           <td>
@@ -107,10 +107,10 @@ const handlePagination = (pageNo) => {
             {{ item.category ? item.category.name : "N/A" }}
           </td>
           <td class="text-right">
-            {{ item?.product_prices?.selling_price || "0.00" }}
+            {{ item?.product_prices?.selling_price || "-" }}
           </td>
           <td class="text-right">
-            {{ item?.pack_size?.quantity || "0.00" }}
+            {{ item?.pack_size?.quantity || "-" }}
           </td>
           <td>
             {{
@@ -132,6 +132,7 @@ const handlePagination = (pageNo) => {
       </tbody>
     </table>
     <a-pagination
+      v-if="allItems?.total > paginate"
       v-model:current="page"
       v-model:page-size="paginate"
       :total="allItems?.total"
