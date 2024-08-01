@@ -66,7 +66,7 @@ const { isLoading } = storeToRefs(dataStore);
 const { handleLogin } = dataStore;
 
 const data = reactive({
-  email: "subrina10@gmail.com",
+  email: "rifat@gmail.com",
   password: 12345678,
 });
 </script>
