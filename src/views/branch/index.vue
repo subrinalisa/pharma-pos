@@ -9,6 +9,7 @@ import {
 import branch from "@/stores/branch_api.js";
 import { onMounted, ref } from "vue";
 
+const isLoading = ref(false);
 const branchData = ref([]);
 const allBranchs = ref([]);
 let page = ref(1);
@@ -87,7 +88,11 @@ const handlePagination = (pageNo) => {
         <tr v-if="!isLoading && !branchData?.length">
           <td colspan="9" class="text-red-600">No Branch Found . . .</td>
         </tr>
-        <tr v-for="(item, index) in branchData" :key="index">
+        <tr
+          v-for="(item, index) in branchData"
+          :key="index"
+          class="hover:bg-gray-100 transition-colors duration-200"
+        >
           <!-- <td class="text-center">
             <button
               @click="

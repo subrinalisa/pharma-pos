@@ -42,7 +42,11 @@
                 <template #overlay>
                   <a-menu>
                     <a-menu-item>
-                      <button type="button" @click="handleLogout($router)">
+                      <button
+                        type="button"
+                        class="w-full"
+                        @click="handleLogout($router)"
+                      >
                         Logout
                       </button>
                     </a-menu-item>

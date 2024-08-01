@@ -56,7 +56,6 @@ const getDashboardData = async () => {
   topData.value.totalCustomers = response.data.total_customer;
   topData.value.totalProducts = response.data.total_product;
   data.value = response.data.monthly_sale;
-  console.log("data", data.value);
 };
 </script>
 

@@ -60,9 +60,9 @@ body {
             @apply text-xl mr-2
         }
 
-        .router-link-exact-active {
-            @apply bg-white
-        }
+        // .router-link-exact-active {
+        //     @apply bg-white
+        // }
 
         li {
             a {
@@ -98,6 +98,14 @@ body {
 }
 
 .table-body {
+    tr {
+        @apply hover:bg-slate-100 transition-colors duration-200;
+    }
+
+    tr:nth-child(even) {
+        @apply bg-gray-100;
+    }
+
     td {
         padding: 4px 8px;
     }

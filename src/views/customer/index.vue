@@ -5,7 +5,7 @@ import {
   EditOutlined,
   PlusOutlined,
 } from "@ant-design/icons-vue";
-
+const isLoading = ref(false);
 import customer from "@/stores/customer_api.js";
 import { onMounted, ref } from "vue";
 
