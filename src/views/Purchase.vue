@@ -55,12 +55,15 @@ const getSupplierInfo = async (supplier) => {
 };
 
 const calculateTotalPrice = (product, quantity) => {
-  const costPrice = product?.pack_size?.selling_price + product?.pack_size?.vat;
+  const costPrice =
+    Number(product?.product_prices?.selling_price) +
+    Number(product?.product_prices?.vat);
+
   return (costPrice * quantity)?.toFixed(2);
 };
 
 const updateTotalPrice = (product, quantity) => {
-  const costPrice = product?.cost + product?.vat;
+  const costPrice = Number(product?.cost) + Number(product?.vat);
   return (costPrice * quantity)?.toFixed(2);
 };
 
@@ -142,10 +145,11 @@ const storeProducts = (product) => {
       product_id: product?.product_id,
       product_name: product?.name,
       pack_size_id: product?.pack_size?.id,
-      tp: product?.pack_size?.selling_price,
-      vat: product?.pack_size?.vat,
-      cost: Number(
-        product?.pack_size?.selling_price + product?.pack_size?.vat
+      tp: product?.product_prices?.selling_price,
+      vat: product?.product_prices?.vat,
+      cost: (
+        Number(product?.product_prices?.selling_price) +
+        Number(product?.product_prices?.vat)
       )?.toFixed(2),
       quantity: quantity,
       total: calculateTotalPrice(product, quantity),
@@ -153,7 +157,7 @@ const storeProducts = (product) => {
       generic_name: product?.description,
       serial: 1,
       stock: product?.pack_size?.quantity,
-      cost_price_preview: product?.pack_size?.selling_price,
+      cost_price_preview: product?.product_prices?.selling_price,
       item_id: product?.product_id,
       batch_no: product?.product_id,
       expiry_date: moment(product?.created_at).format("YYYY-MM-DD"),
@@ -283,14 +287,11 @@ const handlePurchase = async () => {
                         >
                         <span class="mr-2"
                           ><strong>Supplier:</strong>
-                          {{ data?.supplier?.company_name }} -
-                          {{ data?.supplier?.address }} ({{
-                            data?.supplier?.mobile
-                          }});</span
+                          {{ data?.supplier?.company_name }}</span
                         >
                         <span class="mr-2"
                           ><strong>Selling Price:</strong>
-                          {{ data?.pack_size?.selling_price }}</span
+                          {{ data?.product_prices?.selling_price }}</span
                         >
                         <span class="mr-2"
                           ><strong>Category:</strong>
