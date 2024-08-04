@@ -29,8 +29,6 @@ import CustomerCreate from "@/views/customer/create.vue";
 import CustomerEdit from "@/views/customer/edit.vue";
 import SupplierList from "@/views/supplier/List.vue";
 import SupplierAdd from "@/views/supplier/Add.vue";
-import Report from "@/views/Report.vue";
-import PurchaseReport from "@/views/PurchaseReport.vue";
 import Expenses from "@/views/expenses/index.vue";
 import ExpensesCreate from "@/views/expenses/create.vue";
 import ExpensesEdit from "@/views/expenses/edit.vue";
@@ -39,7 +37,9 @@ import VerifySales from "@/views/VerifySales.vue";
 import Branch from "@/views/branch/index.vue"
 import BranchCreate from "@/views/branch/create.vue";
 import BranchEdit from "@/views/branch/edit.vue";
-import ReportInvoice from "@/views/ReportInvoice.vue";
+import Report from "@/views/report/sales/Report.vue";
+import ReportInvoice from "@/views/report/sales/ReportInvoice.vue";
+import PurchaseReport from "@/views/report/purchase/PurchaseReport.vue";
 
 
 const routes = [
