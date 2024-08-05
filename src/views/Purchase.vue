@@ -9,10 +9,9 @@ import { imgBase } from "@/config";
 import { showNotification } from "@/utilities/notification";
 
 const dataStore = useDataStore();
-const { isLoading, isSupplier, paymentList } = storeToRefs(dataStore);
+const { paymentList } = storeToRefs(dataStore);
 const { getProduct, getSupplier, getMRR, getPayment, purchaseInsert } =
   dataStore;
-const searchQuery = ref(null);
 const searchProduct = ref(null);
 const supplierList = ref(null);
 const mrrList = ref(null);
@@ -22,12 +21,15 @@ const gatisPercentage = ref(null);
 const gatisAmount = ref(null);
 const supplierInfo = ref();
 const searchInput = ref(null);
+const mrrInput = ref(null);
+const supplierInput = ref(null);
 const productQuantity = ref(null);
-const paymentIndex = ref(5);
+const paymentIndex = ref(1);
 const paymentAmount = ref(null);
 const notes = ref(null);
 
 const productList = ref([]);
+
 let priceList = reactive({
   subtotal: 0,
   tradePrice: 0,
@@ -45,6 +47,10 @@ const handleSupplierSearch = async (query) => {
 const handleMRRSearch = async (query) => {
   mrrList.value = await getMRR(query);
 };
+const calculateTotalPrice = (price, quantity) => {
+  const costPrice = Number(price) * Number(quantity);
+  return costPrice?.toFixed(2);
+};
 const getSupplierInfo = async (supplier) => {
   supplierInfo.value = {
     id: supplier?.id,
@@ -53,26 +59,17 @@ const getSupplierInfo = async (supplier) => {
     image: imgBase + supplier?.image_path,
   };
 };
-
-const calculateTotalPrice = (product, quantity) => {
-  const costPrice =
-    Number(product?.product_prices?.selling_price) +
-    Number(product?.product_prices?.vat);
-
-  return (costPrice * quantity)?.toFixed(2);
+const updateExpireDate = (index, date) => {
+  productList.value[index].expiry_date = date;
 };
-
-const updateTotalPrice = (product, quantity) => {
-  const costPrice = Number(product?.cost) + Number(product?.vat);
-  return (costPrice * quantity)?.toFixed(2);
-};
-
 const updateQuantity = (product, index, event) => {
   const inputValue = Number(event?.target?.value);
   productList.value[index].quantity = inputValue;
-  productList.value[index].total = updateTotalPrice(product, inputValue);
+  productList.value[index].total = calculateTotalPrice(
+    product?.cost,
+    inputValue
+  );
 };
-
 const updateGatisAmount = () => {
   if (gatisPercentage.value) {
     gatisAmount.value = (
@@ -94,85 +91,64 @@ const updateGatisPercentage = () => {
     gatisPercentage.value = "";
   }
 };
-
-watch(
-  paymentAmount,
-  (newAmount) => {
-    priceList.due = (priceList.total - newAmount)?.toFixed(2);
-    if (priceList.due < 0) {
-      priceList.due = 0;
-    }
-  },
-  { deep: true }
-);
-watch(
-  productList,
-  (newProduct) => {
-    const sumtotal = newProduct.reduce(
-      (sum, item) => sum + Number(item?.total),
-      0
-    );
-    const totalVat = newProduct.reduce((sum, item) => sum + item?.vat, 0);
-
-    priceList = {
-      subtotal: sumtotal,
-      tradePrice: (sumtotal - totalVat)?.toFixed(2),
-      vat: totalVat,
-      total: sumtotal,
-      due: (sumtotal - paymentAmount.value)?.toFixed(2),
-    };
-  },
-  { deep: true }
-);
-
+const calculateStock = (stockes) => {
+  const total = stockes.reduce((sum, batch) => {
+    return sum + parseFloat(batch.received_quantity);
+  }, 0);
+  return total;
+};
 const storeProducts = (product) => {
   let quantity = 1;
   const existingProductIndex = productList.value.findIndex(
-    (item) => item?.id === product?.product_id
+    (item) => item?.product_id == product?.id
   );
-  if (existingProductIndex !== -1) {
+  if (existingProductIndex != -1) {
     quantity++;
     productList.value[existingProductIndex].quantity++;
     productList.value[existingProductIndex].total = calculateTotalPrice(
-      product,
+      product?.product_prices?.selling_price,
       quantity
     );
-    nextTick(() => {
-      productQuantity.value[existingProductIndex]?.focus();
-    });
+    nextTick(() => productQuantity.value[existingProductIndex]?.focus());
   } else {
     productList.value.push({
       product_id: product?.id,
       product_name: product?.name,
       pack_size_id: product?.pack_size?.id,
-      tp: product?.product_prices?.selling_price,
+      tp: product?.product_prices?.trade_price,
       vat: product?.product_prices?.vat,
-      cost: (
-        Number(product?.product_prices?.selling_price) +
-        Number(product?.product_prices?.vat)
-      )?.toFixed(2),
+      cost: product?.product_prices?.selling_price,
       quantity: quantity,
-      total: calculateTotalPrice(product, quantity),
-      size: product?.pack_size?.quantity,
-      generic_name: product?.description,
-      serial: 1,
-      stock: product?.pack_size?.quantity,
-      cost_price_preview: product?.product_prices?.selling_price,
+      total: calculateTotalPrice(
+        product?.product_prices?.selling_price,
+        quantity
+      ),
+      size: product?.category?.name,
+      generic_name: "",
+      serial: "",
+      stock: calculateStock(product?.stock_batches),
+      cost_price_preview: product?.product_prices?.cost_price_without_tax,
       item_id: product?.id,
-      batch_no: product?.id,
-      expiry_date: moment(product?.created_at).format("YYYY-MM-DD"),
+      batch_no: product?.batch_no,
+      expiry_date: "",
     });
-    nextTick(() => {
-      productQuantity.value?.at(-1)?.focus();
-    });
+    nextTick(() => productQuantity.value?.at(-1)?.focus());
   }
 };
-
-onMounted(async () => await getPayment());
-
 const handlePurchase = async () => {
   if (!productList.value?.length) {
+    searchInput.value?.focus();
     showNotification("error", "Please insert a product");
+    return 0;
+  }
+  if (!mrrID.value) {
+    mrrInput.value?.focus();
+    showNotification("error", "Please select an MRR");
+    return 0;
+  }
+  if (!supplierInfo.value?.id) {
+    supplierInput.value?.focus();
+    showNotification("error", "Please select a Supplier");
     return 0;
   }
 
@@ -216,6 +192,41 @@ const handlePurchase = async () => {
     }
   });
 };
+watch(
+  paymentAmount,
+  (newAmount) => {
+    priceList.due = (priceList.total - newAmount)?.toFixed(2);
+    if (priceList.due < 0) {
+      priceList.due = 0;
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  productList,
+  (newProduct) => {
+    const sumtotal = newProduct.reduce(
+      (sum, item) => sum + Number(item?.total),
+      0
+    );
+    const totalTp = newProduct.reduce((sum, item) => sum + Number(item?.tp), 0);
+    const totalVat = newProduct.reduce(
+      (sum, item) => sum + Number(item?.vat),
+      0
+    );
+    priceList = {
+      subtotal: Number(sumtotal)?.toFixed(2),
+      tradePrice: Number(totalTp)?.toFixed(2),
+      vat: Number(totalVat)?.toFixed(2),
+      total: Number(sumtotal)?.toFixed(2),
+      due: (Number(sumtotal) - paymentAmount.value)?.toFixed(2),
+    };
+  },
+  { deep: true }
+);
+
+onMounted(async () => await getPayment());
 </script>
 
 <template>
@@ -230,10 +241,9 @@ const handlePurchase = async () => {
           >
             <i class="bi bi-search"></i>
           </button>
-          <a-dropdown :trigger="['click']">
+          <a-dropdown>
             <input
-              @input="handleProductSearch(searchQuery)"
-              v-model="searchQuery"
+              @input="handleProductSearch($event?.target?.value)"
               @focus="searchInput.select()"
               ref="searchInput"
               type="text"
@@ -242,14 +252,8 @@ const handlePurchase = async () => {
             />
             <template #overlay>
               <a-menu class="max-h-80 overflow-y-auto">
-                <!-- Loading  -->
-                <a-menu-item v-if="isLoading">Loading...</a-menu-item>
                 <!-- No Products Currently Available -->
-                <a-menu-item
-                  v-if="
-                    !isLoading && (!searchProduct || !searchProduct?.length)
-                  "
-                >
+                <a-menu-item v-if="!searchProduct || !searchProduct?.length">
                   <h6 class="font-bold text-red-600">
                     No Products Currently Available...
                   </h6>
@@ -274,32 +278,16 @@ const handlePurchase = async () => {
                     </div>
                     <div>
                       <h6 class="font-bold">
-                        {{ data?.name }} - {{ data?.description }}
+                        {{ data?.name }}
                       </h6>
                       <p class="text-gray-500">
-                        <span class="mr-2"
-                          ><strong>Product Id:</strong>
-                          {{ data?.product_id }};</span
-                        >
-                        <span class="mr-2"
-                          ><strong>Manufacturer:</strong>
-                          {{ data?.manufacturer }};</span
-                        >
-                        <span class="mr-2"
-                          ><strong>Supplier:</strong>
-                          {{ data?.supplier?.company_name }}</span
-                        >
-                        <span class="mr-2"
-                          ><strong>Selling Price:</strong>
-                          {{ data?.product_prices?.selling_price }}</span
-                        >
                         <span class="mr-2"
                           ><strong>Category:</strong>
                           {{ data?.category?.name || "N/A" }};</span
                         >
-                        <span class="mr-2">
-                          <strong>Available Qty:</strong>
-                          {{ data?.product_inventories?.quantity }}</span
+                        <span class="mr-2"
+                          ><strong>Price:</strong>
+                          {{ data?.product_prices?.selling_price }}</span
                         >
                       </p>
                     </div>
@@ -319,10 +307,8 @@ const handlePurchase = async () => {
           </button>
         </div>
         <!-- Table -->
-        <table
-          class="table text-sm border-collapse border border-slate-400 w-full"
-        >
-          <thead>
+        <table class="table text-sm w-full purchase-table">
+          <thead class="table-header">
             <tr>
               <th>-</th>
               <th class="text-center">SL</th>
@@ -335,7 +321,7 @@ const handlePurchase = async () => {
               <th class="text-right">Total</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody class="table-body">
             <tr v-if="!productList?.length">
               <td colspan="9" class="text-center text-red-700">
                 No Product Found
@@ -352,12 +338,47 @@ const handlePurchase = async () => {
                 </button>
               </td>
               <td class="text-center">{{ index + 1 }}</td>
-              <td>{{ product?.product_name }}</td>
-              <td class="text-right">{{ product?.pack_size_id }}</td>
-              <td class="text-right">{{ product?.tp }}</td>
-              <td class="text-right">{{ product?.vat }}</td>
-              <td class="text-right">{{ product?.cost }}</td>
-              <td class="text-right">
+              <td>
+                <p>{{ product?.product_name }}</p>
+                <div class="mt-5">
+                  <p>
+                    <span class="font-semibold">Size:</span> {{ product?.size }}
+                  </p>
+                  <p>
+                    <span class="font-semibold">Generic Name:</span>
+                    {{ product?.generic_name || "-" }}
+                  </p>
+                  <p>
+                    <span class="font-semibold">Serial:</span>
+                    {{ product?.serial || "Empty" }}
+                  </p>
+                  <p>
+                    <span class="font-semibold">Stock:</span>
+                    {{ product?.stock || "-" }}
+                  </p>
+                  <p>
+                    <span class="font-semibold">Cost Price Preview:</span>
+                    {{ product?.cost_price_preview || "-" }}
+                  </p>
+                  <p>
+                    <span class="font-semibold">Item Id:</span>
+                    {{ product?.product_id || "-" }}
+                  </p>
+                  <p class="mt-2">
+                    <label class="mb-2 block">Select Expire Date</label>
+                    <input
+                      type="date"
+                      class="px-3 py-1 border border-black rounded"
+                      @input="updateExpireDate(index, $event?.target?.value)"
+                    />
+                  </p>
+                </div>
+              </td>
+              <td class="text-right w-10">{{ product?.pack_size_id }}</td>
+              <td class="text-right w-10">{{ product?.tp }}</td>
+              <td class="text-right w-10">{{ product?.vat }}</td>
+              <td class="text-right w-10">{{ product?.cost }}</td>
+              <td class="text-right w-24">
                 <input
                   type="number"
                   :value="product?.quantity"
@@ -403,21 +424,17 @@ const handlePurchase = async () => {
               <i class="bi bi-plus-lg"></i>
             </button>
             <div class="grow">
-              <a-dropdown :trigger="['click']">
+              <a-dropdown>
                 <input
                   @input="handleSupplierSearch($event?.target?.value)"
+                  ref="supplierInput"
                   type="text"
                   placeholder="Enter supplier name"
                   class="bg-white w-full px-3 py-3 outline-none shadow-inner border border-slate-300 text-black"
                 />
                 <template #overlay>
                   <a-menu class="max-h-80 overflow-y-auto">
-                    <!-- No supplier Currently Available -->
-                    <a-menu-item
-                      v-if="
-                        !isSupplier && (!supplierList || !supplierList?.length)
-                      "
-                    >
+                    <a-menu-item v-if="!supplierList || !supplierList?.length">
                       <h6 class="font-bold text-red-600">
                         No Supplier Found...
                       </h6>
@@ -479,12 +496,9 @@ const handlePurchase = async () => {
               </div>
             </div>
             <!-- Update & detach -->
-            <ul class="flex items-center space-x-4 list-none p-0 w-full">
-              <li class="mb-4 w-1/2">
-                <button type="button" class="w-full text-left">
-                  <i class="bi bi-check2-circle mr-3"></i>Update Supplier
-                </button>
-              </li>
+            <ul
+              class="flex justify-end items-center space-x-4 list-none p-0 w-full"
+            >
               <li class="mb-4 w-1/2">
                 <button
                   type="button"
@@ -523,9 +537,10 @@ const handlePurchase = async () => {
             </li>
           </ul>
           <!-- MRR -->
-          <a-dropdown :trigger="['click']">
+          <a-dropdown>
             <input
               @input="handleMRRSearch($event?.target?.value)"
+              ref="mrrInput"
               v-model="mrrName"
               type="text"
               placeholder="Enter MRR name"
@@ -549,9 +564,9 @@ const handlePurchase = async () => {
                   <div class="flex items-center">
                     <div class="mr-3">
                       <a-avatar :size="32">
-                        <template #icon
-                          ><UserOutlined class="align-middle"
-                        /></template>
+                        <template #icon>
+                          <UserOutlined class="align-middle" />
+                        </template>
                       </a-avatar>
                     </div>
                     <div>

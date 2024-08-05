@@ -60,8 +60,6 @@ export const useDataStore = defineStore("dataStore", {
       }
     },
 
-    // Product Search
-
     // Product Sale Search
     async getSaleProduct(query) {
       this.isLoading = true;
