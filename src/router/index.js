@@ -6,7 +6,7 @@ import Dashboard from "@/views/Dashboard.vue";
 
 //Start User Management
 
-import Purchase from "@/views/Purchase.vue";
+import Purchase from "@/views/purchase/create.vue";
 import Sales from "@/views/Sales.vue";
 import Users from "@/views/User Management/Users.vue";
 import Useradd from "@/views/User Management/Useradd.vue";
@@ -224,6 +224,7 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+
 });
 
 router.beforeEach((to, from, next) => {
