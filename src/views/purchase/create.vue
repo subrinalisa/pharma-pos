@@ -365,7 +365,7 @@ onMounted(async () => await getPayment());
                   </p>
                   <p>
                     <span class="font-semibold">Cost Price Preview:</span>
-                    {{ product?.cost_price_preview || "-" }}
+                    {{ Number(product?.cost_price_preview) || "-" }}
                   </p>
                   <p>
                     <span class="font-semibold">Item Id:</span>
@@ -382,8 +382,8 @@ onMounted(async () => await getPayment());
                 </div>
               </td>
               <td class="text-right w-10">{{ product?.pack_size_id }}</td>
-              <td class="text-right w-10">{{ product?.tp }}</td>
-              <td class="text-right w-10">{{ product?.vat }}</td>
+              <td class="text-right w-10">{{ Number(product?.tp) }}</td>
+              <td class="text-right w-10">{{ Number(product?.vat) }}</td>
               <td class="text-right w-10">{{ product?.cost }}</td>
               <td class="text-right w-24">
                 <input

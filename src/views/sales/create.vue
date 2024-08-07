@@ -26,6 +26,7 @@ const supplierInput = ref(null);
 const paymentAmount = ref(null);
 const notes = ref(null);
 const productList = ref([]);
+const productStockList = ref([]);
 
 let priceList = reactive({
   subtotal: null,
@@ -68,9 +69,14 @@ const calculateTotalPrice = (price, quantity) => {
 
 const updateQuantity = (product, index, event) => {
   const inputValue = Number(event?.target?.value);
+  if (inputValue > productStockList.value[index]?.stock_batches) {
+    showNotification("error", "Quantity exceeds the available stock.");
+    productList.value[index].quantity = inputValue - 1;
+    return 0;
+  }
   productList.value[index].quantity = inputValue;
   productList.value[index].total = calculateTotalPrice(
-    product?.cost,
+    product?.price,
     inputValue
   );
 };
@@ -79,6 +85,9 @@ watch(
   paymentAmount,
   (newAmount) => {
     priceList.due = (priceList.total - newAmount)?.toFixed(2);
+    if (priceList.due < 0) {
+      priceList.due = 0;
+    }
   },
   { deep: true }
 );
@@ -133,12 +142,21 @@ const storeProducts = (product) => {
         quantity
       ),
     });
+    productStockList.value.push({
+      product_id: product?.id,
+      stock_batches: calculateStock(product?.stock_batches),
+    });
     nextTick(() => {
       productQuantity.value?.at(-1)?.focus();
     });
   }
 };
-
+const calculateStock = (stockes) => {
+  const total = stockes.reduce((sum, batch) => {
+    return sum + parseFloat(batch.balanced_quantity);
+  }, 0);
+  return total;
+};
 const handleSale = async () => {
   if (!productList.value?.length) {
     searchInput.value?.focus();
@@ -146,11 +164,6 @@ const handleSale = async () => {
     return 0;
   }
 
-  if (!supplierInfo.value?.id) {
-    supplierInput.value?.focus();
-    showNotification("error", "Please select a Supplier");
-    return 0;
-  }
   if (!priceList.total & !priceList.due) {
     paidAmount.value?.focus();
     showNotification("error", "Please insert the Amount");
@@ -202,7 +215,7 @@ onMounted(async () => await getPayment());
           >
             <i class="bi bi-search"></i>
           </button>
-          <a-dropdown :trigger="['click']">
+          <a-dropdown>
             <input
               @input="handleProductSearch($event?.target?.value)"
               @focus="searchInput.select()"
@@ -299,16 +312,16 @@ onMounted(async () => await getPayment());
               </td>
               <td class="text-center">{{ index + 1 }}</td>
               <td>{{ product?.product_name }}</td>
-              <td class="text-right">{{ product?.price }}</td>
+              <td class="text-right">{{ Number(product?.price) }}</td>
               <td class="text-right">
                 <input
                   type="number"
-                  :value="product?.quantity"
                   class="text-right bg-transparent outline-none text-red-600 focus:bg-white w-full focus:shadow-lg"
                   ref="productQuantity"
                   @focus="productQuantity[index].select()"
                   @input="updateQuantity(product, index, $event)"
                   @keyup.enter="searchInput.focus()"
+                  v-model="product.quantity"
                 />
               </td>
               <td class="text-right">{{ product?.discount_percent }}</td>
@@ -335,7 +348,7 @@ onMounted(async () => await getPayment());
             </button>
 
             <div class="grow">
-              <a-dropdown :trigger="['click']" @click="handleSupplierSearch">
+              <a-dropdown @click="handleSupplierSearch">
                 <input
                   type="text"
                   placeholder="Enter customer name"
