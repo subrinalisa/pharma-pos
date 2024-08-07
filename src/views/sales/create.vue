@@ -9,9 +9,9 @@ import { imgBase } from "@/config";
 import { showNotification } from "@/utilities/notification";
 
 const dataStore = useDataStore();
-const { isLoading, isSupplier, paymentList } = storeToRefs(dataStore);
+const { isSupplier, paymentList } = storeToRefs(dataStore);
 const { getSaleProduct, getCustomer, getPayment, saleInsert } = dataStore;
-const searchQuery = ref(null);
+
 const searchProduct = ref(null);
 const allSupplierList = ref(null);
 const supplierList = ref(null);
@@ -20,7 +20,9 @@ const comment_on_receipt = ref(false);
 const supplierInfo = ref();
 const searchInput = ref(null);
 const productQuantity = ref(null);
-const paymentIndex = ref(5);
+const paidAmount = ref(null);
+const paymentIndex = ref(1);
+const supplierInput = ref(null);
 const paymentAmount = ref(null);
 const notes = ref(null);
 const productList = ref([]);
@@ -31,6 +33,7 @@ let priceList = reactive({
 });
 
 const handleProductSearch = async (query) => {
+  if (!query) return 0;
   searchProduct.value = await getSaleProduct(query);
 };
 const handleSupplierSearch = async () => {
@@ -49,26 +52,24 @@ const findCustomer = (name) => {
 const getSupplierInfo = async (supplier) => {
   supplierInfo.value = {
     id: supplier?.id,
-    name: supplier?.name,
+    name: supplier?.first_name,
     company: supplier?.company_name,
     image: imgBase + supplier?.image_path,
   };
 };
 
-const calculateTotalPrice = (product, quantity) => {
-  const costPrice =
-    product?.pack_size?.selling_price + product?.pack_size?.vat || 0;
-  return (costPrice * quantity)?.toFixed(2);
-};
-
-const updateTotalPrice = (product, quantity) => {
-  return (product?.total * quantity)?.toFixed(2);
+const calculateTotalPrice = (price, quantity) => {
+  const costPrice = Number(price) * Number(quantity);
+  return costPrice?.toFixed(2);
 };
 
 const updateQuantity = (product, index, event) => {
   const inputValue = Number(event?.target?.value);
   productList.value[index].quantity = inputValue;
-  productList.value[index].total = updateTotalPrice(product, inputValue);
+  productList.value[index].total = calculateTotalPrice(
+    product?.cost,
+    inputValue
+  );
 };
 
 watch(
@@ -78,6 +79,7 @@ watch(
   },
   { deep: true }
 );
+
 watch(
   productList,
   (newProduct) => {
@@ -85,10 +87,17 @@ watch(
       (sum, item) => sum + Number(item?.total),
       0
     );
-
+    const totalTp = newProduct.reduce((sum, item) => sum + Number(item?.tp), 0);
+    const totalVat = newProduct.reduce(
+      (sum, item) => sum + Number(item?.vat),
+      0
+    );
     priceList = {
-      total: sumtotal,
-      due: (sumtotal - paymentAmount.value)?.toFixed(2),
+      subtotal: Number(sumtotal)?.toFixed(2),
+      tradePrice: Number(totalTp)?.toFixed(2),
+      vat: Number(totalVat)?.toFixed(2),
+      total: Number(sumtotal)?.toFixed(2),
+      due: (Number(sumtotal) - paymentAmount.value)?.toFixed(2),
     };
   },
   { deep: true }
@@ -97,13 +106,13 @@ watch(
 const storeProducts = (product) => {
   let quantity = 1;
   const existingProductIndex = productList.value.findIndex(
-    (item) => item?.product_id === product?.product_id
+    (item) => item?.product_id == product?.id
   );
   if (existingProductIndex !== -1) {
     quantity++;
     productList.value[existingProductIndex].quantity++;
     productList.value[existingProductIndex].total = calculateTotalPrice(
-      product,
+      product?.product_prices?.selling_price,
       quantity
     );
     nextTick(() => {
@@ -111,12 +120,15 @@ const storeProducts = (product) => {
     });
   } else {
     productList.value.push({
-      product_id: product?.product_id,
+      product_id: product?.id,
       product_name: product?.name,
       quantity: quantity,
-      price: product?.pack_size?.selling_price || 0,
+      price: product?.product_prices?.selling_price || 0,
       discount_percent: 0,
-      total: calculateTotalPrice(product, quantity),
+      total: calculateTotalPrice(
+        product?.product_prices?.selling_price,
+        quantity
+      ),
     });
     nextTick(() => {
       productQuantity.value?.at(-1)?.focus();
@@ -124,11 +136,21 @@ const storeProducts = (product) => {
   }
 };
 
-onMounted(async () => await getPayment());
-
 const handleSale = async () => {
   if (!productList.value?.length) {
+    searchInput.value?.focus();
     showNotification("error", "Please insert a product");
+    return 0;
+  }
+
+  if (!supplierInfo.value?.id) {
+    supplierInput.value?.focus();
+    showNotification("error", "Please select a Supplier");
+    return 0;
+  }
+  if (!priceList.total.value & !priceList.due) {
+    paidAmount.value?.focus();
+    showNotification("error", "Please insert the Amount");
     return 0;
   }
   const currDate = moment().format("YYYY-MM-DD");
@@ -162,6 +184,7 @@ const handleSale = async () => {
     }
   });
 };
+onMounted(async () => await getPayment());
 </script>
 
 <template>
@@ -178,8 +201,7 @@ const handleSale = async () => {
           </button>
           <a-dropdown :trigger="['click']">
             <input
-              @input="handleProductSearch(searchQuery)"
-              v-model="searchQuery"
+              @input="handleProductSearch($event?.target?.value)"
               @focus="searchInput.select()"
               ref="searchInput"
               type="text"
@@ -188,14 +210,7 @@ const handleSale = async () => {
             />
             <template #overlay>
               <a-menu class="max-h-80 overflow-y-auto">
-                <!-- Loading  -->
-                <a-menu-item v-if="isLoading">Loading...</a-menu-item>
-                <!-- No Products Currently Available -->
-                <a-menu-item
-                  v-if="
-                    !isLoading && (!searchProduct || !searchProduct?.length)
-                  "
-                >
+                <a-menu-item v-if="!searchProduct || !searchProduct?.length">
                   <h6 class="font-bold text-red-600">
                     No Products Currently Available...
                   </h6>
@@ -220,28 +235,16 @@ const handleSale = async () => {
                     </div>
                     <div>
                       <h6 class="font-bold">
-                        {{ data?.name }} - {{ data?.description }}
+                        {{ data?.name }}
                       </h6>
                       <p class="text-gray-500">
                         <span class="mr-2"
-                          ><strong>Product Id:</strong>
-                          {{ data?.product_id }};</span
-                        >
-                        <span class="mr-2"
-                          ><strong>Manufacturer:</strong>
-                          {{ data?.manufacturer }};</span
-                        >
-                        <span class="mr-2"
-                          ><strong>Supplier:</strong>
-                          {{ data?.supplier?.company_name }}</span
-                        >
-                        <span class="mr-2"
-                          ><strong>Selling Price:</strong>
-                          {{ data?.pack_size?.selling_price }}</span
-                        >
-                        <span class="mr-2"
                           ><strong>Category:</strong>
                           {{ data?.category?.name || "N/A" }};</span
+                        >
+                        <span class="mr-2"
+                          ><strong>Price:</strong>
+                          {{ data?.product_prices?.selling_price }}</span
                         >
                       </p>
                     </div>
@@ -335,15 +338,12 @@ const handleSale = async () => {
                   placeholder="Enter customer name"
                   class="bg-white w-full px-3 py-3 outline-none shadow-inner border border-slate-300 text-black"
                   @input="findCustomer($event?.target?.value)"
+                  ref="supplierInput"
                 />
                 <template #overlay>
                   <a-menu class="max-h-80 overflow-y-auto">
                     <!-- No supplier Currently Available -->
-                    <a-menu-item
-                      v-if="
-                        !isSupplier && (!supplierList || !supplierList?.length)
-                      "
-                    >
+                    <a-menu-item v-if="!supplierList || !supplierList?.length">
                       <h6 class="font-bold text-red-600">
                         No customer Found...
                       </h6>
@@ -368,7 +368,7 @@ const handleSale = async () => {
                         </div>
                         <div>
                           <h6 class="font-bold">
-                            {{ supplier?.name }} -
+                            {{ supplier?.first_name }} -
                             {{ supplier?.company_name }}
                           </h6>
                         </div>
@@ -405,12 +405,9 @@ const handleSale = async () => {
               </div>
             </div>
             <!-- Update & detach -->
-            <ul class="flex items-center space-x-4 list-none p-0 w-full">
-              <li class="mb-4 w-1/2">
-                <button type="button" class="w-full text-left">
-                  <i class="bi bi-check2-circle mr-3"></i>Update Supplier
-                </button>
-              </li>
+            <ul
+              class="flex justify-end items-center space-x-4 list-none p-0 w-full"
+            >
               <li class="mb-4 w-1/2">
                 <button
                   type="button"
@@ -423,7 +420,6 @@ const handleSale = async () => {
             </ul>
           </div>
         </div>
-
         <!-- Total -->
         <div class="border border-slate-300 p-2 px-3 mb-4">
           <div class="flex justify-between items-center">
@@ -433,6 +429,7 @@ const handleSale = async () => {
                 type="number"
                 class="shadow-inner bg-transparent text-right px-2 border border-slate-400 w-full py-2"
                 v-model="priceList.total"
+                ref="paidAmount"
               />
             </div>
           </div>

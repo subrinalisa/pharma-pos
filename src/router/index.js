@@ -7,7 +7,7 @@ import Dashboard from "@/views/Dashboard.vue";
 //Start User Management
 
 import Purchase from "@/views/purchase/create.vue";
-import Sales from "@/views/Sales.vue";
+import Sales from "@/views/sales/create.vue";
 import Users from "@/views/User Management/Users.vue";
 import Useradd from "@/views/User Management/Useradd.vue";
 import Useredit from "@/views/User Management/Useredit.vue";
