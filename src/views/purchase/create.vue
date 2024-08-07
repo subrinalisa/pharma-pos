@@ -7,13 +7,23 @@ import { storeToRefs } from "pinia";
 import { nextTick, ref, reactive, watch, onMounted } from "vue";
 import { imgBase } from "@/config";
 import { showNotification } from "@/utilities/notification";
+import router from "@/router";
 
 const dataStore = useDataStore();
-const { paymentList } = storeToRefs(dataStore);
-const { getProduct, getSupplier, getMRR, getPayment, purchaseInsert } =
-  dataStore;
+const { paymentList, userInfo } = storeToRefs(dataStore);
+const {
+  getProduct,
+  getSupplier,
+  getBranch,
+  getMRR,
+  getPayment,
+  purchaseInsert,
+} = dataStore;
 const searchProduct = ref(null);
 const supplierList = ref(null);
+const branchList = ref(null);
+const branch_id = ref("");
+const branchInput = ref("");
 const mrrList = ref(null);
 const mrrName = ref(null);
 const mrrID = ref(null);
@@ -46,6 +56,7 @@ const handleProductSearch = async (query) => {
 const handleSupplierSearch = async (query) => {
   supplierList.value = await getSupplier(query);
 };
+
 const handleMRRSearch = async (query) => {
   mrrList.value = await getMRR(query);
 };
@@ -137,7 +148,7 @@ const storeProducts = (product) => {
     nextTick(() => productQuantity.value?.at(-1)?.focus());
   }
 };
-const handlePurchase = async () => {
+const handlePurchase = async (router) => {
   if (!productList.value?.length) {
     searchInput.value?.focus();
     showNotification("error", "Please insert a product");
@@ -158,6 +169,11 @@ const handlePurchase = async () => {
     showNotification("error", "Please insert the payment");
     return 0;
   }
+  if (!branch_id.value) {
+    branchInput.value?.focus();
+    showNotification("error", "Please select a branch");
+    return 0;
+  }
 
   const currDate = moment().format("YYYY-MM-DD");
   const purchaseData = {
@@ -175,6 +191,7 @@ const handlePurchase = async () => {
     purchase_products: productList.value,
     payment_method_id: paymentIndex.value,
     note: notes.value,
+    branch_id: branch_id.value,
   };
 
   const res = await purchaseInsert(purchaseData);
@@ -196,16 +213,24 @@ const handlePurchase = async () => {
       paymentAmount.value = null;
       paymentIndex.value = null;
       notes.value = null;
+      branch_id.value = userInfo.value?.branch_id;
+      router.push({ name: "purchases" });
     }
   });
 };
 watch(
   paymentAmount,
   (newAmount) => {
-    priceList.due = (priceList.total - newAmount)?.toFixed(2);
-    if (priceList.due < 0) {
-      priceList.due = 0;
+    if (Number(newAmount) > Number(priceList.total)) {
+      showNotification("error", "Enter valid amount");
+      paymentAmount.value = 0;
+
+      return 0;
     }
+    priceList.due = (priceList.total - newAmount)?.toFixed(2);
+    // if (priceList.due < 0) {
+    //   priceList.due = 0;
+    // }
   },
   { deep: true }
 );
@@ -233,7 +258,11 @@ watch(
   { deep: true }
 );
 
-onMounted(async () => await getPayment());
+onMounted(async () => {
+  await getPayment();
+  branchList.value = await getBranch();
+  branch_id.value = userInfo.value?.branch_id;
+});
 </script>
 
 <template>
@@ -308,7 +337,7 @@ onMounted(async () => await getPayment());
           <button
             class="bg-[#000180] px-5 py-1 text-white min-w-fit"
             type="button"
-            @click="handlePurchase"
+            @click="handlePurchase($router)"
           >
             <i class="bi bi-cart mr-2"></i> <span>Purchased</span>
           </button>
@@ -402,26 +431,23 @@ onMounted(async () => await getPayment());
         </table>
       </div>
       <div class="right-side">
-        <!-- Cancel Recv. -->
         <div class="border border-slate-300 p-2 px-3 mb-4">
-          <!-- <ul class="flex items-center space-x-4 list-none p-0 w-full">
-            <li class="mb-4 w-1/2">
-              <button
-                type="button"
-                class="shadow-inner border border-slate-400 w-full py-2"
-              >
-                ...
-              </button>
-            </li>
-            <li class="mb-4 w-1/2">
-              <button
-                type="button"
-                class="shadow-inner border border-slate-400 w-full py-2"
-              >
-                <i class="bi bi-x-lg mr-3 text-red-600"></i>Cancel Recv.
-              </button>
-            </li>
-          </ul> -->
+          <!-- Branch -->
+          <div class="mb-4">
+            <select
+              class="bg-white w-full px-4 py-3 outline-none shadow-inner border border-slate-300 text-black focus:border-black"
+              v-model="branch_id"
+              ref="branchInput"
+              required
+            >
+              <option :value="null">Enter branch name</option>
+              <template v-for="item in branchList">
+                <option :value="item?.id">
+                  {{ item?.organization_name }} - {{ item?.branch }}
+                </option>
+              </template>
+            </select>
+          </div>
           <!-- Supplier -->
           <div class="flex mb-4">
             <button
@@ -676,7 +702,7 @@ onMounted(async () => await getPayment());
           <button
             class="bg-[#000180] px-5 py-2 text-white min-w-fit mt-4 rounded-md"
             type="button"
-            @click="handlePurchase"
+            @click="handlePurchase($router)"
           >
             <i class="bi bi-cart mr-2"></i> <span>Purchased</span>
           </button>

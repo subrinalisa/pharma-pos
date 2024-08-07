@@ -3,16 +3,16 @@
     <div class="flex justify-between mb-4">
       <input
         type="text"
-        placeholder="Search Sales..."
+        placeholder="Search Purchase..."
         class="px-4 py-2 border rounded"
         @input="searchList($event?.target?.value)"
       />
-      <router-link :to="{ name: 'sales-create' }">
+      <router-link :to="{ name: 'purchases-create' }">
         <button
           class="flex items-center px-4 py-2 bg-[#000180] text-white rounded hover:bg-indigo-600"
         >
           <PlusOutlined class="mr-2" />
-          New Sales
+          New Purchase
         </button>
       </router-link>
     </div>
@@ -24,13 +24,14 @@
         <tr>
           <th>Actions</th>
           <th class="text-left">ID</th>
-          <th class="text-left">sale code</th>
-          <th class="text-left">sale date</th>
-          <th class="text-right">total</th>
+          <th class="text-left">purchase code</th>
+          <th class="text-left">purchase date</th>
+          <th class="text-right">total Price</th>
           <th class="text-left">payment method</th>
-          <th class="text-left">customer</th>
-          <th class="text-left">Seller</th>
+          <th class="text-left">supplier</th>
+          <th class="text-left">mrr</th>
           <th class="text-left">branch</th>
+
           <th class="text-center">note</th>
         </tr>
       </thead>
@@ -57,13 +58,13 @@
               <EditOutlined class="align-middle" />
             </button>
           </td>
-          <td>{{ item?.id }}</td>
-          <td>{{ item?.sale_code }}</td>
-          <td>{{ item?.sale_date }}</td>
-          <td class="text-right">{{ item?.total }}</td>
+          <td>{{ item.id }}</td>
+          <td>{{ item.purchase_code }}</td>
+          <td>{{ item.purchase_date }}</td>
+          <td class="text-right">{{ item.total }}</td>
           <td>{{ findById(paymentList, item.payment_method_id)?.name }}</td>
-          <td>{{ item?.customer?.first_name }}</td>
-          <td>{{ item?.sold_user?.name }}</td>
+          <td>{{ findById(list.supplier, item.supplier_id)?.company_name }}</td>
+          <td>{{ findById(list.mrr, item.mrr_id)?.name }}</td>
           <td>
             {{ findById(list.branch, item.branch_id)?.organization_name }} -
             {{ findById(list.branch, item.branch_id)?.branch }}
@@ -91,7 +92,8 @@ import { onMounted, reactive, ref } from "vue";
 
 const dataStore = useDataStore();
 const { paymentList, isListing } = storeToRefs(dataStore);
-const { getSalesList, getPayment, getSupplier, getMRR, getBranch } = dataStore;
+const { getPurchaseList, getPayment, getSupplier, getMRR, getBranch } =
+  dataStore;
 
 const allData = ref();
 const backupData = ref();
@@ -117,7 +119,7 @@ onMounted(async () => {
   fetchList(page.value, "");
 });
 const fetchList = async (page) => {
-  backupData.value = await getSalesList(page, "");
+  backupData.value = await getPurchaseList(page, "");
   allData.value = backupData.value;
 };
 const handlePagination = (pageNo) => {
@@ -126,6 +128,6 @@ const handlePagination = (pageNo) => {
 };
 const searchList = async (query) => {
   if (!query) allData.value = backupData.value;
-  allData.value = await getSalesList("", query);
+  allData.value = await getPurchaseList("", query);
 };
 </script>

@@ -14,8 +14,6 @@ const allItems = ref([]);
 let page = ref(1);
 let paginate = ref(10);
 
-const deleteItem = (index) => {};
-
 onMounted(() => getAllCustomers());
 
 const getAllCustomers = async () => {
