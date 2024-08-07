@@ -26,6 +26,8 @@ const supplierInput = ref(null);
 const productQuantity = ref(null);
 const paymentIndex = ref(1);
 const paymentAmount = ref(null);
+const paidAmount = ref(null);
+
 const notes = ref(null);
 
 const productList = ref([]);
@@ -149,6 +151,11 @@ const handlePurchase = async () => {
   if (!supplierInfo.value?.id) {
     supplierInput.value?.focus();
     showNotification("error", "Please select a Supplier");
+    return 0;
+  }
+  if (!paymentAmount.value) {
+    paidAmount.value?.focus();
+    showNotification("error", "Please insert the payment");
     return 0;
   }
 
@@ -639,7 +646,7 @@ onMounted(async () => await getPayment());
         <!-- Payment Gateway -->
         <div class="border border-slate-300 p-2 px-3">
           <h6>Add Payment</h6>
-          <template v-for="(payment, index) in paymentList" :key="index">
+          <template v-for="payment in paymentList" :key="payment?.id">
             <button
               type="button"
               class="border px-3 py-1 rounded-md mt-3 mr-2"
@@ -658,6 +665,7 @@ onMounted(async () => await getPayment());
             class="block w-full border mt-3 px-3 py-2 rounded-md"
             placeholder="Enter Amount . . ."
             v-model="paymentAmount"
+            ref="paidAmount"
           />
           <textarea
             rows="3"
