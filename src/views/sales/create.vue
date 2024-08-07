@@ -9,7 +9,7 @@ import { imgBase } from "@/config";
 import { showNotification } from "@/utilities/notification";
 
 const dataStore = useDataStore();
-const { isSupplier, paymentList } = storeToRefs(dataStore);
+const { paymentList } = storeToRefs(dataStore);
 const { getSaleProduct, getCustomer, getPayment, saleInsert } = dataStore;
 
 const searchProduct = ref(null);
@@ -28,8 +28,11 @@ const notes = ref(null);
 const productList = ref([]);
 
 let priceList = reactive({
-  total: 0,
-  due: 0,
+  subtotal: null,
+  tradePrice: null,
+  vat: null,
+  total: null,
+  due: null,
 });
 
 const handleProductSearch = async (query) => {
@@ -148,7 +151,7 @@ const handleSale = async () => {
     showNotification("error", "Please select a Supplier");
     return 0;
   }
-  if (!priceList.total.value & !priceList.due) {
+  if (!priceList.total & !priceList.due) {
     paidAmount.value?.focus();
     showNotification("error", "Please insert the Amount");
     return 0;
