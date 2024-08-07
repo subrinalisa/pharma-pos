@@ -9,21 +9,24 @@ import { imgBase } from "@/config";
 import { showNotification } from "@/utilities/notification";
 
 const dataStore = useDataStore();
-const { paymentList } = storeToRefs(dataStore);
-const { getSaleProduct, getCustomer, getPayment, saleInsert } = dataStore;
+const { paymentList, userInfo } = storeToRefs(dataStore);
+const { getSaleProduct, getCustomer, getPayment, getBranch, saleInsert } =
+  dataStore;
 
 const searchProduct = ref(null);
 const allSupplierList = ref(null);
 const supplierList = ref(null);
 const comment_on_receipt = ref(false);
-
+const branchList = ref(null);
+const branch_id = ref("");
+const branchInput = ref("");
 const supplierInfo = ref();
 const searchInput = ref(null);
 const productQuantity = ref(null);
 const paidAmount = ref(null);
 const paymentIndex = ref(1);
 const supplierInput = ref(null);
-const paymentAmount = ref(null);
+const paymentAmount = ref(0);
 const notes = ref(null);
 const productList = ref([]);
 const productStockList = ref([]);
@@ -84,6 +87,11 @@ const updateQuantity = (product, index, event) => {
 watch(
   paymentAmount,
   (newAmount) => {
+    if (Number(newAmount) > Number(priceList.total)) {
+      showNotification("error", "Enter valid amount");
+      paymentAmount.value = 0;
+      return 0;
+    }
     priceList.due = (priceList.total - newAmount)?.toFixed(2);
     if (priceList.due < 0) {
       priceList.due = 0;
@@ -131,6 +139,12 @@ const storeProducts = (product) => {
       productQuantity.value[existingProductIndex]?.focus();
     });
   } else {
+    const checkStock = calculateStock(product?.stock_batches);
+    if (checkStock <= 0) {
+      showNotification("error", "Sorry! Sold out");
+      searchInput.value?.focus();
+      return 0;
+    }
     productList.value.push({
       product_id: product?.id,
       product_name: product?.name,
@@ -141,6 +155,7 @@ const storeProducts = (product) => {
         product?.product_prices?.selling_price,
         quantity
       ),
+      stock_batches: calculateStock(product?.stock_batches),
     });
     productStockList.value.push({
       product_id: product?.id,
@@ -157,16 +172,30 @@ const calculateStock = (stockes) => {
   }, 0);
   return total;
 };
-const handleSale = async () => {
+const handleSale = async (router) => {
   if (!productList.value?.length) {
     searchInput.value?.focus();
     showNotification("error", "Please insert a product");
     return 0;
   }
 
-  if (!priceList.total & !priceList.due) {
+  if (
+    !supplierInfo.value?.id &
+    (Number(paymentAmount.value) != Number(priceList?.total))
+  ) {
+    console.log(paymentAmount.value, priceList?.total);
+    paidAmount.value?.focus();
+    showNotification("error", "Choose a customer or pay in full.");
+    return 0;
+  }
+  if (!supplierInfo.value?.id & !paymentAmount.value) {
     paidAmount.value?.focus();
     showNotification("error", "Please insert the Amount");
+    return 0;
+  }
+  if (!branch_id.value) {
+    branchInput.value?.focus();
+    showNotification("error", "Please select a branch");
     return 0;
   }
   const currDate = moment().format("YYYY-MM-DD");
@@ -181,6 +210,7 @@ const handleSale = async () => {
     paid_amount: paymentAmount.value,
     comment_on_receipt: comment_on_receipt.value,
     item_tiers: "none",
+    branch_id: branch_id.value,
   };
 
   const res = await saleInsert(purchaseData);
@@ -197,10 +227,17 @@ const handleSale = async () => {
       paymentIndex.value = null;
       notes.value = null;
       comment_on_receipt.value = false;
+      branch_id.value = userInfo.value?.branch_id;
+      router.push({ name: "sales" });
     }
   });
 };
-onMounted(async () => await getPayment());
+
+onMounted(async () => {
+  await getPayment();
+  branchList.value = await getBranch();
+  branch_id.value = userInfo.value?.branch_id;
+});
 </script>
 
 <template>
@@ -274,7 +311,7 @@ onMounted(async () => await getPayment());
           <button
             class="bg-[#000180] px-5 py-1 text-white min-w-fit"
             type="button"
-            @click="handleSale"
+            @click="handleSale($router)"
           >
             <i class="bi bi-cart mr-2"></i> <span>Sale</span>
           </button>
@@ -289,6 +326,7 @@ onMounted(async () => await getPayment());
               <th class="text-center">SL</th>
               <th class="text-left">Item Name</th>
               <th class="text-right">Price</th>
+              <th class="text-right">Stock</th>
               <th class="text-right">Qty.</th>
               <th class="text-right">Disc %</th>
               <th class="text-right">Total</th>
@@ -313,6 +351,7 @@ onMounted(async () => await getPayment());
               <td class="text-center">{{ index + 1 }}</td>
               <td>{{ product?.product_name }}</td>
               <td class="text-right">{{ Number(product?.price) }}</td>
+              <td class="text-right">{{ product?.stock_batches }}</td>
               <td class="text-right">
                 <input
                   type="number"
@@ -333,12 +372,22 @@ onMounted(async () => await getPayment());
       <div class="right-side">
         <!-- customer -->
         <div class="border border-slate-300 p-2 px-3 mb-4">
-          <!-- <button
-            type="button"
-            class="shadow-inner border border-slate-400 w-full py-2 mb-4"
-          >
-            ...
-          </button> -->
+          <!-- Branch -->
+          <div class="mb-4">
+            <select
+              class="bg-white w-full px-4 py-3 outline-none shadow-inner border border-slate-300 text-black focus:border-black"
+              v-model="branch_id"
+              ref="branchInput"
+              required
+            >
+              <option :value="null">Enter branch name</option>
+              <template v-for="item in branchList">
+                <option :value="item?.id">
+                  {{ item?.organization_name }} - {{ item?.branch }}
+                </option>
+              </template>
+            </select>
+          </div>
           <div class="flex mb-4">
             <button
               type="button"
@@ -439,13 +488,12 @@ onMounted(async () => await getPayment());
         <!-- Total -->
         <div class="border border-slate-300 p-2 px-3 mb-4">
           <div class="flex justify-between items-center">
-            <div class="mb-3"><label>Sub Total:</label></div>
+            <div class="mb-3"><label>Total:</label></div>
             <div class="mb-3">
               <input
                 type="number"
                 class="shadow-inner bg-transparent text-right px-2 border border-slate-400 w-full py-2"
                 v-model="priceList.total"
-                ref="paidAmount"
               />
             </div>
           </div>
@@ -484,6 +532,8 @@ onMounted(async () => await getPayment());
             class="block w-full border mt-3 px-3 py-2 rounded-md"
             placeholder="Enter Amount . . ."
             v-model="paymentAmount"
+            ref="paidAmount"
+            @focus="paidAmount?.select()"
           />
           <textarea
             rows="3"
@@ -503,7 +553,7 @@ onMounted(async () => await getPayment());
         <button
           class="bg-[#000180] px-5 py-2 text-white min-w-fit mt-4 rounded-md"
           type="button"
-          @click="handleSale"
+          @click="handleSale($router)"
         >
           <i class="bi bi-cart mr-2"></i> <span>Sale</span>
         </button>

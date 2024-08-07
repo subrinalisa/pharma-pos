@@ -10,23 +10,25 @@
       </button>
     </div>
     <ul v-show="isSidebarOpen">
-      <li
-        v-for="(item, index) in filteredMenuItems"
-        :key="index"
-        :class="{ active: isActive(item) }"
-      >
+      <li v-for="(item, index) in filteredMenuItems" :key="index">
         <div @click="toggleCollapse(index)">
-          <router-link :to="{ name: item?.path }">
+          <router-link
+            :to="{ name: item?.path }"
+            :class="{ active: isActive(item) }"
+          >
             <i :class="item?.icon"></i><span>{{ item?.name }}</span>
           </router-link>
         </div>
+
         <ul v-if="item?.child && item.isExpanded">
           <li
             v-for="(child, childIndex) in item?.child"
             :key="'c' + childIndex"
-            :class="{ active: isActive(child) }"
           >
-            <router-link :to="{ name: child?.path }">
+            <router-link
+              :to="{ name: child?.path }"
+              :class="{ active: isActive(child) }"
+            >
               <span>{{ child?.name }}</span>
             </router-link>
           </li>
@@ -37,7 +39,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, watch, computed } from "vue";
+import { reactive, ref, watch, computed } from "vue";
 import { useRoute } from "vue-router";
 import { MenuFoldOutlined } from "@ant-design/icons-vue";
 import { useDataStore } from "@/stores/data";
@@ -76,22 +78,24 @@ const menuItems = reactive([
     icon: "bi bi-download",
     path: "supplier",
     isExpanded: false,
-    permission: "reports",
+    permission: "suppliers",
   },
   {
     name: "Reports",
     icon: "bi bi-graph-down",
     path: "report",
     isExpanded: false,
-    permission: "",
+    permission: "reports",
     child: [
       {
         name: "Sales Report",
         path: "report",
+        permission: "reports",
       },
       {
         name: "Purchase Report",
         path: "purchase-report",
+        permission: "reports",
       },
     ],
   },

@@ -48,35 +48,28 @@ body {
     @apply whitespace-nowrap;
 
     li {
-        @apply border border-slate-300;
+        @apply border border-b-0 border-slate-300;
 
         a {
             @apply inline-block px-5 py-3 w-full;
-
-
         }
 
         i {
             @apply text-xl mr-2
         }
 
-        // .router-link-exact-active {
-        //     @apply bg-white
-        // }
-
         li {
+
+            @apply border-t border-b-0 border-l-0 border-r-0;
+
             a {
                 @apply px-10
             }
         }
     }
 
-    li:not(:last-child) {
-        @apply border border-slate-300 border-b-0;
-
-        a {
-            @apply border-b-0
-        }
+    li:last-child {
+        @apply border-b;
     }
 }
 

@@ -12,6 +12,7 @@ export const useDataStore = defineStore("dataStore", {
     userInfo: null,
     searchProduct: null,
     paymentList: null,
+    isListing: null,
 
 
   }),
@@ -57,6 +58,7 @@ export const useDataStore = defineStore("dataStore", {
       } catch (error) {
         this.isLoading = false;
         console.log(error);
+        showNotification("error", error?.message);
       }
     },
 
@@ -77,11 +79,12 @@ export const useDataStore = defineStore("dataStore", {
       } catch (error) {
         this.isLoading = false;
         console.log(error);
+        showNotification("error", error?.message);
       }
     },
     // Supplier Search
     async getSupplier(query) {
-      if (!query) return 0
+      !query && (query = "");
       this.isSupplier = true;
       try {
         const token = Cookies.get("token");
@@ -97,6 +100,7 @@ export const useDataStore = defineStore("dataStore", {
       } catch (error) {
         this.isSupplier = false;
         console.log(error);
+        showNotification("error", error?.message);
       }
     },
     // Customer Search
@@ -119,7 +123,7 @@ export const useDataStore = defineStore("dataStore", {
     },
     // MRR Search
     async getMRR(query) {
-      if (!query) return 0
+      !query && (query = "");
       this.isMRR = true;
       try {
         const token = Cookies.get("token");
@@ -135,6 +139,7 @@ export const useDataStore = defineStore("dataStore", {
       } catch (error) {
         this.isMRR = false;
         console.log(error);
+        showNotification("error", error?.message);
       }
     },
     // Payment Gateway
@@ -170,6 +175,7 @@ export const useDataStore = defineStore("dataStore", {
         }
       } catch (error) {
         console.log(error);
+        showNotification("error", error?.message);
       }
     },
     // Sale Insert
@@ -188,6 +194,7 @@ export const useDataStore = defineStore("dataStore", {
         }
       } catch (error) {
         console.log(error);
+        showNotification("error", error?.message);
       }
     },
     // Product List
@@ -207,6 +214,7 @@ export const useDataStore = defineStore("dataStore", {
       } catch (error) {
         this.isLoading = false;
         console.log(error);
+        showNotification("error", error?.message);
       }
     },
     // Sales Verify List
@@ -226,6 +234,7 @@ export const useDataStore = defineStore("dataStore", {
       } catch (error) {
         this.isLoading = false;
         console.log(error);
+        showNotification("error", error?.message);
       }
     },
     // Customer List
@@ -245,6 +254,7 @@ export const useDataStore = defineStore("dataStore", {
       } catch (error) {
         this.isLoading = false;
         console.log(error);
+        showNotification("error", error?.message);
       }
     },
     // Expenses List
@@ -264,6 +274,7 @@ export const useDataStore = defineStore("dataStore", {
       } catch (error) {
         this.isLoading = false;
         console.log(error);
+        showNotification("error", error?.message);
       }
     },
     // Expenses List
@@ -283,6 +294,7 @@ export const useDataStore = defineStore("dataStore", {
       } catch (error) {
         this.isLoading = false;
         console.log(error);
+        showNotification("error", error?.message);
       }
     },
     // Purchase List
@@ -302,6 +314,7 @@ export const useDataStore = defineStore("dataStore", {
       } catch (error) {
         this.isLoading = false;
         console.log(error);
+        showNotification("error", error?.message);
       }
     },
     // Invoice
@@ -321,6 +334,69 @@ export const useDataStore = defineStore("dataStore", {
       } catch (error) {
         this.isLoading = false;
         console.log(error);
+        showNotification("error", error?.message);
+      }
+    },
+    // Branch
+    async getBranch() {
+      this.isLoading = true;
+      try {
+        const token = Cookies.get("token");
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+        const response = await axios.get(`${apiBase}/all-branch`, config);
+        this.isLoading = false;
+        if (response?.status == 200)
+          return response?.data;
+      } catch (error) {
+        this.isLoading = false;
+        console.log(error);
+        showNotification("error", error?.message);
+      }
+    },
+    // Purchase List
+    async getPurchaseList(page, query) {
+      if (query) page = ""
+      this.isListing = true;
+      try {
+        const token = Cookies.get("token");
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+        const response = await axios.get(`${apiBase}/all-purchases-paginated?page=${page}&search=${query}`, config);
+        this.isListing = false;
+        if (response?.status == 200)
+          return response?.data;
+      } catch (error) {
+        this.isListing = false;
+        console.log(error);
+        showNotification("error", error?.message);
+      }
+    },
+    // Sale List
+    async getSalesList(page, query) {
+      if (query) page = ""
+      this.isListing = true;
+      try {
+        const token = Cookies.get("token");
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+        const response = await axios.get(`${apiBase}/all-sales-paginated?page=${page}&search=${query}`, config);
+        this.isListing = false;
+        if (response?.status == 200)
+          return response?.data;
+      } catch (error) {
+        this.isListing = false;
+        console.log(error);
+        showNotification("error", error?.message);
       }
     },
   },
