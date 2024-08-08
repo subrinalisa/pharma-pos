@@ -12,7 +12,7 @@ export const useDataStore = defineStore("dataStore", {
     userInfo: null,
     searchProduct: null,
     paymentList: null,
-    isListing: null,
+    isLoading: null,
 
 
   }),
@@ -360,7 +360,7 @@ export const useDataStore = defineStore("dataStore", {
     // Purchase List
     async getPurchaseList(page, query) {
       if (query) page = ""
-      this.isListing = true;
+      this.isLoading = true;
       try {
         const token = Cookies.get("token");
         const config = {
@@ -369,11 +369,31 @@ export const useDataStore = defineStore("dataStore", {
           },
         }
         const response = await axios.get(`${apiBase}/all-purchases-paginated?page=${page}&search=${query}`, config);
-        this.isListing = false;
+        this.isLoading = false;
         if (response?.status == 200)
           return response?.data;
       } catch (error) {
-        this.isListing = false;
+        this.isLoading = false;
+        console.log(error);
+        showNotification("error", error?.message);
+      }
+    },
+    // Purchase Edit List
+    async getPurchaseDetails(id) {
+      this.isLoading = true;
+      try {
+        const token = Cookies.get("token");
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+        const response = await axios.get(`${apiBase}/purchases-edit?id=${id}`, config);
+        this.isLoading = false;
+        if (response?.status == 200)
+          return response?.data;
+      } catch (error) {
+        this.isLoading = false;
         console.log(error);
         showNotification("error", error?.message);
       }
@@ -381,7 +401,7 @@ export const useDataStore = defineStore("dataStore", {
     // Sale List
     async getSalesList(page, query) {
       if (query) page = ""
-      this.isListing = true;
+      this.isLoading = true;
       try {
         const token = Cookies.get("token");
         const config = {
@@ -390,11 +410,11 @@ export const useDataStore = defineStore("dataStore", {
           },
         }
         const response = await axios.get(`${apiBase}/all-sales-paginated?page=${page}&search=${query}`, config);
-        this.isListing = false;
+        this.isLoading = false;
         if (response?.status == 200)
           return response?.data;
       } catch (error) {
-        this.isListing = false;
+        this.isLoading = false;
         console.log(error);
         showNotification("error", error?.message);
       }

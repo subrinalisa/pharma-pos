@@ -7,7 +7,6 @@ import { storeToRefs } from "pinia";
 import { nextTick, ref, reactive, watch, onMounted } from "vue";
 import { imgBase } from "@/config";
 import { showNotification } from "@/utilities/notification";
-import router from "@/router";
 
 const dataStore = useDataStore();
 const { paymentList, userInfo } = storeToRefs(dataStore);
@@ -69,6 +68,7 @@ const getSupplierInfo = async (supplier) => {
     id: supplier?.id,
     name: supplier?.first_name,
     company: supplier?.company_name,
+    type: supplier?.type,
     image: imgBase + supplier?.image_path,
   };
 };
@@ -316,10 +316,15 @@ onMounted(async () => {
                       <h6 class="font-bold">
                         {{ data?.name }}
                       </h6>
+
                       <p class="text-gray-500">
                         <span class="mr-2"
                           ><strong>Category:</strong>
                           {{ data?.category?.name || "N/A" }};</span
+                        >
+                        <span class="mr-2"
+                          ><strong>Available Stock:</strong>
+                          {{ calculateStock(data?.stock_batches) }};</span
                         >
                         <span class="mr-2"
                           ><strong>Price:</strong>
@@ -382,7 +387,7 @@ onMounted(async () => {
                   </p>
                   <p>
                     <span class="font-semibold">Generic Name:</span>
-                    {{ product?.generic_name || "-" }}
+                    {{ product?.generic_name || "Empty" }}
                   </p>
                   <p>
                     <span class="font-semibold">Serial:</span>
@@ -390,15 +395,15 @@ onMounted(async () => {
                   </p>
                   <p>
                     <span class="font-semibold">Stock:</span>
-                    {{ product?.stock || "-" }}
+                    {{ product?.stock || "Empty" }}
                   </p>
                   <p>
                     <span class="font-semibold">Cost Price Preview:</span>
-                    {{ Number(product?.cost_price_preview) || "-" }}
+                    {{ Number(product?.cost_price_preview)?.toFixed(2) || "-" }}
                   </p>
                   <p>
                     <span class="font-semibold">Item Id:</span>
-                    {{ product?.product_id || "-" }}
+                    {{ product?.item_id || "-" }}
                   </p>
                   <p class="mt-2">
                     <label class="mb-2 block">Select Expire Date</label>
@@ -437,8 +442,8 @@ onMounted(async () => {
             <select
               class="bg-white w-full px-4 py-3 outline-none shadow-inner border border-slate-300 text-black focus:border-black"
               v-model="branch_id"
+              @change="productList = []"
               ref="branchInput"
-              required
             >
               <option :value="null">Enter branch name</option>
               <template v-for="item in branchList">
@@ -494,6 +499,7 @@ onMounted(async () => {
                           <h6 class="font-bold">
                             {{ supplier?.first_name }} -
                             {{ supplier?.company_name }}
+                            ( {{ supplier?.type }})
                           </h6>
                         </div>
                       </div>
@@ -517,7 +523,9 @@ onMounted(async () => {
                     </a-avatar>
                   </div>
                   <div>
-                    <h6 class="font-bold">{{ supplierInfo?.name }}</h6>
+                    <h6 class="font-bold">
+                      {{ supplierInfo?.name }}
+                    </h6>
                     <p class="text-[#43B000]">({{ supplierInfo?.company }})</p>
                   </div>
                 </div>
@@ -532,6 +540,9 @@ onMounted(async () => {
             <ul
               class="flex justify-end items-center space-x-4 list-none p-0 w-full"
             >
+              <li class="mb-4 w-1/2">
+                <span class="uppercase">{{ supplierInfo?.type }}</span>
+              </li>
               <li class="mb-4 w-1/2">
                 <button
                   type="button"
@@ -687,7 +698,7 @@ onMounted(async () => {
             </button>
           </template>
           <input
-            type="text"
+            type="number"
             class="block w-full border mt-3 px-3 py-2 rounded-md"
             placeholder="Enter Amount . . ."
             v-model="paymentAmount"

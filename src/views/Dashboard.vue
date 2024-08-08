@@ -11,13 +11,9 @@ const topData = ref({
   totalProducts: 0,
 });
 const chartOptions = ref({
-  chart: {
-    type: "bar",
-    height: 380,
-  },
   xaxis: {
     type: "category",
-
+    colors: ["#33b2df", "#546E7A"],
     group: {
       style: {
         fontSize: "10px",
@@ -88,9 +84,9 @@ const getDashboardData = async () => {
             <p class="px-3 pb-3">Total Purchases Amount</p>
           </div>
           <div
-            class="bg-indigo-500 text-white p-3 rounded min-w-24 text-center"
+            class="bg-purple-600 text-white p-3 rounded min-w-24 text-center"
           >
-            <i class="bi bi-cart text-3xl align-middle mt-3 inline-block"></i>
+            <i class="bi bi-basket text-3xl align-middle mt-3 inline-block"></i>
           </div>
         </div>
       </div>
@@ -103,10 +99,10 @@ const getDashboardData = async () => {
             </h6>
             <p class="px-3 pb-3">Total Items</p>
           </div>
-          <div
-            class="bg-indigo-500 text-white p-3 rounded min-w-24 text-center"
-          >
-            <i class="bi bi-cart text-3xl align-middle mt-3 inline-block"></i>
+          <div class="bg-teal-600 text-white p-3 rounded min-w-24 text-center">
+            <i
+              class="bi bi-minecart text-3xl align-middle mt-3 inline-block"
+            ></i>
           </div>
         </div>
       </div>
@@ -119,10 +115,8 @@ const getDashboardData = async () => {
             </h6>
             <p class="px-3 pb-3">Total Customers</p>
           </div>
-          <div
-            class="bg-indigo-500 text-white p-3 rounded min-w-24 text-center"
-          >
-            <i class="bi bi-cart text-3xl align-middle mt-3 inline-block"></i>
+          <div class="bg-blue-900 text-white p-3 rounded min-w-24 text-center">
+            <i class="bi bi-people text-3xl align-middle mt-3 inline-block"></i>
           </div>
         </div>
       </div>

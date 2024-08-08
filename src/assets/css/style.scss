@@ -48,10 +48,10 @@ body {
     @apply whitespace-nowrap;
 
     li {
-        @apply border border-b-0 border-slate-300;
 
         a {
-            @apply inline-block px-5 py-3 w-full;
+            @apply block px-5 py-3 w-full border border-slate-300 mb-1;
+
         }
 
         i {
@@ -60,22 +60,16 @@ body {
 
         li {
 
-            @apply border-t border-b-0 border-l-0 border-r-0;
-
             a {
                 @apply px-10
             }
         }
     }
 
-    li:last-child {
-        @apply border-b;
-    }
+
 }
 
 .table {
-
-
     th {
         @apply whitespace-nowrap;
     }
@@ -117,4 +111,13 @@ body {
     td {
         vertical-align: baseline;
     }
+}
+
+.ant-pagination .ant-pagination-item-active a {
+    color: #fff !important;
+}
+
+.ant-pagination .ant-pagination-item-active {
+    background-color: #000180 !important;
+    border-color: #000180 !important;
 }

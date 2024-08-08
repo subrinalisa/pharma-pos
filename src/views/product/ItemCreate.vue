@@ -9,6 +9,7 @@ import { useRouter } from "vue-router";
 import Vue3TagsInput from "vue3-tags-input";
 // Variables
 const activeTab = ref("itemInfo");
+const isDiscount = ref(false);
 const categoryList = ref([]);
 const supplierList = ref([]);
 const router = useRouter();
@@ -474,7 +475,7 @@ const deleteVariation = (index) => {
                 :key="index"
                 :value="supplier.id"
               >
-                {{ supplier.first_name }}
+                {{ supplier.first_name }} - {{ supplier?.type }}
               </option>
             </select>
           </div>
@@ -542,6 +543,22 @@ const deleteVariation = (index) => {
             v-model="products.products.description"
             class="w-full border border-gray rounded-md shadow-sm px-4 py-2"
           ></textarea>
+        </div>
+        <div class="mb-4">
+          <label for="isdiscount"
+            ><input
+              type="checkbox"
+              id="isdiscount"
+              @change="isDiscount = !isDiscount"
+            /><span class="ml-2">Is Discount</span></label
+          >
+        </div>
+        <div class="mb-4" v-if="isDiscount">
+          <input
+            type="number"
+            placeholder="Minimum Discount"
+            class="w-full border border-gray rounded-md shadow-sm px-4 py-2"
+          />
         </div>
         <div class="flex justify-end space-x-4">
           <button

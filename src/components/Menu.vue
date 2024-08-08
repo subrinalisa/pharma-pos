@@ -1,13 +1,21 @@
 <template>
+  <!-- <sidebar-menu :menu="menu" theme="white-theme" /> -->
   <div class="sidebar mr-5">
-    <div class="text-right">
-      <button
-        type="button"
-        class="bg-black text-white rounded px-2 py-1 mb-3"
-        @click="isSidebarOpen = !isSidebarOpen"
-      >
-        <MenuFoldOutlined />
-      </button>
+    <div class="flex justify-between">
+      <div class="grow mr-5" v-if="isSidebarOpen">
+        <h1 class="text-lg uppercase tracking-wider font-semibold">
+          Pharma POS
+        </h1>
+      </div>
+      <div class="text-right">
+        <button
+          type="button"
+          class="bg-[#000180] text-white rounded px-2 py-1 mb-3"
+          @click="isSidebarOpen = !isSidebarOpen"
+        >
+          <MenuFoldOutlined />
+        </button>
+      </div>
     </div>
     <ul v-show="isSidebarOpen">
       <li v-for="(item, index) in filteredMenuItems" :key="index">
@@ -16,11 +24,18 @@
             :to="{ name: item?.path }"
             :class="{ active: isActive(item) }"
           >
-            <i :class="item?.icon"></i><span>{{ item?.name }}</span>
+            <div class="flex items-center">
+              <div>
+                <i :class="item?.icon"></i><span>{{ item?.name }}</span>
+              </div>
+              <div class="text-right grow" v-if="item?.child">
+                <i class="bi bi-chevron-down"></i>
+              </div>
+            </div>
           </router-link>
         </div>
 
-        <ul v-if="item?.child && item.isExpanded">
+        <ul v-if="item.isExpanded">
           <li
             v-for="(child, childIndex) in item?.child"
             :key="'c' + childIndex"
@@ -46,12 +61,33 @@ import { useDataStore } from "@/stores/data";
 import { storeToRefs } from "pinia";
 const dataStore = useDataStore();
 const { userInfo } = storeToRefs(dataStore);
-
+const menu = [
+  {
+    header: "Pharma POS",
+    hiddenOnCollapse: true,
+  },
+  {
+    href: "home",
+    title: "Dashboard",
+    icon: "bi bi-speedometer2",
+  },
+  {
+    href: "/charts",
+    title: "Charts",
+    icon: "fa fa-chart-area",
+    child: [
+      {
+        href: "/charts/sublink",
+        title: "Sub Link",
+      },
+    ],
+  },
+];
 // Sidebar state
 const isSidebarOpen = ref(true);
 
 // Menu items with expanded state
-const menuItems = reactive([
+let menuItems = reactive([
   {
     name: "Dashboard",
     icon: "bi bi-speedometer2",
@@ -83,7 +119,7 @@ const menuItems = reactive([
   {
     name: "Reports",
     icon: "bi bi-graph-down",
-    path: "report",
+    path: "",
     isExpanded: false,
     permission: "reports",
     child: [
@@ -135,7 +171,7 @@ const menuItems = reactive([
     permission: "branch",
   },
   {
-    name: "User Management",
+    name: "User",
     icon: "bi bi-people",
     path: "users",
     isExpanded: false,
@@ -188,5 +224,8 @@ const filteredMenuItems = computed(() => {
 <style scoped>
 .active {
   background-color: #fff;
+  color: #000180;
+  border-color: #000180;
+  border-width: 2px;
 }
 </style>

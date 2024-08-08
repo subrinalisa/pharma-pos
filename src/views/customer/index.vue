@@ -20,10 +20,8 @@ const getAllCustomers = async () => {
   const response = await customer.fetchCustomerList(page.value, paginate.value);
   allItems.value = response.data.data;
   customerData.value = response.data.data;
-  console.log(allItems.value.length);
 };
 const customerSearch = async (input) => {
-  console.log(input);
   if (input) {
     const response = await customer.searchCustomerList(input);
     allItems.value = response.data.data;
@@ -67,8 +65,8 @@ const handlePagination = (pageNo) => {
           <th class="text-left">Account No</th>
           <th class="text-left">Company Name</th>
           <th class="text-left">Contact</th>
-          <th class="text-center">Balance</th>
-          <th class="text-center">MRR</th>
+          <th class="text-right">Balance</th>
+          <th class="text-left">MRR</th>
         </tr>
       </thead>
       <tbody class="table-body">
@@ -102,12 +100,18 @@ const handlePagination = (pageNo) => {
           <td>{{ item.account_no }}</td>
           <td>{{ item.company_name }}</td>
           <td>{{ item.contact }}</td>
-          <td class="text-right">{{ item.store_account_balance }}</td>
-          <td class="text-right">{{ item.mrr }}</td>
+          <td class="text-right">
+            {{
+              item.store_account_balance &&
+              Number(item.store_account_balance)?.toFixed(2)
+            }}
+          </td>
+          <td>{{ item?.mrr_info?.name }}</td>
         </tr>
       </tbody>
     </table>
     <a-pagination
+      v-if="allItems?.last_page > 1"
       v-model:current="page"
       v-model:page-size="paginate"
       :total="allItems?.total"

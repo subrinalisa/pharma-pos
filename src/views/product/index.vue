@@ -107,10 +107,18 @@ const handlePagination = (pageNo) => {
             {{ item.category ? item.category.name : "N/A" }}
           </td>
           <td class="text-right">
-            {{ item?.product_prices?.selling_price || "-" }}
+            {{
+              item?.product_prices
+                ? Number(item?.product_prices?.selling_price)?.toFixed(2)
+                : "-"
+            }}
           </td>
           <td class="text-right">
-            {{ item?.pack_size?.quantity || "-" }}
+            {{
+              item?.pack_size?.quantity
+                ? Number(item?.pack_size?.quantity)?.toFixed(2)
+                : "-"
+            }}
           </td>
           <td>
             {{
