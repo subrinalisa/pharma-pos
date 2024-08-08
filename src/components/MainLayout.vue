@@ -1,7 +1,8 @@
 <template>
+  <Menu />
   <section class="w-full box-border overflow-x-hidden p-3">
     <!-- header -->
-    <header class="mb-4">
+    <header class="mb-4 ml-20 mr-3">
       <div class="flex justify-between">
         <div>
           <img src="@/assets/images/logo.png" alt="logo" class="w-full" />
@@ -43,12 +44,8 @@
       </div>
     </header>
     <!-- content -->
-    <div class="border-double border-4 border-slate-300 p-3">
-      <div class="flex">
-        <!-- sidebar -->
-        <Menu />
-        <div class="grow"><slot></slot></div>
-      </div>
+    <div class="border-double border-4 border-slate-300 p-3 ml-20 mr-3">
+      <slot></slot>
     </div>
   </section>
 </template>

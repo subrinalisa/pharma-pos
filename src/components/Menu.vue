@@ -1,6 +1,6 @@
 <template>
-  <!-- <sidebar-menu :menu="menu" theme="white-theme" /> -->
-  <div class="sidebar mr-5">
+  <sidebar-menu :menu="filteredMenuItems" theme="default" :collapsed="true" />
+  <!-- <div class="sidebar mr-5">
     <div class="flex justify-between">
       <div class="grow mr-5" v-if="isSidebarOpen">
         <h1 class="text-lg uppercase tracking-wider font-semibold">
@@ -50,7 +50,7 @@
         </ul>
       </li>
     </ul>
-  </div>
+  </div> -->
 </template>
 
 <script setup>
@@ -67,20 +67,103 @@ const menu = [
     hiddenOnCollapse: true,
   },
   {
-    href: "home",
     title: "Dashboard",
     icon: "bi bi-speedometer2",
+    href: "home",
+    permission: "dashboard",
   },
   {
-    href: "/charts",
-    title: "Charts",
-    icon: "fa fa-chart-area",
+    title: "Customer",
+    icon: "bi bi-people",
+    href: "customer",
+    isExpanded: false,
+    permission: "customer",
+  },
+  {
+    title: "Item",
+    icon: "bi bi-inbox",
+    href: "item",
+    isExpanded: false,
+    permission: "item",
+  },
+  {
+    title: "Suppliers",
+    icon: "bi bi-download",
+    href: "supplier",
+    isExpanded: false,
+    permission: "suppliers",
+  },
+  // {
+  //   href: "",
+  //   title: "",
+  //   icon: "fa fa-chart-area",
+  //   child: [
+  //     {
+  //       href: "/charts/sublink",
+  //       title: "Sub Link",
+  //     },
+  //   ],
+  // },
+  {
+    title: "Reports",
+    icon: "bi bi-graph-down",
+    href: "",
+    isExpanded: false,
+    permission: "reports",
     child: [
       {
-        href: "/charts/sublink",
-        title: "Sub Link",
+        title: "Sales Report",
+        href: "report",
+        permission: "reports",
+      },
+      {
+        title: "Purchase Report",
+        href: "purchase-report",
+        permission: "reports",
       },
     ],
+  },
+  {
+    title: "Expenses",
+    icon: "bi bi-cash-coin",
+    href: "expenses",
+    isExpanded: false,
+    permission: "expenses",
+  },
+  {
+    title: "Purchases",
+    icon: "bi bi-wallet",
+    href: "purchases",
+    isExpanded: false,
+    permission: "purchases",
+  },
+  {
+    title: "Sales",
+    icon: "bi bi-cart",
+    href: "sales",
+    isExpanded: false,
+    permission: "sales",
+  },
+  {
+    title: "Verify Sales",
+    icon: "bi bi-hand-index-thumb",
+    href: "verify-sales",
+    isExpanded: false,
+    permission: "verify-sales",
+  },
+  {
+    title: "Branch",
+    icon: "bi bi-git",
+    href: "branch",
+    isExpanded: false,
+    permission: "branch",
+  },
+  {
+    title: "User",
+    icon: "bi bi-people",
+    href: "users",
+    isExpanded: false,
+    permission: "users",
   },
 ];
 // Sidebar state
@@ -207,7 +290,7 @@ const isActive = (item) => {
 const filteredMenuItems = computed(() => {
   userPermissions.value = userInfo.value?.permissions?.map((info) => info.name);
 
-  return menuItems.filter((item) => {
+  return menu.filter((item) => {
     if (!item.permission || userPermissions.value?.includes(item.permission)) {
       if (item.child) {
         item.child = item.child.filter((child) =>
@@ -221,11 +304,15 @@ const filteredMenuItems = computed(() => {
 });
 </script>
 
-<style scoped>
+<style>
 .active {
   background-color: #fff;
   color: #000180;
   border-color: #000180;
   border-width: 2px;
+}
+.v-sidebar-menu .vsm--link_hover,
+.v-sidebar-menu .vsm--link_active {
+  background: #000180 !important;
 }
 </style>
