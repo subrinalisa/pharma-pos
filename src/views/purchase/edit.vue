@@ -2,106 +2,280 @@
 import MainLayout from "@/components/MainLayout.vue";
 import moment from "moment";
 import { useDataStore } from "@/stores/data";
-import { PictureOutlined } from "@ant-design/icons-vue";
+import { PictureOutlined, UserOutlined } from "@ant-design/icons-vue";
 import { storeToRefs } from "pinia";
 import { nextTick, ref, reactive, watch, onMounted } from "vue";
 import { imgBase } from "@/config";
 import { showNotification } from "@/utilities/notification";
+import { useRoute } from "vue-router";
 
 const dataStore = useDataStore();
 const { paymentList, userInfo } = storeToRefs(dataStore);
-const { getSaleProduct, getCustomer, getPayment, getBranch, saleInsert } =
-  dataStore;
-
+const {
+  getProduct,
+  getSupplier,
+  getBranch,
+  getMRR,
+  getPayment,
+  purchaseInsert,
+  getPurchaseDetails,
+} = dataStore;
 const searchProduct = ref(null);
-const allSupplierList = ref(null);
 const supplierList = ref(null);
-const comment_on_receipt = ref(false);
 const branchList = ref(null);
 const branch_id = ref("");
 const branchInput = ref("");
+const mrrList = ref(null);
+const mrrName = ref(null);
+const mrrID = ref(null);
+const gatisPercentage = ref(null);
+const gatisAmount = ref(null);
 const supplierInfo = ref();
 const searchInput = ref(null);
-const productQuantity = ref(null);
-const paidAmount = ref(null);
-const paymentIndex = ref(1);
+const mrrInput = ref(null);
 const supplierInput = ref(null);
-const paymentAmount = ref(0);
+const productQuantity = ref(null);
+const paymentIndex = ref(1);
+const paymentAmount = ref(null);
+const paidAmount = ref(null);
+
 const notes = ref(null);
+
 const productList = ref([]);
 
 let priceList = reactive({
-  subtotal: null,
-  tradePrice: null,
-  vat: null,
-  total: null,
+  subtotal: 0,
+  tradePrice: 0,
+  vat: 0,
+  total: 0,
   due: null,
-  discount: null,
 });
-const totalPrice = ref(0);
-const updatePrice = (val) => {
-  totalPrice.value = priceList.total - val;
-};
+const route = useRoute();
+const { id } = route?.params;
 const handleProductSearch = async (query) => {
-  if (!query) return 0;
-  searchProduct.value = await getSaleProduct(query);
+  searchProduct.value = await getProduct(query);
 };
-const handleSupplierSearch = async () => {
-  allSupplierList.value = await getCustomer();
-  supplierList.value = allSupplierList.value;
-};
-const findCustomer = (name) => {
-  if (!name) {
-    supplierList.value = allSupplierList.value;
-    return;
-  }
-  supplierList.value = allSupplierList.value.filter((customer) =>
-    customer.name.toLowerCase().includes(name.toLowerCase())
-  );
-};
-const getSupplierInfo = async (supplier) => {
-  supplierInfo.value = {
-    id: supplier?.id,
-    name: supplier?.first_name,
-    company: supplier?.company_name,
-    image: imgBase + supplier?.image_path,
-  };
+const handleSupplierSearch = async (query) => {
+  supplierList.value = await getSupplier(query);
 };
 
+const handleMRRSearch = async (query) => {
+  mrrList.value = await getMRR(query);
+};
 const calculateTotalPrice = (price, quantity) => {
   const costPrice = Number(price) * Number(quantity);
   return costPrice?.toFixed(2);
 };
-
+const getSupplierInfo = (supplier) => {
+  supplierInfo.value = {
+    id: supplier?.id,
+    name: supplier?.first_name,
+    company: supplier?.company_name,
+  };
+};
+const updateExpireDate = (index, date) => {
+  productList.value[index].expiry_date = date;
+};
 const updateQuantity = (product, index, event) => {
   const inputValue = Number(event?.target?.value);
-  if (inputValue > product?.stock_batches) {
-    showNotification("error", "Quantity exceeds the available stock.");
-    productList.value[index].quantity = product?.stock_batches;
-    return 0;
-  }
   productList.value[index].quantity = inputValue;
   productList.value[index].total = calculateTotalPrice(
-    product?.price,
+    product?.cost,
     inputValue
   );
 };
+const updateGatisAmount = () => {
+  if (gatisPercentage.value) {
+    gatisAmount.value = (
+      (priceList?.total * gatisPercentage.value) /
+      100
+    ).toFixed(2);
+  } else {
+    gatisAmount.value = "";
+  }
+};
 
-watch(
-  paymentAmount,
-  (newAmount) => {
-    if (Number(newAmount) > Number(totalPrice.value)) {
-      showNotification("error", "Enter valid amount");
-      paymentAmount.value = 0;
-      return 0;
+const updateGatisPercentage = () => {
+  if (gatisAmount.value) {
+    gatisPercentage.value = (
+      (gatisAmount.value / priceList?.total) *
+      100
+    ).toFixed(2);
+  } else {
+    gatisPercentage.value = "";
+  }
+};
+const calculateStock = (stockes) => {
+  const total = stockes.reduce((sum, batch) => {
+    return sum + parseFloat(batch.received_quantity);
+  }, 0);
+  return total;
+};
+const storeProducts = (product) => {
+  let quantity = 1;
+  const existingProductIndex = productList.value.findIndex(
+    (item) => item?.product_id == product?.id
+  );
+  if (existingProductIndex != -1) {
+    quantity++;
+    productList.value[existingProductIndex].quantity++;
+    productList.value[existingProductIndex].total = calculateTotalPrice(
+      product?.product_prices?.selling_price,
+      quantity
+    );
+    nextTick(() => productQuantity.value[existingProductIndex]?.focus());
+  } else {
+    productList.value.push({
+      id: null,
+      product_id: product?.id,
+      product_name: product?.name,
+      pack_size_id: product?.pack_size?.id,
+      tp: Number(product?.product_prices?.trade_price)?.toFixed(2),
+      vat: Number(product?.product_prices?.vat)?.toFixed(2),
+      cost: Number(product?.product_prices?.selling_price)?.toFixed(2),
+      quantity: quantity,
+      total: calculateTotalPrice(
+        product?.product_prices?.selling_price,
+        quantity
+      ),
+      size: product?.category?.name,
+      generic_name: "",
+      serial: "",
+      stock: calculateStock(product?.stock_batches),
+      cost_price_preview: Number(
+        product?.product_prices?.cost_price_without_tax
+      )?.toFixed(2),
+      item_id: product?.id,
+      batch_no: product?.batch_no,
+      expiry_date: "",
+    });
+    nextTick(() => productQuantity.value?.at(-1)?.focus());
+  }
+};
+const updatePaymentAmount = () => {};
+onMounted(async () => {
+  await getPayment();
+  //  Branch List
+  branchList.value = await getBranch();
+  nextTick(() => (branch_id.value = userInfo.value?.branch_id));
+  // All
+  const allData = await getPurchaseDetails(id);
+  getSupplierInfo(allData?.supplier);
+  gatisPercentage.value = Number(allData?.getis_percent)?.toFixed(2);
+  gatisAmount.value = Number(allData?.amount)?.toFixed(2);
+  mrrName.value = allData?.mrr?.name;
+  mrrID.value = allData?.mrr_id;
+  priceList.subtotal = Number(allData?.sub_total)?.toFixed(2);
+  priceList.tradePrice = Number(allData?.total_trade_price)?.toFixed(2);
+  priceList.vat = Number(allData?.total_vat)?.toFixed(2);
+  priceList.total = Number(allData?.total)?.toFixed(2);
+  priceList.due = Number(allData?.amount_due)?.toFixed(2);
+  paymentAmount.value = allData?.paid_amount;
+  paymentIndex.value = allData?.payment_method_id;
+  notes.value = allData?.note;
+  productList.value = allData?.purchase_products?.map((product) => ({
+    id: product?.id,
+    product_id: product?.id,
+    product_name: product?.product_name,
+    pack_size_id: product?.pack_size_id,
+    tp: Number(product?.tp)?.toFixed(2),
+    vat: Number(product?.vat)?.toFixed(2),
+    cost: Number(product?.cost)?.toFixed(2),
+    quantity: Number(product?.quantity),
+    total: Number(product?.total)?.toFixed(2),
+    size: product?.size,
+    generic_name: product?.generic_name,
+    serial: product?.serial,
+    stock: product?.stock,
+    cost_price_preview: Number(product?.cost_price_preview)?.toFixed(2),
+    item_id: product?.item_id,
+    batch_no: product?.batch_no,
+    expiry_date: product?.expiry_date,
+  }));
+});
+const handlePurchase = async (router) => {
+  if (!productList.value?.length) {
+    searchInput.value?.focus();
+    showNotification("error", "Please insert a product");
+    return 0;
+  }
+  if (!mrrID.value) {
+    mrrInput.value?.focus();
+    showNotification("error", "Please select an MRR");
+    return 0;
+  }
+  if (!supplierInfo.value?.id) {
+    supplierInput.value?.focus();
+    showNotification("error", "Please select a Supplier");
+    return 0;
+  }
+  if (!paymentAmount.value) {
+    paidAmount.value?.focus();
+    showNotification("error", "Please insert the payment");
+    return 0;
+  }
+  if (!branch_id.value) {
+    branchInput.value?.focus();
+    showNotification("error", "Please select a branch");
+    return 0;
+  }
+
+  const currDate = moment().format("YYYY-MM-DD");
+  const purchaseData = {
+    supplier_id: supplierInfo.value?.id,
+    getis_percent: gatisPercentage.value,
+    amount: gatisAmount.value,
+    mrr_id: mrrID.value,
+    sub_total: priceList.subtotal,
+    total_trade_price: priceList.tradePrice,
+    total_vat: priceList.vat,
+    total: priceList.total,
+    amount_due: priceList.due,
+    purchase_date: currDate,
+    paid_amount: paymentAmount.value,
+    purchase_products: productList.value,
+    payment_method_id: paymentIndex.value,
+    note: notes.value,
+    branch_id: branch_id.value,
+  };
+
+  const res = await purchaseInsert(purchaseData);
+  nextTick(() => {
+    if (res) {
+      productList.value = [];
+      supplierInfo.value = null;
+      gatisPercentage.value = null;
+      gatisAmount.value = null;
+      mrrID.value = null;
+      mrrName.value = null;
+      priceList = {
+        subtotal: 0,
+        tradePrice: 0,
+        vat: 0,
+        total: 0,
+        due: 0,
+      };
+      paymentAmount.value = null;
+      paymentIndex.value = null;
+      notes.value = null;
+      branch_id.value = userInfo.value?.branch_id;
+      router.push({ name: "purchases" });
     }
-    priceList.due = (totalPrice.value - newAmount)?.toFixed(2);
-    if (priceList.due < 0) {
-      priceList.due = 0;
-    }
-  },
-  { deep: true }
-);
+  });
+};
+// watch(
+//   paymentAmount,
+//   (newAmount) => {
+//     if (Number(newAmount) > Number(priceList.total)) {
+//       showNotification("error", "Enter valid amount");
+//       paymentAmount.value = 0;
+
+//       return 0;
+//     }
+//     priceList.due = (priceList.total - newAmount)?.toFixed(2);
+//   },
+//   { deep: true }
+// );
 
 watch(
   productList,
@@ -122,122 +296,9 @@ watch(
       total: Number(sumtotal)?.toFixed(2),
       due: (Number(sumtotal) - paymentAmount.value)?.toFixed(2),
     };
-    totalPrice.value = Number(sumtotal)?.toFixed(2);
   },
   { deep: true }
 );
-
-const storeProducts = (product) => {
-  let quantity = 1;
-  const existingProductIndex = productList.value.findIndex(
-    (item) => item?.product_id == product?.id
-  );
-  if (existingProductIndex !== -1) {
-    quantity++;
-    productList.value[existingProductIndex].quantity++;
-    productList.value[existingProductIndex].total = calculateTotalPrice(
-      product?.product_prices?.selling_price,
-      quantity
-    );
-    nextTick(() => {
-      productQuantity.value[existingProductIndex]?.focus();
-    });
-  } else {
-    const checkStock = calculateStock(product?.stock_batches);
-    if (checkStock <= 0) {
-      showNotification("error", "Sorry! Sold out");
-      searchInput.value?.focus();
-      return 0;
-    }
-    productList.value.push({
-      product_id: product?.id,
-      product_name: product?.name,
-      quantity: quantity,
-      price: product?.product_prices?.selling_price || 0,
-      discount_percent: 0,
-      total: calculateTotalPrice(
-        product?.product_prices?.selling_price,
-        quantity
-      ),
-      stock_batches: calculateStock(product?.stock_batches),
-    });
-
-    nextTick(() => {
-      productQuantity.value?.at(-1)?.focus();
-    });
-  }
-};
-const calculateStock = (stockes) => {
-  const total = stockes.reduce((sum, batch) => {
-    return sum + parseFloat(batch.balanced_quantity);
-  }, 0);
-  return total;
-};
-const handleSale = async (router) => {
-  if (!productList.value?.length) {
-    searchInput.value?.focus();
-    showNotification("error", "Please insert a product");
-    return 0;
-  }
-
-  if (
-    !supplierInfo.value?.id &
-    (Number(paymentAmount.value) != Number(totalPrice.value))
-  ) {
-    paidAmount.value?.focus();
-    showNotification("error", "Choose a customer or pay in full.");
-    return 0;
-  }
-  if (!supplierInfo.value?.id & !paymentAmount.value) {
-    paidAmount.value?.focus();
-    showNotification("error", "Please insert the Amount");
-    return 0;
-  }
-  if (!branch_id.value) {
-    branchInput.value?.focus();
-    showNotification("error", "Please select a branch");
-    return 0;
-  }
-  const currDate = moment().format("YYYY-MM-DD");
-  const purchaseData = {
-    sale_date: currDate,
-    note: notes.value,
-    sale_products: productList.value,
-    customer_id: supplierInfo.value?.id,
-    sub_total: priceList.total,
-    total: priceList.total,
-    amount_due: priceList.due,
-    paid_amount: paymentAmount.value,
-    comment_on_receipt: comment_on_receipt.value,
-    item_tiers: "none",
-    branch_id: branch_id.value,
-  };
-
-  const res = await saleInsert(purchaseData);
-  nextTick(() => {
-    if (res) {
-      productList.value = [];
-      supplierInfo.value = null;
-
-      priceList = {
-        total: 0,
-        due: 0,
-      };
-      paymentAmount.value = null;
-      paymentIndex.value = null;
-      notes.value = null;
-      comment_on_receipt.value = false;
-      branch_id.value = userInfo.value?.branch_id;
-      router.push({ name: "sales" });
-    }
-  });
-};
-
-onMounted(async () => {
-  await getPayment();
-  branchList.value = await getBranch();
-  branch_id.value = userInfo.value?.branch_id;
-});
 </script>
 
 <template>
@@ -263,6 +324,7 @@ onMounted(async () => {
             />
             <template #overlay>
               <a-menu class="max-h-80 overflow-y-auto">
+                <!-- No Products Currently Available -->
                 <a-menu-item v-if="!searchProduct || !searchProduct?.length">
                   <h6 class="font-bold text-red-600">
                     No Products Currently Available...
@@ -290,6 +352,7 @@ onMounted(async () => {
                       <h6 class="font-bold">
                         {{ data?.name }}
                       </h6>
+
                       <p class="text-gray-500">
                         <span class="mr-2"
                           ><strong>Category:</strong>
@@ -315,30 +378,29 @@ onMounted(async () => {
           <button
             class="bg-[#000180] px-5 py-1 text-white min-w-fit"
             type="button"
-            @click="handleSale($router)"
+            @click="handlePurchase($router)"
           >
-            <i class="bi bi-cart mr-2"></i> <span>Sale</span>
+            <i class="bi bi-cart mr-2"></i> <span>Purchased</span>
           </button>
         </div>
         <!-- Table -->
-        <table
-          class="table text-sm border-collapse border border-slate-400 w-full"
-        >
-          <thead>
+        <table class="table text-sm w-full purchase-table">
+          <thead class="table-header">
             <tr>
               <th>-</th>
               <th class="text-center">SL</th>
               <th class="text-left">Item Name</th>
-              <th class="text-right">Price</th>
-              <th class="text-right">Stock</th>
+              <th class="text-right">Pack Size</th>
+              <th class="text-right">TP</th>
+              <th class="text-right">VAT</th>
+              <th class="text-right">Cost</th>
               <th class="text-right">Qty.</th>
-              <th class="text-right">Disc %</th>
               <th class="text-right">Total</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody class="table-body">
             <tr v-if="!productList?.length">
-              <td colspan="7" class="text-center text-red-700">
+              <td colspan="9" class="text-center text-red-700">
                 No Product Found
               </td>
             </tr>
@@ -353,36 +415,72 @@ onMounted(async () => {
                 </button>
               </td>
               <td class="text-center">{{ index + 1 }}</td>
-              <td>{{ product?.product_name }}</td>
-              <td class="text-right">{{ Number(product?.price) }}</td>
-              <td class="text-right">{{ product?.stock_batches }}</td>
-              <td class="text-right">
+              <td>
+                <p>{{ product?.product_name }}</p>
+                <div class="mt-5">
+                  <p>
+                    <span class="font-semibold">Size:</span> {{ product?.size }}
+                  </p>
+                  <p>
+                    <span class="font-semibold">Generic Name:</span>
+                    {{ product?.generic_name || "Empty" }}
+                  </p>
+                  <p>
+                    <span class="font-semibold">Serial:</span>
+                    {{ product?.serial || "Empty" }}
+                  </p>
+                  <p>
+                    <span class="font-semibold">Stock:</span>
+                    {{ product?.stock || "Empty" }}
+                  </p>
+                  <p>
+                    <span class="font-semibold">Cost Price Preview:</span>
+                    {{ product?.cost_price_preview || "-" }}
+                  </p>
+                  <p>
+                    <span class="font-semibold">Item Id:</span>
+                    {{ product?.item_id || "-" }}
+                  </p>
+                  <p class="mt-2">
+                    <label class="mb-2 block">Select Expire Date</label>
+                    <input
+                      type="date"
+                      class="px-3 py-1 border border-black rounded"
+                      @input="updateExpireDate(index, $event?.target?.value)"
+                      :value="product?.expiry_date"
+                    />
+                  </p>
+                </div>
+              </td>
+              <td class="text-right w-10">{{ product?.pack_size_id }}</td>
+              <td class="text-right w-10">{{ product?.tp }}</td>
+              <td class="text-right w-10">{{ product?.vat }}</td>
+              <td class="text-right w-10">{{ product?.cost }}</td>
+              <td class="text-right w-24">
                 <input
                   type="number"
+                  :value="product?.quantity"
                   class="text-right bg-transparent outline-none text-red-600 focus:bg-white w-full focus:shadow-lg"
                   ref="productQuantity"
                   @focus="productQuantity[index].select()"
                   @input="updateQuantity(product, index, $event)"
                   @keyup.enter="searchInput.focus()"
-                  v-model="product.quantity"
                 />
               </td>
-              <td class="text-right">{{ product?.discount_percent }}</td>
               <td class="text-right">{{ product?.total }}</td>
             </tr>
           </tbody>
         </table>
       </div>
       <div class="right-side">
-        <!-- customer -->
         <div class="border border-slate-300 p-2 px-3 mb-4">
           <!-- Branch -->
           <div class="mb-4">
             <select
               class="bg-white w-full px-4 py-3 outline-none shadow-inner border border-slate-300 text-black focus:border-black"
               v-model="branch_id"
-              ref="branchInput"
               @change="productList = []"
+              ref="branchInput"
             >
               <option :value="null">Enter branch name</option>
               <template v-for="item in branchList">
@@ -392,6 +490,7 @@ onMounted(async () => {
               </template>
             </select>
           </div>
+          <!-- Supplier -->
           <div class="flex mb-4">
             <button
               type="button"
@@ -399,22 +498,20 @@ onMounted(async () => {
             >
               <i class="bi bi-plus-lg"></i>
             </button>
-
             <div class="grow">
-              <a-dropdown @click="handleSupplierSearch">
+              <a-dropdown>
                 <input
-                  type="text"
-                  placeholder="Enter customer name"
-                  class="bg-white w-full px-3 py-3 outline-none shadow-inner border border-slate-300 text-black"
-                  @input="findCustomer($event?.target?.value)"
+                  @input="handleSupplierSearch($event?.target?.value)"
                   ref="supplierInput"
+                  type="text"
+                  placeholder="Enter supplier name"
+                  class="bg-white w-full px-3 py-3 outline-none shadow-inner border border-slate-300 text-black"
                 />
                 <template #overlay>
                   <a-menu class="max-h-80 overflow-y-auto">
-                    <!-- No supplier Currently Available -->
                     <a-menu-item v-if="!supplierList || !supplierList?.length">
                       <h6 class="font-bold text-red-600">
-                        No customer Found...
+                        No Supplier Found...
                       </h6>
                     </a-menu-item>
                     <!-- a-menu-item -->
@@ -454,11 +551,8 @@ onMounted(async () => {
               <div class="mb-4">
                 <div class="flex">
                   <div class="mr-3">
-                    <a-avatar
-                      :size="36"
-                      :src="supplierInfo?.image"
-                      class="border border-slate-400"
-                    >
+                    <a-avatar :size="36" class="border border-slate-400"
+                      ><UserOutlined class="align-middle mb-2" />
                     </a-avatar>
                   </div>
                   <div>
@@ -467,11 +561,7 @@ onMounted(async () => {
                   </div>
                 </div>
               </div>
-              <div>
-                <!-- <button type="button" class="text-blue-600">
-                  <i class="bi bi-pencil-square"></i>
-                </button> -->
-              </div>
+              <div></div>
             </div>
             <!-- Update & detach -->
             <ul
@@ -489,6 +579,74 @@ onMounted(async () => {
             </ul>
           </div>
         </div>
+        <!-- Getis -->
+        <div class="border border-slate-300 p-2 px-3 mb-4">
+          <h6 class="font-bold mb-3">
+            <i class="bi bi-percent mr-3 text-red-600"></i>Getis
+          </h6>
+          <ul class="flex items-center space-x-4 list-none p-0 w-full">
+            <li class="mb-4 w-1/2">
+              <input
+                type="number"
+                class="shadow-inner bg-transparent text-right px-2 border border-slate-400 w-full py-2"
+                placeholder="Getis Percent"
+                v-model="gatisPercentage"
+                @input="updateGatisAmount"
+              />
+            </li>
+            <li class="mb-4 w-1/2">
+              <input
+                type="number"
+                class="shadow-inner bg-transparent text-right px-2 border border-slate-400 w-full py-2"
+                placeholder="Amount"
+                v-model="gatisAmount"
+                @input="updateGatisPercentage"
+              />
+            </li>
+          </ul>
+          <!-- MRR -->
+          <a-dropdown>
+            <input
+              @input="handleMRRSearch($event?.target?.value)"
+              ref="mrrInput"
+              v-model="mrrName"
+              type="text"
+              placeholder="Enter MRR name"
+              class="bg-white w-full px-3 py-3 outline-none shadow-inner border border-slate-300 text-black"
+            />
+            <template #overlay>
+              <a-menu class="max-h-80 overflow-y-auto">
+                <a-menu-item v-if="!mrrList || !mrrList?.length">
+                  <h6 class="font-bold text-red-600">No Data Found...</h6>
+                </a-menu-item>
+                <a-menu-item
+                  v-for="(mrr, index) in mrrList"
+                  :key="index"
+                  @click="
+                    () => {
+                      mrrName = mrr?.name;
+                      mrrID = mrr?.id;
+                    }
+                  "
+                >
+                  <div class="flex items-center">
+                    <div class="mr-3">
+                      <a-avatar :size="32">
+                        <template #icon>
+                          <UserOutlined class="align-middle" />
+                        </template>
+                      </a-avatar>
+                    </div>
+                    <div>
+                      <h6 class="font-bold">{{ mrr?.name }}</h6>
+                    </div>
+                  </div>
+                </a-menu-item>
+                <!--/ a-menu-item -->
+              </a-menu>
+            </template>
+          </a-dropdown>
+        </div>
         <!-- Total -->
         <div class="border border-slate-300 p-2 px-3 mb-4">
           <div class="flex justify-between items-center">
@@ -501,7 +659,39 @@ onMounted(async () => {
               />
             </div>
           </div>
-
+          <div class="flex justify-between items-center">
+            <div class="mb-3"><label>Total Trade Price:</label></div>
+            <div class="mb-3">
+              <input
+                type="number"
+                class="shadow-inner bg-transparent text-right px-2 border border-slate-400 w-full py-2"
+                v-model="priceList.tradePrice"
+                readonly
+              />
+            </div>
+          </div>
+          <div class="flex justify-between items-center">
+            <div class="mb-3"><label>Total VAT:</label></div>
+            <div class="mb-3">
+              <input
+                type="number"
+                class="shadow-inner bg-transparent text-right px-2 border border-slate-400 w-full py-2 font-bold"
+                v-model="priceList.vat"
+                readonly
+              />
+            </div>
+          </div>
+          <div class="flex justify-between items-center">
+            <div class="mb-3"><label>Total:</label></div>
+            <div class="mb-3">
+              <input
+                type="number"
+                class="shadow-inner bg-transparent text-right px-2 border border-slate-400 w-full py-2 text-red-600"
+                v-model="priceList.total"
+                readonly
+              />
+            </div>
+          </div>
           <div class="flex justify-between items-center">
             <div class="mb-3"><label>Amount Due:</label></div>
             <div class="mb-3">
@@ -513,33 +703,11 @@ onMounted(async () => {
               />
             </div>
           </div>
-          <div class="flex justify-between items-center">
-            <div class="mb-3"><label>Total:</label></div>
-            <div class="mb-3">
-              <input
-                type="number"
-                class="shadow-inner bg-transparent text-right px-2 border border-slate-400 w-full py-2 text-red-600"
-                v-model="totalPrice"
-                readonly
-              />
-            </div>
-          </div>
-          <div class="flex justify-between items-center">
-            <div class="mb-3"><label>Total Discount:</label></div>
-            <div class="mb-3">
-              <input
-                type="number"
-                class="shadow-inner bg-transparent text-right px-2 border border-slate-400 w-full py-2 text-red-600"
-                v-model="priceList.discount"
-                @input="updatePrice($event?.target?.value)"
-              />
-            </div>
-          </div>
         </div>
         <!-- Payment Gateway -->
         <div class="border border-slate-300 p-2 px-3">
           <h6>Add Payment</h6>
-          <template v-for="(payment, index) in paymentList" :key="index">
+          <template v-for="payment in paymentList" :key="payment?.id">
             <button
               type="button"
               class="border px-3 py-1 rounded-md mt-3 mr-2"
@@ -554,35 +722,27 @@ onMounted(async () => {
             </button>
           </template>
           <input
-            type="text"
+            type="number"
             class="block w-full border mt-3 px-3 py-2 rounded-md"
             placeholder="Enter Amount . . ."
             v-model="paymentAmount"
             ref="paidAmount"
-            @focus="paidAmount?.select()"
+            @input="updatePaymentAmount"
           />
           <textarea
             rows="3"
-            class="block w-full border mt-3 px-3 py-2 rounded-md mb-3"
+            class="block w-full border mt-3 px-3 py-2 rounded-md"
             placeholder="Notes . . ."
             v-model="notes"
           ></textarea>
-          <label for="comment_on_receipt" class="text-sm"
-            ><input
-              type="checkbox"
-              class="mr-3"
-              id="comment_on_receipt"
-              v-model="comment_on_receipt"
-            />Comment on receipt</label
+          <button
+            class="bg-[#000180] px-5 py-2 text-white min-w-fit mt-4 rounded-md"
+            type="button"
+            @click="handlePurchase($router)"
           >
+            <i class="bi bi-cart mr-2"></i> <span>Purchased</span>
+          </button>
         </div>
-        <button
-          class="bg-[#000180] px-5 py-2 text-white min-w-fit mt-4 rounded-md"
-          type="button"
-          @click="handleSale($router)"
-        >
-          <i class="bi bi-cart mr-2"></i> <span>Sale</span>
-        </button>
       </div>
     </div>
   </MainLayout>

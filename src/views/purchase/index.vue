@@ -22,33 +22,33 @@
     >
       <thead class="table-header">
         <tr>
-          <th>Actions</th>
+          <!-- <th>Actions</th> -->
           <th class="text-left">ID</th>
           <th class="text-left">purchase code</th>
           <th class="text-left">purchase date</th>
           <th class="text-right">total Price</th>
+          <th class="text-right">total paid</th>
+          <th class="text-right">total DUE</th>
           <th class="text-left">payment method</th>
           <th class="text-left">supplier</th>
           <th class="text-left">mrr</th>
           <th class="text-left">branch</th>
-
           <th class="text-center">note</th>
         </tr>
       </thead>
-
       <tbody class="table-body">
         <tr>
-          <td v-if="isListing">Loading . . .</td>
+          <td colspan="13" v-if="isLoading">Loading . . .</td>
         </tr>
         <tr>
-          <td v-if="!isListing && allData?.total <= 0">No Data Found</td>
+          <td v-if="!isLoading && allData?.total <= 0">No Data Found</td>
         </tr>
         <tr v-for="(item, index) in allData?.data" :key="index">
-          <td class="text-center w-24 whitespace-nowrap">
+          <!-- <td class="text-center w-24 whitespace-nowrap">
             <button
               @click="
                 $router.push({
-                  name: 'purchase-edit',
+                  name: 'purchases-edit',
                   params: { id: item?.id },
                 })
               "
@@ -57,23 +57,28 @@
             >
               <EditOutlined class="align-middle" />
             </button>
-          </td>
+          </td> -->
           <td>{{ item.id }}</td>
           <td>{{ item.purchase_code }}</td>
-          <td>{{ item.purchase_date }}</td>
-          <td class="text-right">{{ item.total }}</td>
-          <td>{{ findById(paymentList, item.payment_method_id)?.name }}</td>
-          <td>{{ findById(list.supplier, item.supplier_id)?.company_name }}</td>
-          <td>{{ findById(list.mrr, item.mrr_id)?.name }}</td>
+          <td>{{ moment(item.purchase_date).format("L") }}</td>
+          <td class="text-right">{{ Number(item.total).toFixed(2) }}</td>
+          <td class="text-right">{{ Number(item.paid_amount).toFixed(2) }}</td>
+          <td class="text-right">{{ Number(item.amount_due).toFixed(2) }}</td>
+          <td>{{ item.payment_method?.name }}</td>
           <td>
-            {{ findById(list.branch, item.branch_id)?.organization_name }} -
-            {{ findById(list.branch, item.branch_id)?.branch }}
+            {{ item.supplier?.first_name }} {{ item.supplier?.last_name }}
+          </td>
+          <td>{{ item.mrr?.name }}</td>
+          <td>
+            {{ item.branch?.organization_name }} -
+            {{ item.branch?.branch }}
           </td>
           <td>{{ item.note }}</td>
         </tr>
       </tbody>
     </table>
     <a-pagination
+      v-if="allData?.last_page > 1"
       v-model:current="page"
       v-model:page-size="limit"
       :total="allData?.total"
@@ -82,50 +87,34 @@
     />
   </MainLayout>
 </template>
-
 <script setup>
 import MainLayout from "@/components/MainLayout.vue";
 import { useDataStore } from "@/stores/data";
 import { PlusOutlined, EditOutlined } from "@ant-design/icons-vue";
+import moment from "moment";
 import { storeToRefs } from "pinia";
-import { onMounted, reactive, ref } from "vue";
-
+import { onMounted, ref } from "vue";
 const dataStore = useDataStore();
-const { paymentList, isListing } = storeToRefs(dataStore);
-const { getPurchaseList, getPayment, getSupplier, getMRR, getBranch } =
-  dataStore;
-
+const { isLoading } = storeToRefs(dataStore);
+const { getPurchaseList } = dataStore;
 const allData = ref();
 const backupData = ref();
-
-let list = reactive({
-  supplier: null,
-  mrr: null,
-  branch: null,
-});
 
 const page = ref(1);
 const limit = ref(10);
 
-const findById = (data, id) => {
-  return data.find((item) => item?.id == id);
-};
+onMounted(() => fetchList(page.value, ""));
 
-onMounted(async () => {
-  await getPayment();
-  list.supplier = await getSupplier();
-  list.mrr = await getMRR();
-  list.branch = await getBranch();
-  fetchList(page.value, "");
-});
 const fetchList = async (page) => {
   backupData.value = await getPurchaseList(page, "");
   allData.value = backupData.value;
 };
+
 const handlePagination = (pageNo) => {
   page.value = pageNo;
   fetchList(page.value);
 };
+
 const searchList = async (query) => {
   if (!query) allData.value = backupData.value;
   allData.value = await getPurchaseList("", query);

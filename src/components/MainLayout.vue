@@ -1,17 +1,10 @@
 <template>
   <section class="w-full box-border overflow-x-hidden p-3">
     <!-- header -->
-    <header class="mb-8">
+    <header class="mb-4">
       <div class="flex justify-between">
         <div>
-          <ul class="flex items-center space-x-4 list-none p-0">
-            <li>
-              <img src="@/assets/images/logo.png" alt="logo" class="w-full" />
-            </li>
-            <li>
-              <span class="font-bold">Dashboard / Receiving</span>
-            </li>
-          </ul>
+          <img src="@/assets/images/logo.png" alt="logo" class="w-full" />
         </div>
         <div>
           <ul class="flex items-center space-x-3 list-none p-0 profile-menu">
@@ -21,16 +14,7 @@
             <li>
               <span class="font-bold">{{ date }}</span>
             </li>
-            <li>
-              <button type="button" class="text-xl">
-                <i class="bi bi-bag"></i>
-              </button>
-            </li>
-            <li>
-              <button type="button" class="text-xl">
-                <i class="bi bi-download"></i>
-              </button>
-            </li>
+
             <li>
               <a-dropdown :trigger="['click']">
                 <a class="ant-dropdown-link cursor-pointer" @click.prevent>

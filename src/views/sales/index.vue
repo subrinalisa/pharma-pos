@@ -22,11 +22,13 @@
     >
       <thead class="table-header">
         <tr>
-          <th>Actions</th>
+          <!-- <th>Actions</th> -->
           <th class="text-left">ID</th>
           <th class="text-left">sale code</th>
           <th class="text-left">sale date</th>
           <th class="text-right">total</th>
+          <th class="text-right">total paid</th>
+          <th class="text-right">total due</th>
           <th class="text-left">payment method</th>
           <th class="text-left">customer</th>
           <th class="text-left">Seller</th>
@@ -37,42 +39,44 @@
 
       <tbody class="table-body">
         <tr>
-          <td v-if="isListing">Loading . . .</td>
+          <td colspan="12" v-if="isLoading">Loading . . .</td>
         </tr>
-        <tr>
-          <td v-if="!isListing && allData?.total <= 0">No Data Found</td>
-        </tr>
+
         <tr v-for="(item, index) in allData?.data" :key="index">
-          <td class="text-center w-24 whitespace-nowrap">
+          <!-- <td class="text-center w-24 whitespace-nowrap">
             <button
               @click="
                 $router.push({
-                  name: 'purchase-edit',
+                  name: 'sales-edit',
                   params: { id: item?.id },
                 })
               "
               class="px-2 py-1 bg-[#000180] text-white rounded hover:bg-indigo-600 mr-2 disabled:bg-gray-800"
-              :disabled="!item?.is_editable"
             >
               <EditOutlined class="align-middle" />
             </button>
-          </td>
+          </td> -->
           <td>{{ item?.id }}</td>
           <td>{{ item?.sale_code }}</td>
-          <td>{{ item?.sale_date }}</td>
-          <td class="text-right">{{ item?.total }}</td>
-          <td>{{ findById(paymentList, item.payment_method_id)?.name }}</td>
+          <td>{{ moment(item?.sale_date).format("L") }}</td>
+          <td class="text-right">{{ Number(item?.total)?.toFixed(2) }}</td>
+          <td class="text-right">
+            {{ Number(item?.paid_amount)?.toFixed(2) }}
+          </td>
+          <td class="text-right">{{ Number(item?.amount_due)?.toFixed(2) }}</td>
+          <td>{{ item.payment_method?.name }}</td>
           <td>{{ item?.customer?.first_name }}</td>
           <td>{{ item?.sold_user?.name }}</td>
           <td>
-            {{ findById(list.branch, item.branch_id)?.organization_name }} -
-            {{ findById(list.branch, item.branch_id)?.branch }}
+            {{ item.branch?.organization_name }} -
+            {{ item.branch?.branch }}
           </td>
           <td>{{ item.note }}</td>
         </tr>
       </tbody>
     </table>
     <a-pagination
+      v-if="allData?.last_page > 1"
       v-model:current="page"
       v-model:page-size="limit"
       :total="allData?.total"
@@ -86,36 +90,22 @@
 import MainLayout from "@/components/MainLayout.vue";
 import { useDataStore } from "@/stores/data";
 import { PlusOutlined, EditOutlined } from "@ant-design/icons-vue";
+import moment from "moment";
 import { storeToRefs } from "pinia";
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, ref } from "vue";
 
 const dataStore = useDataStore();
-const { paymentList, isListing } = storeToRefs(dataStore);
-const { getSalesList, getPayment, getSupplier, getMRR, getBranch } = dataStore;
+const { isLoading } = storeToRefs(dataStore);
+const { getSalesList } = dataStore;
 
 const allData = ref();
 const backupData = ref();
 
-let list = reactive({
-  supplier: null,
-  mrr: null,
-  branch: null,
-});
-
 const page = ref(1);
 const limit = ref(10);
 
-const findById = (data, id) => {
-  return data.find((item) => item?.id == id);
-};
+onMounted(() => fetchList(page.value, ""));
 
-onMounted(async () => {
-  await getPayment();
-  list.supplier = await getSupplier();
-  list.mrr = await getMRR();
-  list.branch = await getBranch();
-  fetchList(page.value, "");
-});
 const fetchList = async (page) => {
   backupData.value = await getSalesList(page, "");
   allData.value = backupData.value;

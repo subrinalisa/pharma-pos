@@ -1,2 +1,2 @@
-export const imgBase = "https://apps.mis.digital/pharmacy-app/storage/";
-export const apiBase = "https://apps.mis.digital/pharmacy-app/api";
+export const imgBase = "http://apps.mis.digital/api/pharmacy-app/storage/";
+export const apiBase = "http://apps.mis.digital/api/pharmacy-app/api";

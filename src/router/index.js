@@ -6,8 +6,10 @@ import Dashboard from "@/views/Dashboard.vue";
 //Start User Management
 import Purchase from "@/views/purchase/index.vue";
 import PurchaseCreate from "@/views/purchase/create.vue";
+import PurchaseEdit from "@/views/purchase/edit.vue";
 import Sales from "@/views/sales/index.vue";
 import SaleCreate from "@/views/sales/create.vue";
+import SaleEdit from "@/views/sales/edit.vue";
 import Users from "@/views/User Management/Users.vue";
 import Useradd from "@/views/User Management/Useradd.vue";
 import Useredit from "@/views/User Management/Useredit.vue";
@@ -18,7 +20,7 @@ import Permissions from "@/views/User Management/Permissions.vue";
 import Permissionsadd from "@/views/User Management/Permissionsadd.vue";
 import Permissionsedit from "@/views/User Management/Permissionsedit.vue";
 //End User Management
-import Item from "@/views/product/Item.vue";
+import Item from "@/views/product/index.vue";
 import ItemCreate from "@/views/product/ItemCreate.vue";
 import ItemEdit from "@/views/product/ItemEdit.vue";
 
@@ -130,6 +132,11 @@ const routes = [
     component: PurchaseCreate,
   },
   {
+    path: "/purchases-edit/:id",
+    name: "purchases-edit",
+    component: PurchaseEdit,
+  },
+  {
     path: "/sales",
     name: "sales",
     component: Sales,
@@ -138,6 +145,11 @@ const routes = [
     path: "/sales-create",
     name: "sales-create",
     component: SaleCreate,
+  },
+  {
+    path: "/sales-edit/:id",
+    name: "sales-edit",
+    component: SaleEdit,
   },
   {
     path: "/verify-sales",

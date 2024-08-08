@@ -1,8 +1,10 @@
-import { notification } from "ant-design-vue";
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 
 export const showNotification = (type, message) => {
-  notification[type]({
-    message: message,
-    duration: 2,
-  });
+  toast(message, {
+    theme: "light",
+    type: type,
+    autoClose: 3000,
+  })
 };

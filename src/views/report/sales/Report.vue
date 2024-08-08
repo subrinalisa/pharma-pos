@@ -12,8 +12,8 @@ const { getSaleReport } = dataStore;
 
 const saleReport = ref(null);
 const summaryReport = ref(null);
-const fromDate = ref("2024-07-01");
-const toDate = ref("2024-07-31");
+const fromDate = ref();
+const toDate = ref();
 const showProducts = ref(null);
 
 const genereate = ref(true);

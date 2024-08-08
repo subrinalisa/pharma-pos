@@ -109,11 +109,15 @@ const handlePagination = (pageNo) => {
           <td>{{ item.description }}</td>
           <td>{{ item.category }}</td>
           <td>{{ item.date }}</td>
-          <td class="text-right">{{ item.amount }}</td>
+          <td class="text-right">
+            {{ item.amount && Number(item.amount)?.toFixed(2) }}
+          </td>
           <td>{{ item.type }}</td>
-          <td class="text-right">{{ item.tax }}</td>
-          <td class="text-right">{{ item.recipient_id }}</td>
-          <td class="text-right">{{ item.approved_by }}</td>
+          <td class="text-right">
+            {{ item.tax && Number(item.tax)?.toFixed(2) }}
+          </td>
+          <td>{{ item.recipient?.name }}</td>
+          <td>{{ item.approved?.name }}</td>
         </tr>
       </tbody>
     </table>
